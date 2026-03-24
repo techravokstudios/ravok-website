@@ -302,8 +302,8 @@ export default function AboutUsPage() {
           <div className="grid sm:grid-cols-3 gap-12 lg:gap-16 mb-16">
             {[
               { name: "Amanda Aoki Rak", role: "CEO & Founder", image: "/images/team/amanda.jpg" },
-              { name: "Thibault Dominici", role: "CFO", image: "/images/team/thibault.jpg" },
-              { name: "Lois Ungar", role: "Strategic Advisor", image: "/images/team/lois.png" },
+              { name: "Thibault Dominici", role: "CFO", image: "/images/team/lois.png" },
+              { name: "Lois Ungar", role: "Strategic Advisor", image: "/images/team/thibault.jpg" },
             ].map((member, i) => (
               <motion.div
                 key={i}
