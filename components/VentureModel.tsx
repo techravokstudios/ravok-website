@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function VentureModel() {
     return (
-        <section id="model" className="py-24 lg:py-32 bg-[#1C1B14] text-white border-t border-white/5 relative overflow-hidden rounded-t-3xl shadow-2xl">
+        <section id="model" className="py-24 lg:py-32 bg-zinc-950 text-white border-t border-white/5 relative overflow-hidden rounded-t-3xl shadow-2xl">
             {/* Background Image Layer */}
             <div className="absolute inset-0 z-0">
                 <img
@@ -14,7 +14,7 @@ export default function VentureModel() {
                     alt="Venture Model Background"
                     className="w-full h-full object-cover opacity-30 grayscale"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#1C1B14]/60 via-[#1C1B14]/80 to-[#1C1B14]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-zinc-950/80 to-black" />
             </div>
 
             <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
@@ -74,7 +74,7 @@ export default function VentureModel() {
                 {/* Right Image (Statue) */}
                 <FadeIn delay={0.5} className="hidden lg:block h-full min-h-[600px] relative">
                     {/* Placeholder for the Torso Statue */}
-                    <div className="absolute inset-0 bg-gradient-to-l from-[#1C1B14] via-transparent to-transparent z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-l from-black via-transparent to-transparent z-10" />
                     <img
                         src="/images/bg_1.png"
                         alt="Venture Studio Statue"

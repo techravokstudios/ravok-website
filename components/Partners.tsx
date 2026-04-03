@@ -36,7 +36,7 @@ export default function Partners() {
     ];
 
     return (
-        <section id="investors" className="relative py-32 bg-[#1C1B14] text-white overflow-hidden rounded-t-3xl shadow-2xl isolate">
+        <section id="investors" className="relative py-32 bg-black text-white overflow-hidden rounded-t-3xl shadow-2xl isolate">
             {/* Background Image Layer */}
             <div className="absolute inset-0 z-0">
                 <img

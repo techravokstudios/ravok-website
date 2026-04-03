@@ -29,7 +29,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#1C1B14] text-white border-t border-white/10 font-sans rounded-t-3xl shadow-2xl relative">
+    <footer className="bg-black text-white border-t border-white/10 font-sans rounded-t-3xl shadow-2xl relative">
       {/* Main Split Layout */}
       <div className="flex flex-col lg:flex-row min-h-[400px] relative z-10">
         {/* Background Image - Fixed Size */}

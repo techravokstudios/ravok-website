@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 export default function IntroSection() {
     return (
-        <section className="py-24 lg:py-32 px-6 bg-[#1C1B14] text-white relative overflow-hidden rounded-t-3xl shadow-2xl">
+        <section className="py-24 lg:py-32 px-6 bg-black text-white relative overflow-hidden rounded-t-3xl shadow-2xl">
             {/* Background Image Layer - Fixed Size */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <img
