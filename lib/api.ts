@@ -642,11 +642,11 @@ export type FormSubmissionList = {
   total: number;
 };
 
-export async function submitPublicForm(type: FormType, input: { name: string; email: string; data: Record<string, any> }): Promise<{ status: string; id: number }> {
+export async function submitPublicForm(type: FormType, input: { name: string; email: string; agreed_to_terms: boolean; data: Record<string, any> }): Promise<{ status: string; id: number }> {
   return fetchApi<{ status: string; id: number }>(`${getApiBase()}/api/public/forms/${encodeURIComponent(type)}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({ name: input.name, email: input.email, ...input.data }),
+    body: JSON.stringify({ name: input.name, email: input.email, agreed_to_terms: input.agreed_to_terms, ...input.data }),
   });
 }
 

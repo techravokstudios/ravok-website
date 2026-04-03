@@ -27,15 +27,17 @@ class FormSubmissionController extends Controller
             return response()->json(['message' => 'Invalid form type'], 422);
         }
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
+            'name'             => ['required', 'string', 'max:255'],
+            'email'            => ['required', 'email', 'max:255'],
+            'agreed_to_terms'  => ['required', 'accepted'],
         ]);
-        $payload = $request->except(['name', 'email']);
+        $payload = $request->except(['name', 'email', 'agreed_to_terms']);
         $submission = FormSubmission::create([
-            'type' => $type,
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'data' => $payload ?: null,
+            'type'      => $type,
+            'name'      => $validated['name'],
+            'email'     => $validated['email'],
+            'data'      => $payload ?: null,
+            'agreed_at' => now(),
         ]);
 
         $fromAddress = config('mail.from.address');

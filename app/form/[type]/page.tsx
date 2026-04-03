@@ -10,6 +10,78 @@ import { useParams, useRouter } from "next/navigation";
 import Footer from "@/components/Footer";
 import { useMemo, useState } from "react";
 
+const TERMS_TEXT = `SCRIPT SUBMISSION TERMS AND CONDITIONS
+Last Updated April 1, 2026
+
+PLEASE READ THESE TERMS AND CONDITIONS CAREFULLY BEFORE SUBMITTING ANY MATERIAL. BY SUBMITTING A SCRIPT, TREATMENT, SYNOPSIS, OR ANY RELATED MATERIAL (COLLECTIVELY, "SUBMISSION") THROUGH THIS WEBSITE, YOU ("SUBMITTER") ACKNOWLEDGE THAT YOU HAVE READ, UNDERSTOOD, AND AGREE TO BE BOUND BY THESE TERMS AND CONDITIONS. IF YOU DO NOT AGREE, DO NOT SUBMIT ANY MATERIAL.
+
+1. ELIGIBILITY
+The Submitter must be at least 18 years of age and legally authorized to enter into a binding agreement. By making a Submission, you represent and warrant that you meet these requirements.
+
+2. UNSOLICITED MATERIAL ACKNOWLEDGMENT
+The Submitter acknowledges that Ravok Studios receives numerous script submissions and that ideas, themes, story elements, and concepts contained within the Submission may be similar to material already under development, previously received from other sources, or independently created by Ravok Studios or its affiliates. The Submitter agrees that no confidential or fiduciary relationship is established between the Submitter and Ravok Studios by virtue of this Submission.
+
+3. OWNERSHIP AND ORIGINALITY
+The Submitter represents and warrants that:
+(a) The Submission is the Submitter's original work, or the Submitter has obtained all necessary rights, permissions, and licenses to submit the material and to grant the rights described herein.
+(b) The Submission does not infringe upon or violate any copyright, trademark, right of privacy, right of publicity, or any other intellectual property or proprietary right of any third party.
+(c) The Submission does not contain any defamatory, libelous, obscene, or otherwise unlawful content.
+(d) No prior agreement, obligation, or encumbrance exists that conflicts with the rights granted herein.
+(e) If the Submission is based upon, adapted from, or derived from any pre-existing work, including but not limited to published or unpublished literary works, life stories, or other intellectual property, the Submitter has obtained all necessary rights to such underlying material and is authorized to grant the rights described herein.
+
+4. LIMITED LICENSE TO REVIEW
+By submitting material, the Submitter grants Ravok Studios a non-exclusive, royalty-free, worldwide license to read, evaluate, analyze (including through automated or AI-assisted means), and internally discuss the Submission for the purpose of determining its suitability for development or production.
+
+5. NO OBLIGATION
+Ravok Studios is under no obligation to:
+(a) Review, respond to, or acknowledge receipt of any Submission.
+(b) Develop, produce, or otherwise use any Submission.
+(c) Return any submitted material to the Submitter.
+(d) Enter into any agreement with the Submitter regarding the Submission.
+Ravok Studios reserves the sole and absolute discretion to accept or reject any Submission for any reason or no reason at all.
+
+6. COMPENSATION
+No compensation, payment, credit, or other consideration is owed to the Submitter for the act of submitting material or for Ravok Studios' review thereof. If Ravok Studios elects to proceed with development or production of a Submission, any compensation or credit shall be subject to a separate written agreement negotiated between the parties.
+
+7. DATA COLLECTION AND USE
+
+7.1 Personal Information
+In connection with the Submission, Ravok Studios may collect personal information including, but not limited to, the Submitter's name, email address, phone number, mailing address, professional biography, and any other information provided through the submission form. This information will be processed in accordance with Ravok Studios' Privacy Policy.
+
+7.2 Use of Submission Data in Connection with Proprietary AI-Assisted Analysis
+By submitting material through this website, the Submitter acknowledges and agrees that Ravok Studios utilizes a proprietary AI-powered analytical framework in connection with the evaluation and development of submitted material. The Submitter consents to the following uses of the Submission:
+(a) Analytical Processing. The Submission may be processed by Ravok Studios' proprietary systems and by third-party artificial intelligence services, including large language models, for the purpose of script analysis, market assessment, audience evaluation, concept validation, financial modeling, and other analytical functions related to the evaluation of the Submission's viability for development or production.
+(b) Data Retention and Contextual Learning. Ravok Studios may retain Submission data, including analytical results, metadata, and project-level context derived from the Submission, within its proprietary systems to improve the accuracy, relevance, and depth of its analytical capabilities over time.
+(c) Anonymized and Aggregated Insights. Ravok Studios may derive anonymized, aggregated, or statistical insights from Submissions for the purpose of improving its proprietary analytical models, benchmarking tools, market databases, and platform functionality. Such derived data shall not identify the Submitter or the specific content of any individual Submission.
+The Submitter acknowledges that AI-assisted analysis is one component of Ravok Studios' evaluation process and that all development and production decisions are made at Ravok Studios' sole discretion. The Submitter waives any right to additional compensation, notification, or approval in connection with the uses described in this Section 7.2.
+
+7.3 Data Retention
+Ravok Studios reserves the right to retain Submission data and associated personal information for as long as reasonably necessary to fulfill the evaluation and analytical purposes described herein, or as required by applicable law. Anonymized or aggregated data derived from Submissions pursuant to Section 7.2(c) may be retained indefinitely.
+
+8. INDEMNIFICATION
+The Submitter agrees to indemnify, defend, and hold harmless Ravok Studios, its officers, directors, employees, agents, affiliates, successors, and assigns from and against any and all claims, demands, liabilities, losses, damages, costs, and expenses (including reasonable attorneys' fees) arising out of or in connection with:
+(a) Any breach of the Submitter's representations, warranties, or obligations under these Terms.
+(b) Any claim that the Submission infringes or misappropriates any intellectual property or other rights of any third party.
+(c) Any dispute between the Submitter and any third party relating to the Submission.
+
+9. LIMITATION OF LIABILITY
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, RAVOK STUDIOS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, REVENUE, DATA, OR OPPORTUNITIES, ARISING OUT OF OR RELATED TO THESE TERMS OR ANY SUBMISSION, REGARDLESS OF THE THEORY OF LIABILITY.
+
+10. NO WAIVER OF RIGHTS
+The Submitter retains ownership of the Submission. Nothing in these Terms shall be construed as an assignment of copyright or other ownership rights, except as expressly stated herein. However, the Submitter acknowledges that the licenses and consents granted under these Terms are irrevocable with respect to any use that has already occurred.
+
+11. MODIFICATION OF TERMS
+Ravok Studios reserves the right to modify these Terms and Conditions at any time without prior notice. Any modifications will be effective upon posting to the website. Continued submission of material following the posting of updated Terms constitutes acceptance of such changes.
+
+12. GOVERNING LAW AND DISPUTE RESOLUTION
+These Terms and Conditions shall be governed by and construed in accordance with the laws of the State of California, without regard to conflict of law principles, except to the extent that the internal affairs, corporate governance, or entity-level obligations of Ravok Studios are governed by the laws of the State of Delaware. Any dispute arising under or in connection with these Terms shall be subject to the exclusive jurisdiction of the state and federal courts located in Los Angeles County, California. The Submitter irrevocably consents to personal jurisdiction in such courts and waives any objection to venue, including on the basis of inconvenient forum.
+
+13. SEVERABILITY
+If any provision of these Terms is found to be invalid, illegal, or unenforceable, the remaining provisions shall continue in full force and effect.
+
+14. ENTIRE AGREEMENT
+These Terms and Conditions constitute the entire agreement between the Submitter and Ravok Studios with respect to the submission of material and supersede all prior or contemporaneous communications, representations, or agreements, whether written or oral.`;
+
 const writerQuestions = [
   "What is the title of your project?",
   "Can you share the logline in 30 words or less?",
@@ -31,11 +103,10 @@ const writerQuestions = [
   "Please share a link to the Pitch Deck.",
   "Please share your IMDB link/Linkedin/social media handles",
   "What kind of directors do you like and what's the vision you hope the person that comes in would bring to the project? tell us at least 3 directors",
-  "I have read and agree to the Ravok Submission release agreement",
 ];
 
 const directorQuestions = [
-  "Primary Portfolio / Director’s Reel",
+  "Primary Portfolio / Director's Reel",
   "Professional Links",
   "The Superpower",
   "Budget Experience",
@@ -52,7 +123,6 @@ const directorQuestions = [
   "Attached Talent",
   "Ideal Outcome",
   "Link to Materials",
-  "Agreement",
 ];
 
 const producerQuestions = [
@@ -106,7 +176,9 @@ export default function FormPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [answers, setAnswers] = useState<string[]>(() => questions.map(() => ""));
-  const total = questions.length + 2;
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+  const total = questions.length + 2; // +2 for name and email
   const completed = useMemo(() => {
     let c = 0;
     if (name.trim()) c++;
@@ -115,6 +187,7 @@ export default function FormPage() {
     return c;
   }, [name, email, answers]);
   const pct = Math.round((completed / total) * 100);
+
   function updateAnswer(i: number, v: string) {
     setAnswers((arr) => {
       const next = arr.slice();
@@ -122,6 +195,7 @@ export default function FormPage() {
       return next;
     });
   }
+
   function renderField(q: string, i: number) {
     if (t === "director" && q === "The Superpower") {
       return (
@@ -169,21 +243,6 @@ export default function FormPage() {
         </div>
       );
     }
-    if (t === "director" && q === "Agreement") {
-      const checked = (answers[i] || "") === "Agreed";
-      return (
-        <div className="flex items-center gap-2">
-          <input
-            id={`q_${i}`}
-            type="checkbox"
-            checked={checked}
-            onChange={(e) => updateAnswer(i, e.target.checked ? "Agreed" : "")}
-            className="h-4 w-4 accent-ravok-gold"
-          />
-          <span className="font-sans text-sm text-white/80">I agree</span>
-        </div>
-      );
-    }
     if (t === "producer" && q === "Primary strength in production") {
       return (
         <select
@@ -223,6 +282,7 @@ export default function FormPage() {
       />
     );
   }
+
   async function submit() {
     const nm = name.trim();
     const em = email.trim();
@@ -230,19 +290,25 @@ export default function FormPage() {
       toast.error("Name and email are required");
       return;
     }
+    if (!agreedToTerms) {
+      toast.error("You must read and agree to the Terms and Conditions before submitting");
+      return;
+    }
     const data: Record<string, any> = {};
     questions.forEach((q, i) => (data[q] = answers[i] || ""));
     try {
-      await submitPublicForm(t, { name: nm, email: em, data });
+      await submitPublicForm(t, { name: nm, email: em, agreed_to_terms: true, data });
       setName("");
       setEmail("");
       setAnswers(questions.map(() => ""));
+      setAgreedToTerms(false);
       toast.success("Submitted");
       router.push("/form");
     } catch (e: any) {
       toast.error(e.message || "Submission failed");
     }
   }
+
   return (
     <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black">
       <section className="pt-32 pb-16 px-6">
@@ -293,10 +359,46 @@ export default function FormPage() {
                 </div>
               ))}
             </div>
+
+            {/* Terms and Conditions */}
+            <div className="space-y-3 pt-2 border-t border-white/10">
+              <p className="font-sans text-sm font-semibold text-ravok-gold uppercase tracking-widest">
+                Script Submission Terms &amp; Conditions
+              </p>
+              <div
+                className="h-64 overflow-y-auto rounded-lg border border-white/20 bg-black/60 p-4 font-sans text-xs text-white/60 leading-relaxed whitespace-pre-wrap"
+                tabIndex={0}
+                aria-label="Script Submission Terms and Conditions"
+              >
+                {TERMS_TEXT}
+              </div>
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-ravok-gold cursor-pointer"
+                  aria-required="true"
+                />
+                <span className="font-sans text-sm text-white/80 group-hover:text-white transition-colors">
+                  I have read and agree to the Script Submission Terms and Conditions, including the use of my submission data for AI-assisted analysis as described in Section 7.2.
+                </span>
+              </label>
+            </div>
+
             <div>
-              <Button onClick={submit} className="bg-ravok-gold text-black hover:brightness-95">
+              <Button
+                onClick={submit}
+                disabled={!agreedToTerms}
+                className="bg-ravok-gold text-black hover:brightness-95 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
                 Submit
               </Button>
+              {!agreedToTerms && (
+                <p className="mt-2 font-sans text-xs text-white/40">
+                  You must agree to the Terms and Conditions to submit.
+                </p>
+              )}
             </div>
           </div>
         </div>

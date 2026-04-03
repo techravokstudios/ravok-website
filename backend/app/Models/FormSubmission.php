@@ -14,10 +14,12 @@ class FormSubmission extends Model
         'name',
         'email',
         'data',
+        'agreed_at',
     ];
 
     protected $casts = [
-        'data' => 'array',
+        'data'      => 'array',
+        'agreed_at' => 'datetime',
     ];
 }
 
