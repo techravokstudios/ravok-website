@@ -30,7 +30,7 @@ export default function Philosophy() {
     ];
 
     return (
-        <section className="py-24 lg:py-32 px-6 bg-black text-white relative border-t border-white/5 overflow-hidden rounded-t-3xl shadow-2xl">
+        <section className="py-24 lg:py-32 px-6 bg-[#1C1B14] text-white relative border-t border-white/5 overflow-hidden rounded-t-3xl shadow-2xl">
             {/* Background Image Layer */}
             <div className="absolute inset-0 z-0">
                 <img

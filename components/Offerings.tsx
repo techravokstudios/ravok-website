@@ -27,7 +27,7 @@ export default function Offerings() {
     ];
 
     return (
-        <section className="py-32 bg-black text-white px-6 relative z-10 rounded-t-3xl shadow-2xl overflow-hidden">
+        <section className="py-32 bg-[#1C1B14] text-white px-6 relative z-10 rounded-t-3xl shadow-2xl overflow-hidden">
             {/* Background Image Layer */}
             <div className="absolute inset-0 z-0">
                 <img
