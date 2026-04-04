@@ -4,11 +4,18 @@
 
 export function formatDate(date: Date | string, format: string = 'MMM dd, yyyy'): string {
   const d = new Date(date)
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  const monthAbbrs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const dayAbbrs = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
   const map: Record<string, number | string> = {
-    mm: String(d.getMonth() + 1).padStart(2, '0'),
-    m: d.getMonth() + 1,
-    dddd: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][d.getDay()],
-    ddd: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()],
+    MMMM: monthNames[d.getMonth()],
+    MMM: monthAbbrs[d.getMonth()],
+    MM: String(d.getMonth() + 1).padStart(2, '0'),
+    M: d.getMonth() + 1,
+    dddd: dayNames[d.getDay()],
+    ddd: dayAbbrs[d.getDay()],
     dd: String(d.getDate()).padStart(2, '0'),
     d: d.getDate(),
     yyyy: d.getFullYear(),
@@ -25,7 +32,8 @@ export function formatDate(date: Date | string, format: string = 'MMM dd, yyyy')
     A: d.getHours() >= 12 ? 'pm' : 'am',
   }
 
-  return format.replace(/\b(yyyy|yy|mmmm|mmm|mm|m|dddd|ddd|dd|d|HH|H|hh|h|mm|m|ss|s|A|a)\b/g, (match) => String(map[match]))
+  // Replace longest tokens first to avoid partial matches
+  return format.replace(/\b(MMMM|MMM|MM|M|yyyy|yy|dddd|ddd|dd|d|HH|H|hh|h|mm|m|ss|s|A|a)\b/g, (match) => String(map[match]))
 }
 
 export function formatRelativeTime(date: Date | string): string {

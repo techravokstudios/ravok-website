@@ -118,17 +118,27 @@ export interface Tag {
 export interface Confession {
   id: number
   body: string
-  category: ConfessionCategory
+  category?: ConfessionCategory
   status: ConfessionStatus
-  featured_on_social: boolean
-  submitted_from: string
-  approved_by?: number
-  approved_at?: string
+  reactions: number
+  featured_at?: string | null
+  amanda_response?: string | null
   created_at: string
   updated_at: string
 }
 
-export type ConfessionCategory = 'tip' | 'warning' | 'confession' | 'question'
+export type ConfessionCategory =
+  | 'Development Hell'
+  | 'Shady Accounting'
+  | 'Gatekeeping'
+  | 'Equity Theft'
+  | 'The Waiting Game'
+  | 'Festival Politics'
+  | 'Streaming Nightmares'
+  | 'Work For Hire Horror'
+  | 'The Meeting That Changed Nothing'
+  | 'General Confession'
+
 export type ConfessionStatus = 'pending' | 'approved' | 'rejected' | 'featured'
 
 export interface Contact {

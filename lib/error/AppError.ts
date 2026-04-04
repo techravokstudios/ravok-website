@@ -31,7 +31,8 @@ export class AppError extends Error {
 
   getValidationErrors(): Record<string, string[]> {
     if (this.isValidationError() && typeof this.data === 'object' && this.data !== null) {
-      return (this.data as Record<string, string[]>).errors || {}
+      const dataObj = this.data as { errors?: Record<string, string[]> }
+      return dataObj.errors || {}
     }
     return {}
   }

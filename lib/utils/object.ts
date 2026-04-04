@@ -82,7 +82,7 @@ export function invert<T extends Record<string, string>>(obj: T): Record<string,
 }
 
 export function values<T extends Record<string, unknown>>(obj: T): T[keyof T][] {
-  return Object.values(obj)
+  return Object.values(obj) as T[keyof T][]
 }
 
 export function entries<T extends Record<string, unknown>>(obj: T): [keyof T, T[keyof T]][] {

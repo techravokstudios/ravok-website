@@ -51,10 +51,11 @@ class ApiClient {
           }
 
           // Transform axios error to AppError
+          const responseData = error.response?.data as Record<string, unknown> | undefined
           const appError = new AppError(
-            error.response?.data?.message || error.message || 'Unknown error',
+            (responseData?.message as string) || error.message || 'Unknown error',
             error.response?.status || 500,
-            error.response?.data
+            responseData
           )
 
           return Promise.reject(appError)

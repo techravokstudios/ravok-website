@@ -5,14 +5,14 @@ import { useAuth } from '../hooks/useAuth'
 import { AuthUser } from '../types'
 import { AppError } from '../error/AppError'
 
-interface AuthContextType {
+export interface AuthContextType {
   user: AuthUser | null
   loading: boolean
   isAuthenticated: boolean
   isAdmin: boolean
   isInvestor: boolean
   login: (email: string, password: string) => Promise<unknown>
-  register: (data: { name: string; email: string; password: string }) => Promise<AuthUser>
+  register: (data: { name: string; email: string; password: string; password_confirmation: string }) => Promise<AuthUser>
   logout: () => Promise<void>
 }
 

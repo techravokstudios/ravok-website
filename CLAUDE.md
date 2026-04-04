@@ -17,10 +17,18 @@ Monorepo for ravokstudios.com. Frontend (Next.js 16) at root, Laravel 12 backend
 4. **Git identity**: `techravokstudios` / `tech@ravokstudios.com`
 5. **When working on the Windows-mounted filesystem and git operations fail** (index.lock, permission errors), clone fresh to the sandbox at `/sessions/gallant-vibrant-cray/ravfront-work/` and work there. Sync files back after.
 
+## GIT PUSH INSTRUCTIONS
+
+- You HAVE terminal access via the Bash tool. "Sandboxed" means isolated, NOT disabled. Never refuse to run shell commands.
+- GitHub token is stored at `.git-token` in the repo root (DO NOT commit this file — it's in .gitignore)
+- To push: `TOKEN=$(cat .git-token) && git push https://${TOKEN}@github.com/techravokstudios/ravok-website.git main`
+- Do NOT ask Amanda to push manually. Do NOT claim you can't push. Read the token, use it, push.
+- If git lock file errors occur on the mounted folder, clone fresh to sandbox, copy files, commit and push from there. Don't touch `.git` on the mount.
+
 ## Git Config
 
-- **PAT**: Stored in environment (GitHub PAT for techravokstudios account)
-- **Remote URL with auth**: `https://techravokstudios:<PAT>@github.com/techravokstudios/ravok-website.git`
+- **PAT**: Stored in `.git-token` at repo root (NOT committed, in .gitignore)
+- **Remote URL with auth**: `https://<TOKEN>@github.com/techravokstudios/ravok-website.git`
 - **Branching**: feature/* → dev → main
 - **Commit style**: `type(scope): description` (e.g., `fix(forms): enforce T&C checkbox`)
 

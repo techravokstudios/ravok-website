@@ -42,7 +42,7 @@ export interface AuthUser {
   name: string
   email: string
   role: string
-  created_at: string
+  created_at?: string
 }
 
 // Pagination

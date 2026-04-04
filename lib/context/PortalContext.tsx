@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react'
 import { Venture, Document, Update } from '../types'
 
-interface PortalContextType {
+export interface PortalContextType {
   // Portal state
   selectedVenture: Venture | null
   setSelectedVenture: (venture: Venture | null) => void
@@ -34,7 +34,7 @@ const PortalContext = createContext<PortalContextType | undefined>(undefined)
 
 export function PortalProvider({ children }: { children: ReactNode }) {
   const [selectedVenture, setSelectedVenture] = useState<Venture | null>(null)
-  const [documentFilter, setDocumentFilterState] = useState({
+  const [documentFilter, setDocumentFilterState] = useState<PortalContextType['documentFilter']>({
     category: undefined,
     venture_id: undefined,
   })
@@ -43,7 +43,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
   const [updates, setUpdates] = useState<Update[]>([])
   const [isLoadingPortal, setIsLoadingPortal] = useState(false)
 
-  const setDocumentFilter = useCallback((filter: Partial<typeof documentFilter>) => {
+  const setDocumentFilter = useCallback((filter: Partial<PortalContextType['documentFilter']>) => {
     setDocumentFilterState((prev) => ({ ...prev, ...filter }))
   }, [])
 

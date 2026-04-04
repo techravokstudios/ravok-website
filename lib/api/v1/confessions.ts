@@ -2,14 +2,16 @@ import { ApiClient } from '../client'
 import { API_ENDPOINTS } from '../../config/endpoints'
 import {
   Confession,
+  ConfessionCategory,
   ApiResponse,
   PaginatedResponse,
 } from '../../types'
 
 export interface ConfessionSubmissionData {
   body: string
-  category?: 'tip' | 'warning' | 'confession' | 'question'
+  category?: ConfessionCategory
   submitted_from?: string // IP address or anon identifier
+  notify_email?: string
 }
 
 export interface ConfessionModerationData {

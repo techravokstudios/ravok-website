@@ -50,7 +50,7 @@ export function useAuth() {
     }
   }
 
-  const register = async (data: { name: string; email: string; password: string }) => {
+  const register = async (data: { name: string; email: string; password: string; password_confirmation: string }) => {
     try {
       const user = await authApi.register(data)
       setUser(user)
