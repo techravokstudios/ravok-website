@@ -1,0 +1,20 @@
+{
+  "name": "ravok-website",
+  "description": "RAVOK Studios venture studio website — Next.js frontend + Laravel backend",
+  "contextRoots": [
+    "./ravok-master-plan"
+  ],
+  "taskContextMap": {
+    "rebrand-public-site": "./ravok-master-plan/01-brand-identity/CONTEXT.md",
+    "investor-portal": "./ravok-master-plan/03-investor-portal/CONTEXT.md",
+    "backend-api": "./ravok-master-plan/04-backend-api/CONTEXT.md",
+    "content-engine": "./ravok-master-plan/06-content-engine/CONTEXT.md",
+    "hollywood-confessions": "./ravok-master-plan/06b-hollywood-confessions/CONTEXT.md",
+    "tech-ventures": "./ravok-master-plan/05-tech-ventures/CONTEXT.md",
+    "crm-automations": "./ravok-master-plan/07-crm-automations/CONTEXT.md",
+    "devops-cicd": "./ravok-master-plan/08-devops-cicd/CONTEXT.md",
+    "roadmap": "./ravok-master-plan/10-roadmap/CONTEXT.md"
+  },
+  "globalContext": "./ravok-master-plan/00-project-overview/CONTEXT.md",
+  "notes": "Before starting any task, reference the corresponding CONTEXT.md from ravok-master-plan/. Each file has full business logic + technical specs."
+}
