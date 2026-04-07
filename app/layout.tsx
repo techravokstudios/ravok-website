@@ -35,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${cormorant.variable} ${kanit.variable} ${instrument.variable} antialiased bg-black text-white cursor-none`}
+        className={`${cormorant.variable} ${kanit.variable} ${instrument.variable} antialiased bg-black text-white`}
       >
         <CustomCursor />
         {children}

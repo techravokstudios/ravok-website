@@ -133,6 +133,8 @@ export default function Footer() {
                     key={i}
                     href={href}
                     className="text-gray-400"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     whileHover={{
                       scale: 1.2,
                       color: "var(--color-ravok-gold)",
@@ -147,24 +149,6 @@ export default function Footer() {
             </motion.div>
           </div>
 
-          {/* Circular Dot Button */}
-          <motion.div
-            className="absolute bottom-12 right-12 lg:right-24 z-10"
-            initial={{ opacity: 0, scale: 0 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            <motion.button
-              onClick={scrollToTop}
-              className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group bg-black/20 backdrop-blur-sm"
-              whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.1)" }}
-              whileTap={{ scale: 0.9 }}
-              aria-label="Scroll to top"
-            >
-              <div className="w-1.5 h-1.5 bg-white rounded-full group-hover:bg-ravok-gold transition-colors" />
-            </motion.button>
-          </motion.div>
         </motion.div>
       </div>
 

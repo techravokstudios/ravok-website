@@ -7,9 +7,18 @@ export const CustomCursor = () => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [isHovering, setIsHovering] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
+    const [isEnabled, setIsEnabled] = useState(false);
 
     useEffect(() => {
         setIsMounted(true);
+
+        const canUseCustomCursor =
+            window.matchMedia("(pointer: fine)").matches &&
+            !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        setIsEnabled(canUseCustomCursor);
+        if (!canUseCustomCursor) return;
+        document.documentElement.classList.add("custom-cursor-enabled");
 
         const mouseMove = (e: MouseEvent) => {
             setMousePosition({
@@ -38,13 +47,14 @@ export const CustomCursor = () => {
         window.addEventListener("mouseover", handleMouseOver);
 
         return () => {
+            document.documentElement.classList.remove("custom-cursor-enabled");
             window.removeEventListener("mousemove", mouseMove);
             window.removeEventListener("mouseover", handleMouseOver);
         };
     }, []);
 
     // Don't render anything until mounted on client
-    if (!isMounted) return null;
+    if (!isMounted || !isEnabled) return null;
 
     return (
         <motion.div
