@@ -1,306 +1,346 @@
 "use client";
 
-import { submitPublicForm, FormType } from "@/lib/api/v1/forms";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { useParams, useRouter } from "next/navigation";
-import Footer from "@/components/layout/Footer";
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { ChevronLeft, CheckCircle } from "lucide-react";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import { RatingScale } from "../_components/RatingScale";
+import {
+  writerQuestions,
+  directorQuestions,
+  producerQuestions,
+  type FormQuestion,
+} from "../_components/formQuestions";
 
-const writerQuestions = [
-  "What is the title of your project?",
-  "Can you share the logline in 30 words or less?",
-  "How many pages is your script?",
-  "What genre does your script belong to?",
-  "Can you list three films with similar concepts?",
-  "What inspired you to start this script and how long have you been working on it?",
-  "Exactly how many versions has this script been through?",
-  "What is the most controversial or 'risky' element of your script?",
-  "Narrative arc: How strong is this aspect of your script?",
-  "Character development: How strong is this aspect of your script?",
-  "Story structure: How strong is this aspect of your script?",
-  "What do you feel your script needs to improve?",
-  "Has this project received professional coverage or script doctoring? Please provide details.",
-  "Do you personally own the IP, or is it optioned?",
-  "Who do you see as your primary target audience?",
-  "Why does your audience need to see this story in the next 18 months?",
-  "Please share a link with a 3-Act Structure One Pager.",
-  "Please share a link to the Pitch Deck.",
-  "Please share your IMDB link/Linkedin/social media handles",
-  "What kind of directors do you like and what's the vision you hope the person that comes in would bring to the project? tell us at least 3 directors",
-  "I have read and agree to the Ravok Submission release agreement",
-];
+type FormType = "writer" | "director" | "producer";
 
-const directorQuestions = [
-  "Primary Portfolio / Director’s Reel",
-  "Professional Links",
-  "The Superpower",
-  "Budget Experience",
-  "Technical Fluency",
-  "Project Interest",
-  "If project-specific",
-  "The Dangerous Factor",
-  "The Benchmark",
-  "Narrative Integrity",
-  "Collaborative Style",
-  "Department Heads",
-  "Crisis Management",
-  "References",
-  "Attached Talent",
-  "Ideal Outcome",
-  "Link to Materials",
-  "Agreement",
-];
-
-const producerQuestions = [
-  "Working title of the IP",
-  "Logline in 30 words or less",
-  "Why does the audience need to see this in the next 18 months",
-  "Who is the audience, and how large is that demographic",
-  "List 3 films with similar budgets/tones and their ROI data",
-  "What made you interested in this particular project",
-  "Is there an LLC or SPV already formed for this production",
-  "Is the IP fully secured",
-  "Has the script undergone professional coverage or legal vetting",
-  "List any existing investors and their equity percentages",
-  "Who is currently handling the bookkeeping/accounting for development spend",
-  "What specific administrative or strategic resource do you lack",
-  "Primary strength in production",
-  "Greatest weakness in the production cycle",
-  "Do you specialize in Raising Capital, Managing Capital, or Scaling Operations",
-  "Discipline with paperwork, payroll, and reporting",
-  "Describe a time you saved a project from total collapse",
-  "Highest budget personally managed from start to finish",
-  "Profitable exit details",
-  "Most significant production failure and lesson",
-  "List 3 strategic relationships",
-  "One industry reference who can vouch for Business Integrity",
-  "Floor and Ceiling budget numbers",
-  "Secured hard or soft money",
-  "Capital or equity you are seeking to raise",
-  "Link to the Pitch Deck, Budget Top-sheet, and Production Timeline",
-  "Why are you the producer who can execute this",
-];
-
-function titleForType(type: FormType) {
-  if (type === "writer") return "WRITER";
-  if (type === "director") return "DIRECTOR";
-  return "PRODUCER";
-}
-
-function questionsForType(type: FormType) {
-  if (type === "writer") return writerQuestions;
-  if (type === "director") return directorQuestions;
+function questionsForType(t: FormType): FormQuestion[] {
+  if (t === "writer") return writerQuestions;
+  if (t === "director") return directorQuestions;
   return producerQuestions;
 }
 
-export default function FormPage() {
+function titleForType(t: FormType) {
+  if (t === "writer") return "Writer Submission";
+  if (t === "director") return "Director Submission";
+  return "Producer / Executive Submission";
+}
+
+export default function PitchFormPage() {
   const params = useParams();
   const router = useRouter();
   const rawType = (params?.type as string | undefined)?.toLowerCase();
-  const t = (rawType === "writer" || rawType === "director" || rawType === "producer" ? rawType : "writer") as FormType;
+  const t: FormType =
+    rawType === "writer" || rawType === "director" || rawType === "producer"
+      ? rawType
+      : "writer";
+
   const questions = useMemo(() => questionsForType(t), [t]);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [answers, setAnswers] = useState<string[]>(() => questions.map(() => ""));
-  const total = questions.length + 2;
-  const completed = useMemo(() => {
-    let c = 0;
-    if (name.trim()) c++;
-    if (email.trim()) c++;
-    c += answers.filter((v) => v.trim().length > 0).length;
-    return c;
-  }, [name, email, answers]);
-  const pct = Math.round((completed / total) * 100);
-  function updateAnswer(i: number, v: string) {
-    setAnswers((arr) => {
-      const next = arr.slice();
-      next[i] = v;
-      return next;
-    });
+  const [answers, setAnswers] = useState<Record<string, string | number | boolean>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  function setValue(id: string, val: string | number | boolean) {
+    setAnswers((prev) => ({ ...prev, [id]: val }));
+    if (errors[id]) setErrors((prev) => { const n = { ...prev }; delete n[id]; return n; });
   }
-  function renderField(q: string, i: number) {
-    if (t === "director" && q === "The Superpower") {
-      return (
-        <select
-          id={`q_${i}`}
-          value={answers[i] || ""}
-          onChange={(e) => updateAnswer(i, e.target.value)}
-          className="mt-1 w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 font-sans text-sm text-white"
-        >
-          <option value="">Select an option</option>
-          <option value="Visual World-Building">Visual World-Building</option>
-          <option value="Actor Performance">Actor Performance</option>
-          <option value="Technical Innovation/VFX">Technical Innovation/VFX</option>
-        </select>
-      );
+
+  // Progress
+  const filled = useMemo(() => {
+    return questions.filter((q) => {
+      const v = answers[q.id];
+      if (v === undefined || v === "" || v === false) return false;
+      return true;
+    }).length;
+  }, [answers, questions]);
+  const pct = Math.round((filled / questions.length) * 100);
+
+  function validate(): boolean {
+    const errs: Record<string, string> = {};
+    for (const q of questions) {
+      if (!q.required) continue;
+      const v = answers[q.id];
+      if (v === undefined || v === "" || v === false || v === 0) {
+        errs[q.id] = "Required";
+      }
+      if (q.type === "email" && v && typeof v === "string" && !v.includes("@")) {
+        errs[q.id] = "Invalid email";
+      }
     }
-    if (t === "director" && q === "Link to Materials") {
-      const val = answers[i] || "";
-      const parts = val.split("::");
-      const sel = parts[0] || "";
-      const url = parts[1] || "";
-      return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <select
-              id={`q_${i}_type`}
-              value={sel}
-              onChange={(e) => updateAnswer(i, `${e.target.value}::${url}`)}
-              className="mt-1 w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 font-sans text-sm text-white"
-            >
-              <option value="">Select type</option>
-              <option value="Pitch Deck">Pitch Deck</option>
-              <option value="Director Lookbook">Director Lookbook</option>
-              <option value="Visual Treatment">Visual Treatment</option>
-            </select>
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  }
+
+  async function handleSubmit() {
+    if (!validate()) {
+      // Scroll to first error
+      const firstErr = Object.keys(errors)[0] || questions.find((q) => q.required && !answers[q.id])?.id;
+      if (firstErr) {
+        document.getElementById(`field-${firstErr}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      // Build submission data
+      const name = (answers["name"] as string) || "";
+      const email = (answers["email"] as string) || "";
+      const data: Record<string, string | number | boolean> = {};
+      for (const q of questions) {
+        if (q.id !== "name" && q.id !== "email") {
+          data[q.label] = answers[q.id] ?? "";
+        }
+      }
+
+      // Try API first
+      const { submitPublicForm } = await import("@/lib/api/v1/forms");
+      await submitPublicForm(t, { name, email, data: data as Record<string, any> });
+
+      setSubmitted(true);
+    } catch {
+      // Fallback: build mailto
+      const name = (answers["name"] as string) || "Unknown";
+      const subject = encodeURIComponent(`[${t.toUpperCase()} SUBMISSION] ${name}`);
+      const bodyLines = questions.map((q) => `${q.label}: ${answers[q.id] ?? "(empty)"}`).join("\n\n");
+      const body = encodeURIComponent(bodyLines);
+      window.location.href = `mailto:contact@ravokstudios.com?subject=${subject}&body=${body}`;
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function renderField(q: FormQuestion) {
+    const val = answers[q.id];
+    const hasError = !!errors[q.id];
+    const baseInput = `w-full px-4 py-3 bg-white/5 border rounded-lg text-white placeholder:text-ravok-slate/50 font-sans text-sm focus:outline-none focus:ring-2 focus:ring-ravok-gold/50 focus:border-ravok-gold/50 transition-colors ${
+      hasError ? "border-red-500/50" : "border-white/10"
+    }`;
+
+    switch (q.type) {
+      case "text":
+      case "url":
+      case "email":
+        return (
+          <input
+            type={q.type === "url" ? "url" : q.type === "email" ? "email" : "text"}
+            value={(val as string) || ""}
+            onChange={(e) => setValue(q.id, e.target.value)}
+            placeholder={q.placeholder}
+            className={baseInput}
+          />
+        );
+
+      case "textarea":
+        return (
+          <textarea
+            rows={3}
+            value={(val as string) || ""}
+            onChange={(e) => setValue(q.id, e.target.value)}
+            placeholder={q.placeholder}
+            className={`${baseInput} resize-none`}
+          />
+        );
+
+      case "select":
+        return (
+          <select
+            value={(val as string) || ""}
+            onChange={(e) => setValue(q.id, e.target.value)}
+            className={`${baseInput} bg-black/30`}
+          >
+            <option value="" className="bg-black">Select an option</option>
+            {q.options?.map((opt) => (
+              <option key={opt} value={opt} className="bg-black">{opt}</option>
+            ))}
+          </select>
+        );
+
+      case "rating5":
+        return (
+          <RatingScale
+            max={5}
+            value={(val as number) || 0}
+            onChange={(v) => setValue(q.id, v)}
+            lowLabel={q.lowLabel}
+            highLabel={q.highLabel}
+          />
+        );
+
+      case "rating10":
+        return (
+          <RatingScale
+            max={10}
+            value={(val as number) || 0}
+            onChange={(v) => setValue(q.id, v)}
+            lowLabel={q.lowLabel}
+            highLabel={q.highLabel}
+          />
+        );
+
+      case "yesno":
+        return (
+          <div className="flex gap-4">
+            {["Yes", "No"].map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => setValue(q.id, opt)}
+                className={`px-6 py-2 rounded-lg border font-sans text-sm transition-all ${
+                  val === opt
+                    ? "bg-ravok-gold border-ravok-gold text-black font-medium"
+                    : "border-white/20 text-white/60 hover:border-ravok-gold/50"
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
           </div>
-          <div>
-            <Input
-              id={`q_${i}_url`}
-              placeholder="Add link"
-              value={url}
-              onChange={(e) => updateAnswer(i, `${sel}::${e.target.value}`)}
+        );
+
+      case "checkbox":
+        return (
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={!!val}
+              onChange={(e) => setValue(q.id, e.target.checked)}
+              className="mt-1 h-5 w-5 rounded border-white/20 bg-white/5 accent-ravok-gold"
+            />
+            <span className="font-sans text-sm text-white/80 group-hover:text-white transition-colors">
+              {q.label}
+            </span>
+          </label>
+        );
+
+      default:
+        return null;
+    }
+  }
+
+  if (submitted) {
+    return (
+      <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black">
+        <Navbar />
+        <div className="container mx-auto max-w-2xl px-6 pt-32 pb-24 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <CheckCircle className="w-16 h-16 text-ravok-gold mx-auto mb-6" />
+            <h1 className="font-heading text-4xl text-white mb-4">Submission Received</h1>
+            <p className="font-sans text-ravok-slate mb-8">
+              Thank you for your {t} submission. Our team will review it and get back to you.
+            </p>
+            <Link
+              href="/pitch-us"
+              className="inline-block bg-ravok-gold text-black px-8 py-3 rounded-full font-sans font-bold text-sm tracking-widest uppercase hover:bg-ravok-beige transition-colors"
+            >
+              Back to Pitch Us
+            </Link>
+          </motion.div>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black">
+      <Navbar />
+
+      <div className="container mx-auto max-w-3xl px-6 pt-32 pb-24">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Link
+            href="/pitch-us"
+            className="inline-flex items-center gap-1.5 font-sans text-sm text-ravok-slate hover:text-ravok-gold transition-colors mb-8"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Back to Pitch Us
+          </Link>
+
+          <h1 className="text-4xl sm:text-5xl font-heading text-ravok-gold leading-tight mb-2">
+            {titleForType(t)}
+          </h1>
+          <p className="font-sans text-sm text-ravok-slate mb-1">
+            Fields marked with <span className="text-ravok-gold">*</span> are required.
+          </p>
+          <div className="mt-4 h-0.5 w-16 bg-ravok-gold mb-8" />
+        </motion.div>
+
+        {/* Progress bar */}
+        <div className="sticky top-0 z-10 bg-black/90 backdrop-blur-xl py-3 mb-6 -mx-6 px-6 border-b border-white/5">
+          <div className="flex items-center justify-between font-sans text-xs text-ravok-slate mb-2">
+            <span>{filled}/{questions.length} completed</span>
+            <span>{pct}%</span>
+          </div>
+          <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+            <motion.div
+              className="h-full bg-ravok-gold rounded-full"
+              animate={{ width: `${pct}%` }}
+              transition={{ duration: 0.3 }}
             />
           </div>
         </div>
-      );
-    }
-    if (t === "director" && q === "Agreement") {
-      const checked = (answers[i] || "") === "Agreed";
-      return (
-        <div className="flex items-center gap-2">
-          <input
-            id={`q_${i}`}
-            type="checkbox"
-            checked={checked}
-            onChange={(e) => updateAnswer(i, e.target.checked ? "Agreed" : "")}
-            className="h-4 w-4 accent-ravok-gold"
-          />
-          <span className="font-sans text-sm text-white/80">I agree</span>
-        </div>
-      );
-    }
-    if (t === "producer" && q === "Primary strength in production") {
-      return (
-        <select
-          id={`q_${i}`}
-          value={answers[i] || ""}
-          onChange={(e) => updateAnswer(i, e.target.value)}
-          className="mt-1 w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 font-sans text-sm text-white"
-        >
-          <option value="">Select an option</option>
-          <option value="Financial Engineering">Financial Engineering</option>
-          <option value="Creative Packaging">Creative Packaging</option>
-          <option value="On-Set Execution">On-Set Execution</option>
-        </select>
-      );
-    }
-    if (t === "producer" && q === "Do you specialize in Raising Capital, Managing Capital, or Scaling Operations") {
-      return (
-        <select
-          id={`q_${i}`}
-          value={answers[i] || ""}
-          onChange={(e) => updateAnswer(i, e.target.value)}
-          className="mt-1 w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 font-sans text-sm text-white"
-        >
-          <option value="">Select an option</option>
-          <option value="Raising Capital">Raising Capital</option>
-          <option value="Managing Capital">Managing Capital</option>
-          <option value="Scaling Operations">Scaling Operations</option>
-        </select>
-      );
-    }
-    return (
-      <Textarea
-        id={`q_${i}`}
-        rows={3}
-        value={answers[i] || ""}
-        onChange={(e) => updateAnswer(i, e.target.value)}
-      />
-    );
-  }
-  async function submit() {
-    const nm = name.trim();
-    const em = email.trim();
-    if (!nm || !em) {
-      toast.error("Name and email are required");
-      return;
-    }
-    const data: Record<string, any> = {};
-    questions.forEach((q, i) => (data[q] = answers[i] || ""));
-    try {
-      await submitPublicForm(t, { name: nm, email: em, data });
-      setName("");
-      setEmail("");
-      setAnswers(questions.map(() => ""));
-      toast.success("Submitted");
-      router.push("/pitch-us");
-    } catch (e: any) {
-      toast.error(e.message || "Submission failed");
-    }
-  }
-  return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black">
-      <section className="pt-32 pb-16 px-6">
-        <div className="container mx-auto max-w-3xl">
-          <div className="mb-6">
-            <h1 className="text-4xl sm:text-5xl font-heading font-thin text-ravok-gold leading-tight">
-              {titleForType(t)} Form
-            </h1>
-            <p className="mt-2 font-sans text-sm text-ravok-slate">
-              Name and email are required. All other fields are optional.
-            </p>
-          </div>
 
-          <div className="mb-4">
-            <div className="flex items-center justify-between text-xs font-sans text-ravok-slate mb-2">
-              <span>
-                {completed}/{total} completed
-              </span>
-              <span>{pct}%</span>
-            </div>
-            <div className="h-2 w-full rounded bg-white/10 overflow-hidden">
-              <div
-                className="h-full bg-ravok-gold"
-                style={{ width: `${pct}%` }}
-                aria-valuenow={pct}
-                aria-valuemin={0}
-                aria-valuemax={100}
-              />
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-white/10 bg-black/40 shadow-lg p-6 space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
-              </div>
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
-            </div>
-            <div className="space-y-5">
-              {questions.map((q, i) => (
-                <div key={i} className="space-y-2">
-                  <Label htmlFor={`q_${i}`}>{q}</Label>
-                  {renderField(q, i)}
-                </div>
-              ))}
-            </div>
-            <div>
-              <Button onClick={submit} className="bg-ravok-gold text-black hover:brightness-95">
-                Submit
-              </Button>
-            </div>
-          </div>
+        {/* Form */}
+        <div className="space-y-8">
+          {questions.map((q, i) => (
+            <motion.div
+              key={q.id}
+              id={`field-${q.id}`}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: Math.min(i * 0.03, 0.3) }}
+            >
+              {q.type !== "checkbox" && (
+                <label className="block font-sans text-sm font-medium text-white mb-2">
+                  <span className="text-ravok-slate font-normal mr-2">{i + 1}.</span>
+                  {q.label}
+                  {q.required && <span className="text-ravok-gold ml-1">*</span>}
+                  {!q.required && q.helperText && (
+                    <span className="text-ravok-slate/60 font-normal ml-2 text-xs">({q.helperText})</span>
+                  )}
+                </label>
+              )}
+              {q.helperText && q.type !== "checkbox" && q.required && (
+                <p className="font-sans text-xs text-ravok-slate/60 mb-2">{q.helperText}</p>
+              )}
+              {renderField(q)}
+              {errors[q.id] && (
+                <p className="font-sans text-xs text-red-400 mt-1">{errors[q.id]}</p>
+              )}
+            </motion.div>
+          ))}
         </div>
-      </section>
+
+        {/* Submit */}
+        <div className="mt-12 pt-8 border-t border-white/10">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={submitting}
+            className="w-full bg-ravok-gold text-black px-8 py-4 rounded-full font-sans font-bold text-sm tracking-widest uppercase hover:bg-ravok-beige transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {submitting ? "Submitting..." : "Submit Application"}
+          </button>
+          <p className="font-sans text-xs text-ravok-slate/60 text-center mt-4">
+            By submitting, your information will be reviewed by the RAVOK development team. We typically respond within 2-4 weeks.
+          </p>
+        </div>
+      </div>
+
       <Footer />
     </main>
   );
