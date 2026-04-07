@@ -55,26 +55,14 @@ export default function Navbar() {
         setIsOpen(false);
     }, [pathname]);
 
-    // Build nav items dynamically so "INVESTORS" behaves by role:
-    // - Logged out: shows INVESTORS -> /login
-    // - Investor: shows INVESTOR -> /investor
-    // - Admin: hides the Investor entry entirely
-    const navItems = (() => {
-        const items = [
-            { href: "/", label: "HOME" },
-            { href: "/about-us", label: "ABOUT US" },
-            { href: "/portfolio", label: "PORTFOLIO" },
-            { href: "/insights", label: "INSIGHTS" },
-            { href: "/pitch-us", label: "PITCH US" },
-            { href: "/contact-us", label: "CONTACT" },
-        ] as { href: string; label: string }[];
-        if (!user) {
-            items.splice(2, 0, { href: "/login", label: "INVESTORS" });
-        } else if (user.role !== "admin") {
-            items.splice(2, 0, { href: "/investor", label: "INVESTOR" });
-        }
-        return items;
-    })();
+    const navItems = [
+        { href: "/", label: "HOME" },
+        { href: "/about-us", label: "ABOUT US" },
+        { href: "/portfolio", label: "PORTFOLIO" },
+        { href: "/insights", label: "INSIGHTS" },
+        { href: "/pitch-us", label: "PITCH US" },
+        { href: "/contact-us", label: "CONTACT" },
+    ];
 
     return (
         <motion.nav
@@ -146,14 +134,14 @@ export default function Navbar() {
                     ))}
                 </div>
 
-                {/* Login & Register (when not logged in) or Dashboard (when logged in) */}
-                <motion.div
-                    className="hidden lg:flex items-center gap-4"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: 0.6 }}
-                >
-                    {user ? (
+                {/* Dashboard - only visible when logged in */}
+                {user && (
+                    <motion.div
+                        className="hidden lg:flex items-center"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.6 }}
+                    >
                         <Link
                             href={user.role === "admin" ? "/admin" : user.status === "approved" ? "/investor" : "/pending"}
                             className="flex items-center gap-2"
@@ -167,31 +155,8 @@ export default function Navbar() {
                                 <span className="relative z-10">DASHBOARD</span>
                             </motion.div>
                         </Link>
-                    ) : (
-                        <>
-                            <Link href="/register">
-                                <span className="text-white/80 hover:text-ravok-gold font-sans text-xs tracking-widest transition-colors duration-300">
-                                    REGISTER
-                                </span>
-                            </Link>
-                            <Link href="/login">
-                                <motion.div
-                                    className="px-6 py-2 border border-white/20 text-xs tracking-widest transition-all overflow-hidden relative group"
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    <span className="relative z-10 group-hover:text-black transition-colors duration-300">LOGIN</span>
-                                    <motion.div
-                                        className="absolute inset-0 bg-white"
-                                        initial={{ x: "-100%" }}
-                                        whileHover={{ x: 0 }}
-                                        transition={{ duration: 0.3 }}
-                                    />
-                                </motion.div>
-                            </Link>
-                        </>
-                    )}
-                </motion.div>
+                    </motion.div>
+                )}
             </div>
 
             {/* Mobile Menu Overlay - high z-index so it sits above all page content */}
@@ -225,14 +190,14 @@ export default function Navbar() {
                                 </Link>
                             </motion.div>
                         ))}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 20 }}
-                            transition={{ delay: navItems.length * 0.1 }}
-                            className="flex gap-6 pt-4 border-t border-white/10"
-                        >
-                            {user ? (
+                        {user && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 20 }}
+                                transition={{ delay: navItems.length * 0.1 }}
+                                className="flex gap-6 pt-4 border-t border-white/10"
+                            >
                                 <Link
                                     href={user.role === "admin" ? "/admin" : user.status === "approved" ? "/investor" : "/pending"}
                                     onClick={() => setIsOpen(false)}
@@ -241,25 +206,8 @@ export default function Navbar() {
                                     <LayoutDashboard className="w-4 h-4" />
                                     DASHBOARD
                                 </Link>
-                            ) : (
-                                <>
-                                    <Link
-                                        href="/register"
-                                        onClick={() => setIsOpen(false)}
-                                        className="hover:text-ravok-gold transition-colors text-sm tracking-widest py-3 px-4"
-                                    >
-                                        REGISTER
-                                    </Link>
-                                    <Link
-                                        href="/login"
-                                        onClick={() => setIsOpen(false)}
-                                        className="hover:text-ravok-gold transition-colors text-sm tracking-widest py-3 px-4"
-                                    >
-                                        LOGIN
-                                    </Link>
-                                </>
-                            )}
-                        </motion.div>
+                            </motion.div>
+                        )}
                     </motion.div>
                 )}
             </AnimatePresence>

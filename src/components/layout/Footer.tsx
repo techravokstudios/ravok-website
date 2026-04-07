@@ -120,9 +120,29 @@ export default function Footer() {
               </nav>
             </motion.div>
 
-            {/* Follow Us */}
+            {/* Portal & Follow */}
             <motion.div className="space-y-6" variants={itemVariants}>
-              <h4 className="text-ravok-gold text-xl font-heading tracking-wide">Follow Us</h4>
+              <h4 className="text-ravok-gold text-xl font-heading tracking-wide">Portal</h4>
+              <nav className="flex flex-col space-y-4 text-sm text-gray-400 font-light tracking-wide">
+                {[
+                  { href: "/login", label: "Investor Login" },
+                  { href: "/register", label: "Investor Register" },
+                ].map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="group relative inline-block w-fit"
+                  >
+                    <span className="group-hover:text-white transition-colors duration-300">
+                      {link.label}
+                    </span>
+                    <motion.span
+                      className="absolute -bottom-1 left-0 w-0 h-px bg-ravok-gold group-hover:w-full transition-all duration-300"
+                    />
+                  </Link>
+                ))}
+              </nav>
+              <h4 className="text-ravok-gold text-xl font-heading tracking-wide pt-4">Follow Us</h4>
               <div className="flex gap-4">
                 {[
                   { Icon: Facebook, href: "https://www.facebook.com/people/Ravok-Studios/61578824300063/" },
