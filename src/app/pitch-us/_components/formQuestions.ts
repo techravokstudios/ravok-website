@@ -35,7 +35,7 @@ export const writerQuestions: FormQuestion[] = [
   { id: "pitch_deck_link", label: "Please share a link to the Pitch Deck.", type: "url", required: true, placeholder: "https://" },
   { id: "social_links", label: "Please share your IMDB link/Linkedin/social media handles", type: "textarea", required: true },
   { id: "directors_vision", label: "What kind of directors do you like and what's the vision you hope the person that comes in would bring to the project? Tell us at least 3 directors.", type: "textarea", required: true },
-  { id: "agreement", label: "I have read and agree to the Ravok Submission Release Agreement", type: "checkbox", required: true },
+  { id: "agreement", label: "Script Submission Terms and Conditions", type: "checkbox", required: true },
 ];
 
 export const directorQuestions: FormQuestion[] = [
@@ -58,7 +58,7 @@ export const directorQuestions: FormQuestion[] = [
   { id: "attached_talent", label: "List all actors, DPs, or HODs currently attached with signed LOIs if any, or personal connections that can be a strategic fit for your projects.", type: "textarea", required: true },
   { id: "ideal_outcome", label: "What is your ideal outcome for a project (Theatrical, Streaming, etc)?", type: "text", required: true },
   { id: "materials_link", label: "Link to your latest Pitch Deck, Director Lookbook, or Visual Treatment.", type: "url", required: true, placeholder: "https://" },
-  { id: "agreement", label: "I have read and agree to the Ravok Submission Release Agreement", type: "checkbox", required: true },
+  { id: "agreement", label: "Script Submission Terms and Conditions", type: "checkbox", required: true },
 ];
 
 export const producerQuestions: FormQuestion[] = [
@@ -91,5 +91,5 @@ export const producerQuestions: FormQuestion[] = [
   { id: "capital_seeking", label: "Exactly how much capital/equity are you seeking to raise?", type: "text", required: true },
   { id: "materials_link", label: "Link to the Pitch Deck, Budget Top-sheet, and Production Timeline.", type: "url", required: true, placeholder: "https://" },
   { id: "why_you", label: "Why are you the producer who can execute this?", type: "textarea", required: true },
-  { id: "agreement", label: "I have read and agree to the Ravok Submission Release Agreement", type: "checkbox", required: true },
+  { id: "agreement", label: "Script Submission Terms and Conditions", type: "checkbox", required: true },
 ];

@@ -204,17 +204,65 @@ export default function PitchFormPage() {
 
       case "checkbox":
         return (
-          <label className="flex items-start gap-3 cursor-pointer group">
-            <input
-              type="checkbox"
-              checked={!!val}
-              onChange={(e) => setValue(q.id, e.target.checked)}
-              className="mt-1 h-5 w-5 rounded border-white/20 bg-white/5 accent-ravok-gold"
-            />
-            <span className="font-sans text-sm text-white/80 group-hover:text-white transition-colors">
-              {q.label}
-            </span>
-          </label>
+          <div className="space-y-4">
+            {/* Scrollable T&C text */}
+            <div className="max-h-64 overflow-y-auto rounded-lg border border-white/10 bg-white/[0.03] p-6 font-sans text-xs text-white/70 leading-relaxed space-y-4 scrollbar-thin">
+              <p className="font-bold text-white text-sm uppercase tracking-wider">Script Submission Terms and Conditions</p>
+              <p className="text-[10px] text-ravok-slate">Last Updated April 1, 2026</p>
+              <p>PLEASE READ THESE TERMS AND CONDITIONS CAREFULLY BEFORE SUBMITTING ANY MATERIAL. BY SUBMITTING A SCRIPT, TREATMENT, SYNOPSIS, OR ANY RELATED MATERIAL (COLLECTIVELY, &ldquo;SUBMISSION&rdquo;) THROUGH THIS WEBSITE, YOU (&ldquo;SUBMITTER&rdquo;) ACKNOWLEDGE THAT YOU HAVE READ, UNDERSTOOD, AND AGREE TO BE BOUND BY THESE TERMS AND CONDITIONS.</p>
+
+              <p className="font-bold text-white/90">1. ELIGIBILITY</p>
+              <p>The Submitter must be at least 18 years of age and legally authorized to enter into a binding agreement.</p>
+
+              <p className="font-bold text-white/90">2. UNSOLICITED MATERIAL ACKNOWLEDGMENT</p>
+              <p>The Submitter acknowledges that Ravok Studios receives numerous script submissions and that ideas, themes, story elements, and concepts contained within the Submission may be similar to material already under development, previously received from other sources, or independently created by Ravok Studios or its affiliates. No confidential or fiduciary relationship is established.</p>
+
+              <p className="font-bold text-white/90">3. OWNERSHIP AND ORIGINALITY</p>
+              <p>The Submitter represents and warrants that: (a) The Submission is original work or all necessary rights have been obtained; (b) The Submission does not infringe upon any intellectual property rights; (c) No prior agreement conflicts with the rights granted herein; (d) If based on pre-existing work, all necessary rights to underlying material have been obtained.</p>
+
+              <p className="font-bold text-white/90">4. LIMITED LICENSE TO REVIEW</p>
+              <p>By submitting material, the Submitter grants Ravok Studios a non-exclusive, royalty-free, worldwide license to read, evaluate, analyze (including through automated or AI-assisted means), and internally discuss the Submission.</p>
+
+              <p className="font-bold text-white/90">5. NO OBLIGATION</p>
+              <p>Ravok Studios is under no obligation to review, respond to, develop, produce, return, or enter into any agreement regarding any Submission.</p>
+
+              <p className="font-bold text-white/90">6. COMPENSATION</p>
+              <p>No compensation is owed for the act of submitting or for review thereof. Any compensation for development or production shall be subject to a separate written agreement.</p>
+
+              <p className="font-bold text-white/90">7. DATA COLLECTION AND USE</p>
+              <p>Ravok Studios may collect personal information and process Submissions using proprietary AI-powered analytical frameworks for script analysis, market assessment, audience evaluation, and concept validation. Anonymized, aggregated insights may be derived. The Submitter waives any right to additional compensation in connection with these uses.</p>
+
+              <p className="font-bold text-white/90">8. INDEMNIFICATION</p>
+              <p>The Submitter agrees to indemnify and hold harmless Ravok Studios from any claims arising from breach of representations or third-party IP disputes.</p>
+
+              <p className="font-bold text-white/90">9. LIMITATION OF LIABILITY</p>
+              <p>Ravok Studios shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from these Terms or any Submission.</p>
+
+              <p className="font-bold text-white/90">10. NO WAIVER OF RIGHTS</p>
+              <p>The Submitter retains ownership of the Submission. Nothing herein constitutes an assignment of copyright, except as expressly stated.</p>
+
+              <p className="font-bold text-white/90">11-14. ADDITIONAL PROVISIONS</p>
+              <p>Ravok Studios may modify these Terms at any time. Governed by California law (corporate matters by Delaware law). Exclusive jurisdiction in Los Angeles County courts. If any provision is invalid, remaining provisions continue. These Terms constitute the entire agreement.</p>
+            </div>
+
+            {/* Checkbox */}
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={!!val}
+                onChange={(e) => setValue(q.id, e.target.checked)}
+                className="mt-1 h-5 w-5 rounded border-white/20 bg-white/5 accent-ravok-gold shrink-0"
+              />
+              <span className="font-sans text-sm text-white/80 group-hover:text-white transition-colors">
+                I have read and agree to the Script Submission Terms and Conditions, including the use of my submission data for AI-assisted analysis as described in Section 7.
+              </span>
+            </label>
+
+            {/* Warning if not checked */}
+            {!val && errors[q.id] && (
+              <p className="font-sans text-xs text-red-400">You must agree to the Terms and Conditions to submit.</p>
+            )}
+          </div>
         );
 
       default:
@@ -327,10 +375,15 @@ export default function PitchFormPage() {
 
         {/* Submit */}
         <div className="mt-12 pt-8 border-t border-white/10">
+          {!answers["agreement"] && (
+            <p className="font-sans text-sm text-ravok-slate text-center mb-4">
+              You must agree to the Terms and Conditions to submit.
+            </p>
+          )}
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={submitting}
+            disabled={submitting || !answers["agreement"]}
             className="w-full bg-ravok-gold text-black px-8 py-4 rounded-full font-sans font-bold text-sm tracking-widest uppercase hover:bg-ravok-beige transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? "Submitting..." : "Submit Application"}
