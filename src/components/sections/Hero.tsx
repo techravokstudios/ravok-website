@@ -85,7 +85,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative h-screen w-full flex flex-col items-center justify-center bg-[#1C1B14] overflow-hidden"
+      className="relative h-screen w-full flex flex-col items-center justify-center bg-ravok-charcoal overflow-hidden"
     >
       {/* Background Image — Smooth Parallax */}
       <motion.div
@@ -99,8 +99,8 @@ export default function Hero() {
           style={{ willChange: "transform", transform: "translateZ(0)" }}
         />
         {/* Warm charcoal overlay — replaces pure-black gradients */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1C1B14]/60 via-[#1C1B14]/10 to-[#1C1B14]" />
-        <div className="absolute inset-0 shadow-[inset_0_0_120px_60px_rgba(28,27,20,0.5)] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ravok-charcoal/60 via-ravok-charcoal/10 to-ravok-charcoal" />
+        <div className="absolute inset-0 shadow-[inset_0_0_120px_60px_rgba(28, 27, 20,0.5)] pointer-events-none" />
       </motion.div>
 
       {/* Architectural columns — left & right, blueprint style */}
@@ -174,7 +174,7 @@ export default function Hero() {
       </div>
 
       {/* Bottom gradient fade into next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#1C1B14] to-transparent z-[3] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-ravok-charcoal to-transparent z-[3] pointer-events-none" />
     </section>
   );
 }

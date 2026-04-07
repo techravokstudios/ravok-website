@@ -4,7 +4,7 @@ import Footer from "@/components/layout/Footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#1C1B14] text-white overflow-x-hidden">
+    <main className="min-h-screen bg-ravok-charcoal text-white overflow-x-hidden">
       <Navbar />
       <Hero />
       <IntroSection />

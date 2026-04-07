@@ -35,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${cormorant.variable} ${kanit.variable} ${instrument.variable} antialiased bg-[#1C1B14] text-white cursor-none blueprint-grid`}
+        className={`${cormorant.variable} ${kanit.variable} ${instrument.variable} antialiased bg-ravok-charcoal text-white cursor-none blueprint-grid`}
       >
         <CustomCursor />
         {children}

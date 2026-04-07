@@ -77,7 +77,7 @@ export default function Navbar() {
 
     return (
         <motion.nav
-            className={`fixed top-0 left-0 w-full z-[100] text-white transition-all duration-500 ${scrolled ? 'bg-[#1C1B14]/90 backdrop-blur-xl border-b border-white/10' : ''
+            className={`fixed top-0 left-0 w-full z-[100] text-white transition-all duration-500 ${scrolled ? 'bg-ravok-charcoal/90 backdrop-blur-xl border-b border-white/10' : ''
                 }`}
             initial={{ y: -100 }}
             animate={{ y: 0 }}
@@ -200,7 +200,7 @@ export default function Navbar() {
                         role="dialog"
                         aria-modal="true"
                         aria-label="Navigation menu"
-                        className="fixed inset-0 min-h-screen min-h-[100dvh] bg-[#1C1B14] z-[90] flex flex-col items-center justify-center gap-8 text-xl font-heading touch-manipulation"
+                        className="fixed inset-0 min-h-screen min-h-[100dvh] bg-ravok-charcoal z-[90] flex flex-col items-center justify-center gap-8 text-xl font-heading touch-manipulation"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
