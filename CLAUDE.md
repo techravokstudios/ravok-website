@@ -43,29 +43,59 @@ Monorepo for ravokstudios.com. Frontend (Next.js 16) at root, Laravel 12 backend
 ## Repo Structure
 
 ```
-/                       → Next.js frontend root
-├── app/                → App Router pages
-│   ├── admin/          → Admin dashboard (protected)
-│   ├── investor/       → Investor portal (protected)
-│   ├── form/[type]/    → Writer/Director/Producer submission forms
+/                           → Next.js frontend root
+├── app/                    → App Router pages
+│   ├── (public)/           → Public route group (insights, confessions)
+│   ├── admin/              → Admin dashboard (protected)
+│   ├── investor/           → Investor portal (protected)
+│   ├── form/[type]/        → Writer/Director/Producer submission forms
 │   ├── about-us/
 │   ├── our-model/
 │   ├── contact-us/
-│   ├── insights/       → Blog/insights
 │   └── ...
-├── components/         → React components
-│   ├── ui/             → shadcn/ui primitives
-│   ├── dashboard/      → Admin/investor dashboard components
-│   └── *.tsx           → Public site components (Hero, Navbar, Footer, etc.)
-├── lib/                → Utilities (api.ts, utils.ts, toast.ts)
-├── public/images/      → Static images
-├── backend/            → Laravel 12 API
-│   ├── app/
-│   ├── routes/api.php
-│   ├── database/
-│   └── ...
-└── .github/            → PR template, contributing guide
+├── modules/                → Domain feature modules (self-contained)
+│   ├── marketing/          → Homepage section components (Hero, Philosophy, etc.)
+│   ├── confessions/        → Hollywood Confessions (components, API, types)
+│   ├── blog/               → Blog/insights (RichTextEditor, articles API, types)
+│   ├── investor/           → Investor portal (future)
+│   └── forms/              → Creator submission forms (future)
+├── components/             → Shared React components
+│   ├── dashboard/          → Admin/investor dashboard shell
+│   ├── FadeIn.tsx          → Shared animation wrapper
+│   ├── Navbar.tsx          → Site navigation
+│   ├── Footer.tsx          → Site footer
+│   └── CustomCursor.tsx    → Custom cursor effect
+├── lib/                    → Shared libraries
+│   ├── api/                → Modular API layer
+│   │   ├── base.ts         → Shared HTTP utilities (fetchApi, auth helpers)
+│   │   ├── client.ts       → Axios instance (Sanctum cookies)
+│   │   └── v1/             → Endpoint modules (auth, posts, users, etc.)
+│   ├── ui/                 → shadcn/ui primitives (button, card, input, etc.)
+│   ├── design-system/      → TypeScript design tokens
+│   │   ├── tokens.ts       → Colors, breakpoints, spacing, z-index
+│   │   ├── typography.ts   → Font stacks, responsive type scale
+│   │   ├── animations.ts   → Framer Motion presets, reduced-motion
+│   │   ├── wireframe.ts    → Wireframe illustration constants
+│   │   ├── rendering.ts    → 4-layer rendering stack config
+│   │   └── pages/          → Per-page design specs (filled during Canva design)
+│   ├── config/             → Route constants, app config
+│   ├── context/            → React contexts (AuthContext stub)
+│   ├── hooks/              → Custom hooks (useApi)
+│   ├── types/              → Shared TypeScript types
+│   └── validation/         → Future Zod schemas
+├── design/                 → Design reference materials
+│   ├── style-guide.md      → Visual language quick reference
+│   ├── reference-images/   → Wireframe reference images
+│   ├── canva-exports/      → Canva design exports
+│   └── font-files/         → Self-hosted font source files
+├── ravok-master-plan/      → Business context for all build phases
+├── public/                 → Static assets (images, fonts)
+├── backend/                → Laravel 12 API
+├── _archive/               → Archived files (never deleted, just moved here)
+└── .github/                → PR template, contributing guide
 ```
+
+**Import convention:** `lib/api.ts` is a backward-compatible re-export shim. New code should import directly from `@/lib/api/v1/*` or `@/lib/api/base`.
 
 ## Key People
 
@@ -81,9 +111,11 @@ Monorepo for ravokstudios.com. Frontend (Next.js 16) at root, Laravel 12 backend
 - Backend synced from `ravok_backend` private repo into monorepo `backend/` folder
 - Submission forms (writer/director/producer) enforce T&C agreement with checkbox + backend validation + agreed_at timestamp
 - Railway deployment needs config update: change source repo to `ravok-website`, root directory to `backend/`
-- **Master plan integrated**: `ravok-master-plan/` directory in repo root contains business context for all build phases (00-project-overview through 10-roadmap)
-- **Pending rebrand**: Website needs to match Q2 2026 pitch deck visual identity (warm charcoal bg, brighter gold, blueprint grid, wireframe statues, Ionic columns, meander borders). Full spec in `ravok-master-plan/01-brand-identity/CONTEXT.md`
+- **Master plan integrated**: `ravok-master-plan/` directory in repo root contains business context for all build phases
+- **Repo restructured (Phase 0 complete)**: API monolith decomposed, domain modules created, design system tokens in place, shadcn/ui moved to lib/ui
+- **Pending rebrand**: Website needs to match Q2 2026 pitch deck visual identity. Full spec in `ravok-master-plan/ravok-brand-guidelines.md` and `lib/design-system/`
 - **dev branch active**: Feature work proceeds feature/* → dev → main
+- **Archive policy**: Files are never deleted — they go to `_archive/`
 
 ## Master Plan (Phase 0: Foundation)
 
@@ -113,9 +145,10 @@ ravok-master-plan/
 
 ## Known Issues
 
-- `images/` directory at repo root (tracked, not referenced by code) — should be removed
+- ~~`images/` directory at repo root~~ → archived to `_archive/images/`
 - `public/images/` is 36MB total — several images are 4-6MB and need compression
-- Unused files tracked in git: `01.png`, `bg_image_1.png`, `partners1.png`, Next.js template SVGs
+- ~~Unused Next.js template SVGs~~ → archived to `_archive/`
 - `next.config.ts` defaults to production URL instead of localhost
-- No frontend `.env.example`
+- ~~No frontend `.env.example`~~ → added
 - `fav.png` is 1MB (should be <50KB for a favicon)
+- Font migration pending: current code uses Cormorant Garamond/Kanit/Instrument Sans, brand guidelines specify ITC Baskerville/Coco Gothic (with Libre Baskerville/Montserrat free fallbacks)

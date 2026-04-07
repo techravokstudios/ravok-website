@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ravok Studios — Website Audit & Proposal · April 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --black: #0a0a08;
+    --charcoal: #1c1c1a;
+    --gold: #c4953a;
+    --gold-dim: #a98147;
+    --text: #e8e4dc;
+    --muted: rgba(232,228,218,0.5);
+    --border: rgba(232,228,218,0.1);
+    --red: #c0392b;
+    --orange: #d35400;
+    --green: #27ae60;
+    --blue: #2980b9;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--charcoal);
+    color: var(--text);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* COVER */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 80px;
+    background: linear-gradient(135deg, #0a0a08 0%, #1c1c1a 60%, #2a2310 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(196,149,58,0.08) 0%, transparent 70%);
+  }
+  .cover-eyebrow {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+  .cover-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.1;
+    max-width: 700px;
+    margin-bottom: 32px;
+  }
+  .cover-title span { color: var(--gold); }
+  .cover-sub {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.8;
+    margin-bottom: 48px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+    width: 100%;
+    max-width: 600px;
+  }
+  .cover-meta-item { font-size: 12px; color: var(--muted); }
+  .cover-meta-item strong { display: block; color: var(--text); font-size: 14px; margin-bottom: 2px; }
+
+  /* LAYOUT */
+  .page { padding: 80px; max-width: 1100px; margin: 0 auto; }
+  .section { margin-bottom: 80px; }
+
+  /* SECTION HEADERS */
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  h2 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 32px;
+    font-weight: 400;
+    margin-bottom: 24px;
+    line-height: 1.2;
+  }
+  h3 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  p { color: var(--muted); margin-bottom: 16px; line-height: 1.8; }
+  p strong { color: var(--text); }
+
+  /* STATUS BANNER */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .status-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .status-card .num {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .status-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); }
+  .num.red { color: var(--red); }
+  .num.orange { color: var(--orange); }
+  .num.green { color: var(--green); }
+  .num.gold { color: var(--gold); }
+
+  /* PRIORITY TAGS */
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-right: 8px;
+    margin-bottom: 4px;
+  }
+  .tag-critical { background: rgba(192,57,43,0.2); color: #e74c3c; border: 1px solid rgba(192,57,43,0.4); }
+  .tag-high { background: rgba(211,84,0,0.2); color: #e67e22; border: 1px solid rgba(211,84,0,0.4); }
+  .tag-medium { background: rgba(196,149,58,0.2); color: var(--gold); border: 1px solid rgba(196,149,58,0.4); }
+  .tag-low { background: rgba(39,174,96,0.2); color: #2ecc71; border: 1px solid rgba(39,174,96,0.4); }
+  .tag-forms { background: rgba(41,128,185,0.2); color: #3498db; border: 1px solid rgba(41,128,185,0.4); }
+  .tag-design { background: rgba(142,68,173,0.2); color: #9b59b6; border: 1px solid rgba(142,68,173,0.4); }
+  .tag-backend { background: rgba(192,57,43,0.15); color: #c0392b; border: 1px solid rgba(192,57,43,0.3); }
+  .tag-content { background: rgba(39,174,96,0.15); color: #27ae60; border: 1px solid rgba(39,174,96,0.3); }
+
+  /* ISSUE CARDS */
+  .issue-list { display: flex; flex-direction: column; gap: 16px; }
+  .issue-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    border-left: 3px solid var(--border);
+  }
+  .issue-card.critical { border-left-color: #e74c3c; }
+  .issue-card.high { border-left-color: #e67e22; }
+  .issue-card.medium { border-left-color: var(--gold); }
+  .issue-card.low { border-left-color: #2ecc71; }
+  .issue-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; gap: 12px; }
+  .issue-title { font-weight: 600; font-size: 14px; color: var(--text); }
+  .issue-body { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .issue-fix {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(196,149,58,0.06);
+    border: 1px solid rgba(196,149,58,0.15);
+    border-radius: 6px;
+    font-size: 12px;
+    color: rgba(232,228,218,0.7);
+  }
+  .issue-fix strong { color: var(--gold); display: block; margin-bottom: 4px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* PAGE AUDIT TABLE */
+  .page-table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
+  .page-table th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px;
+    vertical-align: top;
+  }
+  .page-table tr:last-child td { border-bottom: none; }
+  .dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+  .dot-red { background: #e74c3c; }
+  .dot-orange { background: #e67e22; }
+  .dot-green { background: #2ecc71; }
+  .dot-gold { background: var(--gold); }
+
+  /* ROADMAP */
+  .roadmap { display: flex; flex-direction: column; gap: 0; }
+  .phase {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 32px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .phase:last-child { border-bottom: none; }
+  .phase-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding-top: 4px;
+  }
+  .phase-num {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 48px;
+    font-weight: 400;
+    color: rgba(196,149,58,0.15);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .phase-time { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .phase-content h3 { margin-bottom: 8px; }
+  .phase-tasks { list-style: none; margin-top: 12px; }
+  .phase-tasks li {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .phase-tasks li::before {
+    content: '—';
+    color: var(--gold-dim);
+    flex-shrink: 0;
+  }
+
+  /* WORKFLOW BOX */
+  .workflow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+  .workflow-step {
+    background: var(--charcoal);
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .workflow-step .step-num {
+    font-size: 28px;
+    font-family: 'Libre Baskerville', serif;
+    color: var(--gold);
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+  .workflow-step .step-name { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .workflow-step .step-who { font-size: 11px; color: var(--muted); }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: #0d0d0b;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px 24px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: rgba(232,228,218,0.8);
+    margin: 16px 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .code-block .comment { color: rgba(196,149,58,0.6); }
+  .code-block .cmd { color: #3498db; }
+  .code-block .file { color: #2ecc71; }
+
+  /* DIVIDER */
+  hr { border: none; border-top: 1px solid var(--border); margin: 60px 0; }
+
+  /* RECOMMENDATION CALLOUT */
+  .callout {
+    border: 1px solid rgba(196,149,58,0.3);
+    border-radius: 8px;
+    padding: 24px 28px;
+    background: rgba(196,149,58,0.04);
+    margin: 24px 0;
+  }
+  .callout-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .callout p { color: rgba(232,228,218,0.75); margin-bottom: 0; }
+
+  /* BACKEND STATUS */
+  .backend-status {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .backend-card {
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .backend-card.broken { border-color: rgba(192,57,43,0.4); background: rgba(192,57,43,0.05); }
+  .backend-card.working { border-color: rgba(39,174,96,0.4); background: rgba(39,174,96,0.05); }
+  .backend-card h4 { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .backend-card.broken h4 { color: #e74c3c; }
+  .backend-card.working h4 { color: #2ecc71; }
+  .backend-card ul { list-style: none; font-size: 12px; color: var(--muted); }
+  .backend-card ul li { padding: 3px 0; }
+
+  /* FOOTER */
+  .doc-footer {
+    padding: 40px 80px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 768px) {
+    .cover, .page { padding: 32px; }
+    .workflow { grid-template-columns: repeat(2, 1fr); }
+    .phase { grid-template-columns: 1fr; gap: 8px; }
+    .backend-status { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <p class="cover-eyebrow">Ravok Studios · Internal Document</p>
+  <h1 class="cover-title">Website Audit &amp;<br/><span>Rebuild Proposal</span></h1>
+  <p class="cover-sub">A full assessment of ravokstudios.com — what's broken, what's missing, and a prioritized plan to make it match the ambition of the brand.</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><strong>April 6, 2026</strong>Audit Date</div>
+    <div class="cover-meta-item"><strong>ravokstudios.com</strong>Property</div>
+    <div class="cover-meta-item"><strong>techravokstudios/ravok-website</strong>Repository</div>
+    <div class="cover-meta-item"><strong>For Claude Code</strong>Execution Target</div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="page">
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="section">
+    <p class="section-label">Executive Summary</p>
+    <h2>Where things stand</h2>
+    <p>The site is live, looks professional, and has all the right pages. But there are <strong>two categories of problems</strong> holding it back: functional bugs that are actively breaking the user experience (most critically, form submissions failing with a server error), and structural gaps where the UX doesn't match the quality of the brand or the seriousness of what you're asking people to submit.</p>
+    <p>The good news: the codebase is clean, Vercel deploys automatically on every push to <strong>main</strong>, and the fix plan is well-defined. Most issues are 1-3 hour Claude Code tasks.</p>
+
+    <div class="status-grid">
+      <div class="status-card"><div class="num red">1</div><div class="label">Critical Bug</div></div>
+      <div class="status-card"><div class="num orange">4</div><div class="label">High Priority Fixes</div></div>
+      <div class="status-card"><div class="num gold">6</div><div class="label">Medium Improvements</div></div>
+      <div class="status-card"><div class="num green">3</div><div class="label">Low Priority Polish</div></div>
+    </div>
+  </div>
+
+  <!-- WORKFLOW SECTION -->
+  <div class="section">
+    <p class="section-label">How We Work Now</p>
+    <h2>Our workflow going forward</h2>
+    <p>You tried having me code directly. It creates confusion, wrong directories, file access issues. Here's the clean model that actually works:</p>
+    <div class="workflow">
+      <div class="workflow-step">
+        <div class="step-num">01</div>
+        <div class="step-name">You Brief</div>
+        <div class="step-who">Amanda → Claude (me)</div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">02</div>
+        <div class="step-name">I Audit + Spec</div>
+        <div class="step-who">Claude → Documents & proposals</div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">03</div>
+        <div class="step-name">You Approve</div>
+        <div class="step-who">Amanda reviews → Go / No go</div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">04</div>
+        <div class="step-name">Claude Code Builds</div>
+        <div class="step-who">In terminal → Pushes to dev</div>
+      </div>
+    </div>
+    <p>I write the specs so precisely that Claude Code can execute without guessing. You stay in the director chair. Nothing gets built without your approval.</p>
+  </div>
+
+  <hr/>
+
+  <!-- CRITICAL BUG -->
+  <div class="section">
+    <p class="section-label">Issue #1 — Critical</p>
+    <h2>Form submissions are broken</h2>
+
+    <div class="issue-card critical">
+      <div class="issue-header">
+        <span class="issue-title">Backend API (Laravel on Railway) is down — all form submissions fail</span>
+        <span class="tag tag-critical">Critical</span><span class="tag tag-backend">Backend</span><span class="tag tag-forms">Forms</span>
+      </div>
+      <div class="issue-body">
+        When someone fills out the Writer, Director, or Producer form and clicks Submit, the frontend calls <code>POST /api/public/forms/[type]</code> on the Laravel backend hosted on Railway. That server is either down, sleeping (Railway free tier spins down after inactivity), or misconfigured. The result is the "Cannot connect to server" error you saw in the screenshot.<br/><br/>
+        Every submission attempt silently fails. No data is being saved. If anyone submitted a form recently, that data is gone.
+      </div>
+      <div class="issue-fix">
+        <strong>Fix Options — Pick One</strong>
+        <strong>Option A (Fast, 2 hrs): Email fallback via Resend</strong> — Replace the API call with a direct email send using Resend (free tier, no server needed). Every submission goes straight to contact@ravokstudios.com as a formatted email. Data is immediately in your inbox. No Railway dependency.<br/><br/>
+        <strong>Option B (Proper, 4-6 hrs): Fix Railway deployment</strong> — Debug why Railway is failing, fix environment variables, ensure the Laravel backend is healthy, add a health check. More robust long-term but requires backend debugging.<br/><br/>
+        <strong>Recommendation: Option A first, then Option B later.</strong> Get submissions working today with email, then migrate to the database backend when it's stable.
+      </div>
+    </div>
+  </div>
+
+  <!-- HIGH PRIORITY -->
+  <div class="section">
+    <p class="section-label">Issues #2–5 — High Priority</p>
+    <h2>Form UX needs a rebuild</h2>
+    <p>The forms are structurally there but the experience doesn't match what you're asking for. These are people submitting serious professional work — the form needs to feel that way.</p>
+
+    <div class="issue-list">
+      <div class="issue-card high">
+        <div class="issue-header">
+          <span class="issue-title">No required vs optional field distinction</span>
+          <span class="tag tag-high">High</span><span class="tag tag-forms">Forms</span><span class="tag tag-design">Design</span>
+        </div>
+        <div class="issue-body">Every field looks identical — no asterisk, no visual weight difference, no label color. Currently the code says "Name and email are required, all others optional." But per your Google Doc, that's wrong — many more fields should be required or at minimum strongly encouraged. Users have no idea what they need to fill in before submitting.</div>
+        <div class="issue-fix">
+          <strong>Fix</strong>
+          Add gold asterisk (*) to required fields. Add "(optional)" label in muted text to optional ones. Mark truly important fields as required in the validation logic, not just name + email.
+        </div>
+      </div>
+
+      <div class="issue-card high">
+        <div class="issue-header">
+          <span class="issue-title">Rating questions are plain text boxes — need 1–5 and 1–10 selectors</span>
+          <span class="tag tag-high">High</span><span class="tag tag-forms">Forms</span><span class="tag tag-design">Design</span>
+        </div>
+        <div class="issue-body">
+          These questions currently render as open textareas:<br/>
+          <em>Writer:</em> "Narrative arc: How strong is this aspect?" / "Character development: How strong?" / "Story structure: How strong?"<br/>
+          <em>Director:</em> "Technical Fluency (1–10)" / "Narrative Integrity (1–10)"<br/>
+          <em>Producer:</em> "Discipline with paperwork, payroll, and reporting (1–10)"<br/><br/>
+          People type random things. You can't analyze or compare that data. They need interactive selectors — the gold dot/ball style you described.
+        </div>
+        <div class="issue-fix">
+          <strong>Fix</strong>
+          Build a <code>RatingScale</code> component. For 1–5: five clickable circles that fill gold on select. For 1–10: ten smaller dots in a row. Selected value stores as a number. Clean, fast to implement with Tailwind.
+        </div>
+      </div>
+
+      <div class="issue-card high">
+        <div class="issue-header">
+          <span class="issue-title">Director + Producer forms use shorthand labels, not full questions</span>
+          <span class="tag tag-high">High</span><span class="tag tag-forms">Forms</span>
+        </div>
+        <div class="issue-body">
+          The Writer form uses the full question text ("Can you share the logline in 30 words or less?"). But the Director form has labels like just "Budget Experience" or "Technical Fluency" with no actual question. Same for Producer. Users don't know what to write. Your Google Doc has the full question wording — it's not being used.
+        </div>
+        <div class="issue-fix">
+          <strong>Fix</strong>
+          Replace all shorthand labels in <code>directorQuestions[]</code> and <code>producerQuestions[]</code> arrays with the full question text from your Google Doc. 30-minute task for Claude Code.
+        </div>
+      </div>
+
+      <div class="issue-card high">
+        <div class="issue-header">
+          <span class="issue-title">Insights page shows "Loading insights…" — content never renders</span>
+          <span class="tag tag-high">High</span><span class="tag tag-backend">Backend</span><span class="tag tag-content">Content</span>
+        </div>
+        <div class="issue-body">The /insights page is live but broken. It's stuck in a loading state because it's trying to fetch articles from the Laravel backend — which is down. Anyone visiting the Insights page sees a spinning loader forever. This is a public-facing page tied to your brand credibility.</div>
+        <div class="issue-fix">
+          <strong>Fix</strong>
+          Add a graceful fallback: if the API fails, show a clean empty state ("Insights coming soon — follow us on Instagram for the latest.") instead of a broken loading spinner. Later, when the backend is fixed, content will auto-populate.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- MEDIUM PRIORITY -->
+  <div class="section">
+    <p class="section-label">Issues #6–11 — Medium Priority</p>
+    <h2>Experience improvements</h2>
+
+    <div class="issue-list">
+      <div class="issue-card medium">
+        <div class="issue-header">
+          <span class="issue-title">Form T&C is a wall of small text — needs a better UX</span>
+          <span class="tag tag-medium">Medium</span><span class="tag tag-forms">Forms</span>
+        </div>
+        <div class="issue-body">The Terms &amp; Conditions text is dumped as a scrollable textarea that people scroll past. The AI data processing clause in particular (Section 7.2) is legally significant. Better UX: collapsible summary with a "Read full terms" expand, and a clearly styled checkbox that confirms agreement.</div>
+        <div class="issue-fix"><strong>Fix</strong> Split into a short summary + expandable full text. Style the checkbox to be prominent (gold border, clear label).</div>
+      </div>
+
+      <div class="issue-card medium">
+        <div class="issue-header">
+          <span class="issue-title">Producer form has 29 fields with no section grouping — high abandonment risk</span>
+          <span class="tag tag-medium">Medium</span><span class="tag tag-forms">Forms</span>
+        </div>
+        <div class="issue-body">29 questions presented as one continuous scroll. No sections, no visual breathing room. Industry research consistently shows forms longer than ~10 visible questions have significantly higher abandonment. The Producer form needs section headers: "About the Project", "Your Background", "Financial Details", "Strategic Fit".</div>
+        <div class="issue-fix"><strong>Fix</strong> Add gold section dividers + headers grouping related questions. Does not change the questions themselves, just organizes them visually.</div>
+      </div>
+
+      <div class="issue-card medium">
+        <div class="issue-header">
+          <span class="issue-title">About Us team photos not loading</span>
+          <span class="tag tag-medium">Medium</span><span class="tag tag-content">Content</span>
+        </div>
+        <div class="issue-body">The three team member photo slots (Amanda, Thibault, Lois) have an image load fallback showing the first letter of the name. The actual photos either aren't uploaded to /public/images/team/ or the filenames don't match. Looks unfinished for a pitch-quality site.</div>
+        <div class="issue-fix"><strong>Fix</strong> Upload correct photos to the right path, or confirm filenames match what's in the code: <code>amanda.jpg</code>, <code>thibault.jpg</code>, <code>lois.png</code>.</div>
+      </div>
+
+      <div class="issue-card medium">
+        <div class="issue-header">
+          <span class="issue-title">No success / error feedback after form submission attempt</span>
+          <span class="tag tag-medium">Medium</span><span class="tag tag-forms">Forms</span>
+        </div>
+        <div class="issue-body">When the API is down, the toast error just says "Submission failed" with no guidance. When it works, the success just redirects to /form. Users deserve: a clear confirmation screen, what happens next (response time), and a way to follow up.</div>
+        <div class="issue-fix"><strong>Fix</strong> Design a proper success state ("Your submission has been received. We review all submissions within 2-4 weeks.") and better error messages with a retry option.</div>
+      </div>
+
+      <div class="issue-card medium">
+        <div class="issue-header">
+          <span class="issue-title">Contact page has three "inquiry types" pointing to the same email</span>
+          <span class="tag tag-medium">Medium</span><span class="tag tag-content">Content</span>
+        </div>
+        <div class="issue-body">General Inquiries, Partnership Inquiries, and Investor Relations all show contact@ravokstudios.com. This creates the appearance of organizational structure without actually having it. Either differentiate the emails, or simplify to one clean contact line.</div>
+        <div class="issue-fix"><strong>Fix</strong> Either set up email routing (e.g., investors@ravokstudios.com → forwards to Amanda) or remove the fake differentiation and use one honest contact line.</div>
+      </div>
+
+      <div class="issue-card medium">
+        <div class="issue-header">
+          <span class="issue-title">No "Submit" link in the main navigation</span>
+          <span class="tag tag-medium">Medium</span><span class="tag tag-design">Design</span>
+        </div>
+        <div class="issue-body">The submission forms are your primary conversion tool for writers, directors, and producers. They're buried at /form/writer etc., reachable only from the Contact Us page. The Navbar has no direct path to submission. For your target audience — creators — this should be a top-level nav item.</div>
+        <div class="issue-fix"><strong>Fix</strong> Add "SUBMIT" to the Navbar, linking to /form (the form index page showing all three types).</div>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- PAGE AUDIT TABLE -->
+  <div class="section">
+    <p class="section-label">Page-by-Page Status</p>
+    <h2>Full site map</h2>
+    <table class="page-table">
+      <thead>
+        <tr>
+          <th>Page</th>
+          <th>Route</th>
+          <th>Status</th>
+          <th>Primary Issue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Homepage</td>
+          <td>/</td>
+          <td><span class="dot dot-green"></span>Working</td>
+          <td style="color:var(--muted)">Design tokens reverted twice — confirm final visual direction</td>
+        </tr>
+        <tr>
+          <td>About Us</td>
+          <td>/about-us</td>
+          <td><span class="dot dot-gold"></span>Mostly OK</td>
+          <td style="color:var(--muted)">Team photos not loading; no bios</td>
+        </tr>
+        <tr>
+          <td>Our Model</td>
+          <td>/our-model</td>
+          <td><span class="dot dot-green"></span>Working</td>
+          <td style="color:var(--muted)">Clean — minor copy review needed</td>
+        </tr>
+        <tr>
+          <td>Contact Us</td>
+          <td>/contact-us</td>
+          <td><span class="dot dot-green"></span>Working</td>
+          <td style="color:var(--muted)">All three emails point to same address; add Navbar Submit link</td>
+        </tr>
+        <tr>
+          <td>Writer Form</td>
+          <td>/form/writer</td>
+          <td><span class="dot dot-red"></span>Broken</td>
+          <td style="color:var(--muted)">Submissions fail; no required indicators; no rating selectors</td>
+        </tr>
+        <tr>
+          <td>Director Form</td>
+          <td>/form/director</td>
+          <td><span class="dot dot-red"></span>Broken</td>
+          <td style="color:var(--muted)">Submissions fail; shorthand labels; no rating selectors</td>
+        </tr>
+        <tr>
+          <td>Producer Form</td>
+          <td>/form/producer</td>
+          <td><span class="dot dot-red"></span>Broken</td>
+          <td style="color:var(--muted)">Submissions fail; 29 ungrouped fields; no rating selectors</td>
+        </tr>
+        <tr>
+          <td>Insights</td>
+          <td>/insights</td>
+          <td><span class="dot dot-red"></span>Broken</td>
+          <td style="color:var(--muted)">Stuck in loading state — no content renders</td>
+        </tr>
+        <tr>
+          <td>Investor Portal</td>
+          <td>/investor</td>
+          <td><span class="dot dot-gold"></span>Auth-gated</td>
+          <td style="color:var(--muted)">Not audited (requires login)</td>
+        </tr>
+        <tr>
+          <td>Admin</td>
+          <td>/admin</td>
+          <td><span class="dot dot-gold"></span>Auth-gated</td>
+          <td style="color:var(--muted)">Not audited (requires login)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BACKEND CONTEXT -->
+  <div class="section">
+    <p class="section-label">Technical Context</p>
+    <h2>Why things are breaking</h2>
+    <p>The site has two parts: the <strong>Next.js frontend</strong> on Vercel (always on, auto-deploys) and a <strong>Laravel backend</strong> on Railway (needs active management). The backend is where form submissions are stored and where articles live. Right now it's unreachable.</p>
+
+    <div class="backend-status">
+      <div class="backend-card working">
+        <h4>✓ Working</h4>
+        <ul>
+          <li>Next.js frontend (Vercel)</li>
+          <li>All static pages</li>
+          <li>Navigation &amp; routing</li>
+          <li>Auth UI (login/register pages render)</li>
+          <li>Investor portal UI</li>
+        </ul>
+      </div>
+      <div class="backend-card broken">
+        <h4>✗ Not Working</h4>
+        <ul>
+          <li>Form submission API</li>
+          <li>Insights / articles API</li>
+          <li>Confession wall API</li>
+          <li>Admin data fetching</li>
+          <li>Email notifications</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">Key Context from Commit History</div>
+      <p>The commit history shows the confessions wall was built and deployed to production, then <strong>immediately reverted</strong>. The brand design tokens (gold color, background) were also deployed then reverted. This suggests there's been some instability in what direction to go. Before Claude Code touches anything, it needs clear direction on which design tokens are final and what features are approved to ship.</p>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- PRIORITIZED ROADMAP -->
+  <div class="section">
+    <p class="section-label">Execution Roadmap</p>
+    <h2>What Claude Code should build, in order</h2>
+    <p>Each phase is a separate Claude Code session with a spec document I'll prepare. You approve before each phase starts.</p>
+
+    <div class="roadmap">
+      <div class="phase">
+        <div>
+          <div class="phase-num">01</div>
+          <div class="phase-label">Phase 1</div>
+          <div class="phase-time">~2–3 hrs · Do first</div>
+        </div>
+        <div class="phase-content">
+          <h3>Fix form submissions — email fallback</h3>
+          <p>Get submissions actually working. Remove the dependency on the broken Railway backend. Every form submission goes directly to your email via Resend API.</p>
+          <ul class="phase-tasks">
+            <li>Add Resend (or similar) for email delivery — no server required</li>
+            <li>Create a Next.js API route: <code>/api/submit-form</code></li>
+            <li>Format submissions as clean HTML emails with all field values</li>
+            <li>Update frontend to call the new API route instead of Railway</li>
+            <li>Test all three form types end-to-end</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div>
+          <div class="phase-num">02</div>
+          <div class="phase-label">Phase 2</div>
+          <div class="phase-time">~3–4 hrs · Do second</div>
+        </div>
+        <div class="phase-content">
+          <h3>Form UX rebuild</h3>
+          <p>Rewrite the form with proper required/optional indicators, rating selectors, full question text, and section grouping for Producer.</p>
+          <ul class="phase-tasks">
+            <li>Build <code>RatingScale</code> component (1–5 dots, 1–10 dots) in brand gold</li>
+            <li>Replace shorthand Director/Producer labels with full questions from Google Doc</li>
+            <li>Mark correct required fields with gold asterisk</li>
+            <li>Add section headers to Producer form (4 groups)</li>
+            <li>Improve T&C UX (summary + expand)</li>
+            <li>Build proper success confirmation screen</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div>
+          <div class="phase-num">03</div>
+          <div class="phase-label">Phase 3</div>
+          <div class="phase-time">~1–2 hrs · Quick wins</div>
+        </div>
+        <div class="phase-content">
+          <h3>Site-wide quick fixes</h3>
+          <p>Clean up the smaller issues across the site.</p>
+          <ul class="phase-tasks">
+            <li>Add "SUBMIT" to Navbar</li>
+            <li>Fix Insights page empty state (no more broken loader)</li>
+            <li>Upload/fix team photos on About Us</li>
+            <li>Fix Contact page email differentiation or simplify</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div>
+          <div class="phase-num">04</div>
+          <div class="phase-label">Phase 4</div>
+          <div class="phase-time">~4–6 hrs · When ready</div>
+        </div>
+        <div class="phase-content">
+          <h3>Backend stabilization</h3>
+          <p>Fix Railway deployment so the database backend works properly. This enables admin form review, articles/insights, and the confession wall.</p>
+          <ul class="phase-tasks">
+            <li>Debug Railway environment variables and deployment config</li>
+            <li>Run database migrations</li>
+            <li>Verify all API endpoints respond correctly</li>
+            <li>Wire form submissions to save to DB (in addition to email)</li>
+            <li>Enable Insights page content to pull from DB</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- WHAT I NEED FROM YOU -->
+  <div class="section">
+    <p class="section-label">Before We Start</p>
+    <h2>What I need from you to write the Claude Code briefs</h2>
+
+    <div class="issue-list">
+      <div class="issue-card" style="border-left-color: var(--gold);">
+        <div class="issue-title" style="margin-bottom:10px;">1. Required fields sign-off</div>
+        <div class="issue-body">For each form, which fields beyond Name + Email should be required? My recommendation based on your Google Doc: for Writer, also require Logline, Genre, IP Ownership, and the 3 rating scales. For Director, also require Reel URL and The Superpower. For Producer, also require Logline, LLC status, and the strength dropdown. Say yes, or tell me which ones to change.</div>
+      </div>
+      <div class="issue-card" style="border-left-color: var(--gold);">
+        <div class="issue-title" style="margin-bottom:10px;">2. Email address for submissions</div>
+        <div class="issue-body">Where should form submissions land? I'll assume contact@ravokstudios.com unless you tell me otherwise. You may want a dedicated submissions@ravokstudios.com so they don't mix with general inquiries.</div>
+      </div>
+      <div class="issue-card" style="border-left-color: var(--gold);">
+        <div class="issue-title" style="margin-bottom:10px;">3. Design tokens — what's final?</div>
+        <div class="issue-body">The commit history shows the brand redesign (new gold #C9A84C, warm charcoal background, blueprint grid overlay) was deployed then reverted from main. Is the current design on ravokstudios.com what you want to keep? Or was the reverted design actually the direction you want and it just had bugs?</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <span>Ravok Studios · Website Audit · April 2026</span>
+  <span>Prepared for Claude Code execution</span>
+</div>
+
+</body>
+</html>
