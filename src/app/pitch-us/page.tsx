@@ -71,7 +71,15 @@ export default function PitchUsPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            RAVOK invests in early-stage entertainment projects the way venture capital invests in startups. If you have a compelling creative vision, we want to hear from you.
+            RAVOK invests in early-stage entertainment projects like venture capital invests in startups. If you are building a high-upside film or IP-led project, we want to hear from you.
+          </motion.p>
+          <motion.p
+            className="font-sans text-sm text-ravok-gold/90 max-w-2xl leading-relaxed mt-5 uppercase tracking-widest"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.25 }}
+          >
+            No submission fees. Founder-style ownership from day one.
           </motion.p>
           <motion.div
             className="mt-6 h-0.5 w-16 bg-ravok-gold"
@@ -129,7 +137,7 @@ export default function PitchUsPage() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
           >
-            Each role has a tailored form to help us understand your strengths and project.
+            Each role has a tailored intake form so our team can evaluate fit, package faster, and move qualified projects into diligence.
           </motion.p>
           <div className="grid lg:grid-cols-3 gap-6">
             {ROLES.map((role, i) => (
