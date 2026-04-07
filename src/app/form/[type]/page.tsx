@@ -297,7 +297,7 @@ export default function FormPage() {
     const data: Record<string, any> = {};
     questions.forEach((q, i) => (data[q] = answers[i] || ""));
     try {
-      await submitPublicForm(t, { name: nm, email: em, agreed_to_terms: true, data });
+      await submitPublicForm(t, { name: nm, email: em, data });
       setName("");
       setEmail("");
       setAnswers(questions.map(() => ""));
