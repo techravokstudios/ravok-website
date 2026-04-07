@@ -2,7 +2,7 @@
 
 import Script from "next/script";
 import { useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 declare global {
   interface Window {
@@ -17,20 +17,16 @@ type GoogleAnalyticsProps = {
 
 export default function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!measurementId || typeof window.gtag !== "function") return;
 
-    const query = searchParams.toString();
-    const page_path = query ? `${pathname}?${query}` : pathname;
-
     window.gtag("event", "page_view", {
-      page_path,
+      page_path: window.location.pathname + window.location.search,
       page_location: window.location.href,
       page_title: document.title,
     });
-  }, [pathname, searchParams, measurementId]);
+  }, [pathname, measurementId]);
 
   if (!measurementId) return null;
 
