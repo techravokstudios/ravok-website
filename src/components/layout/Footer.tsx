@@ -77,8 +77,10 @@ export default function Footer() {
                 {[
                   { href: "/", label: "Home" },
                   { href: "/about-us", label: "About Us" },
+                  { href: "/our-model", label: "Our Model" },
+                  { href: "/portfolio", label: "Portfolio" },
+                  { href: "/insights", label: "Blog" },
                   { href: "/contact-us", label: "Contact Us" },
-                  { href: "/insights", label: "Blog" }
                 ].map((link) => (
                   <Link
                     key={link.href}
@@ -102,7 +104,8 @@ export default function Footer() {
               <nav className="flex flex-col space-y-4 text-sm text-gray-400 font-light tracking-wide">
                 {[
                   { href: "/terms-and-conditions", label: "Terms and Conditions" },
-                  { href: "/privacy-policy", label: "Privacy Policy" }
+                  { href: "/privacy-policy", label: "Privacy Policy" },
+                  { href: "/submission-agreement", label: "Submission Release Agreement" }
                 ].map((link) => (
                   <Link
                     key={link.href}
@@ -125,8 +128,8 @@ export default function Footer() {
               <h4 className="text-ravok-gold text-xl font-heading tracking-wide">Portal</h4>
               <nav className="flex flex-col space-y-4 text-sm text-gray-400 font-light tracking-wide">
                 {[
-                  { href: "/login", label: "Investor Login" },
-                  { href: "/register", label: "Investor Register" },
+                  { href: "/login", label: "Investor Portal" },
+                  { href: "/admin", label: "Admin Portal" },
                 ].map((link) => (
                   <Link
                     key={link.href}

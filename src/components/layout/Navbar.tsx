@@ -58,6 +58,7 @@ export default function Navbar() {
     const navItems = [
         { href: "/", label: "HOME" },
         { href: "/about-us", label: "ABOUT US" },
+        { href: "/our-model", label: "OUR MODEL" },
         { href: "/portfolio", label: "PORTFOLIO" },
         { href: "/insights", label: "BLOG" },
         { href: "/pitch-us", label: "PITCH US" },
