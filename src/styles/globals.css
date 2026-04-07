@@ -3,139 +3,25 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ═══════════════════════════════════════════════════════════════════
-   RAVOK STUDIOS — GLOBAL DESIGN SYSTEM
-   Single source of truth for ALL pages. Change here = changes everywhere.
-   ═══════════════════════════════════════════════════════════════════ */
-
-/* ─── Brand Colors ─────────────────────────────────────────────── */
 @theme {
-  /* Fonts */
   --font-heading: var(--font-cormorant);
   --font-body: var(--font-kanit);
   --font-sans: var(--font-instrument);
 
-  /* Brand palette */
-  --color-ravok-charcoal: #1C1B14;
-  --color-ravok-charcoal-light: #252419;
-  --color-ravok-charcoal-surface: #2A2920;
+  /* RAVOK Brand palette — Q2 pitch deck */
+  --color-background: #1C1B14;
+  --color-foreground: #ffffff;
+
   --color-ravok-gold: #C9A84C;
   --color-ravok-gold-dim: #A98147;
-  --color-ravok-gold-muted: rgba(201, 168, 76, 0.15);
   --color-ravok-beige: #F3E4B9;
   --color-ravok-slate: #98958C;
-  --color-ravok-white: #E8E4DC;
-
-  /* Semantic colors — use THESE in components */
-  --color-background: #1C1B14;
-  --color-foreground: #E8E4DC;
-  --color-foreground-muted: rgba(232, 228, 220, 0.6);
-  --color-foreground-faint: rgba(232, 228, 220, 0.4);
-  --color-accent: #C9A84C;
-  --color-accent-hover: #D4A94A;
-  --color-surface: #252419;
-  --color-surface-elevated: #2A2920;
-  --color-border-default: rgba(232, 228, 220, 0.08);
-  --color-border-strong: rgba(232, 228, 220, 0.15);
-
-  /* Spacing — consistent across all pages */
-  --spacing-page-x: 1rem;
-  --spacing-section-y: 3rem;
-
-  /* Max content width */
-  --width-content: 1440px;
-  --width-narrow: 800px;
+  --color-ravok-charcoal: #1C1B14;
+  --color-ravok-charcoal-light: #252419;
 }
 
-/* Responsive spacing overrides */
-@media (min-width: 768px) {
-  :root {
-    --spacing-page-x: 2rem;
-    --spacing-section-y: 4rem;
-  }
-}
-@media (min-width: 1024px) {
-  :root {
-    --spacing-page-x: 4rem;
-    --spacing-section-y: 6rem;
-  }
-}
-
-/* ─── Typography Scale ─────────────────────────────────────────── */
-:root {
-  /* Display — hero headlines */
-  --text-display: 48px;
-  --leading-display: 1.0;
-  --tracking-display: -0.02em;
-
-  /* H1 — page titles */
-  --text-h1: 36px;
-  --leading-h1: 1.1;
-  --tracking-h1: -0.01em;
-
-  /* H2 — section titles */
-  --text-h2: 28px;
-  --leading-h2: 1.15;
-
-  /* H3 — subsection titles */
-  --text-h3: 20px;
-  --leading-h3: 1.2;
-
-  /* H4 — card titles */
-  --text-h4: 16px;
-  --leading-h4: 1.3;
-
-  /* Body */
-  --text-body: 16px;
-  --leading-body: 1.6;
-
-  /* Small */
-  --text-small: 13px;
-  --leading-small: 1.5;
-
-  /* Caption — uppercase labels */
-  --text-caption: 10px;
-  --leading-caption: 1.4;
-  --tracking-caption: 0.05em;
-
-  /* Nav links */
-  --text-nav: 12px;
-  --tracking-nav: 0.12em;
-}
-
-@media (min-width: 768px) {
-  :root {
-    --text-display: 72px;
-    --text-h1: 48px;
-    --text-h2: 36px;
-    --text-h3: 24px;
-    --text-h4: 18px;
-    --text-body: 16px;
-    --text-small: 13px;
-    --text-caption: 11px;
-    --text-nav: 13px;
-  }
-}
-
-@media (min-width: 1024px) {
-  :root {
-    --text-display: 96px;
-    --text-h1: 64px;
-    --text-h2: 48px;
-    --text-h3: 32px;
-    --text-h4: 24px;
-    --text-body: 18px;
-    --text-small: 14px;
-    --text-caption: 12px;
-    --text-nav: 14px;
-  }
-}
-
-/* ─── Base Styles ──────────────────────────────────────────────── */
 body {
   font-family: var(--font-body);
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
   overflow-x: hidden;
 }
 
@@ -143,104 +29,11 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
 }
 
-h1 { font-size: var(--text-h1); line-height: var(--leading-h1); letter-spacing: var(--tracking-h1); }
-h2 { font-size: var(--text-h2); line-height: var(--leading-h2); }
-h3 { font-size: var(--text-h3); line-height: var(--leading-h3); }
-h4 { font-size: var(--text-h4); line-height: var(--leading-h4); }
-
-p, li { line-height: var(--leading-body); }
-
 ::selection {
-  background-color: var(--color-accent);
-  color: var(--color-background);
+  background-color: #C9A84C;
+  color: #1C1B14;
 }
 
-/* ─── Utility Classes ──────────────────────────────────────────── */
-
-/* Text styles */
-.text-display {
-  font-family: var(--font-heading);
-  font-size: var(--text-display);
-  line-height: var(--leading-display);
-  letter-spacing: var(--tracking-display);
-}
-
-.text-caption {
-  font-size: var(--text-caption);
-  line-height: var(--leading-caption);
-  letter-spacing: var(--tracking-caption);
-  text-transform: uppercase;
-}
-
-.text-nav {
-  font-size: var(--text-nav);
-  letter-spacing: var(--tracking-nav);
-  text-transform: uppercase;
-}
-
-.text-gold { color: var(--color-accent); }
-.text-muted { color: var(--color-foreground-muted); }
-.text-faint { color: var(--color-foreground-faint); }
-
-/* Layout */
-.page-container {
-  max-width: var(--width-content);
-  margin: 0 auto;
-  padding-left: var(--spacing-page-x);
-  padding-right: var(--spacing-page-x);
-}
-
-.page-narrow {
-  max-width: var(--width-narrow);
-  margin: 0 auto;
-  padding-left: var(--spacing-page-x);
-  padding-right: var(--spacing-page-x);
-}
-
-.section-spacing {
-  padding-top: var(--spacing-section-y);
-  padding-bottom: var(--spacing-section-y);
-}
-
-/* Thin heading weight — Cormorant looks best at 300 for display sizes */
-.font-heading-thin {
-  font-family: var(--font-heading);
-  font-weight: 300;
-  letter-spacing: 0.06em;
-}
-
-/* ─── Blueprint Grid Overlay ──────────────────────────────────── */
-.blueprint-grid {
-  background-image:
-    linear-gradient(to right,  rgba(201, 168, 76, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(201, 168, 76, 0.06) 1px, transparent 1px),
-    linear-gradient(to right,  rgba(201, 168, 76, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(201, 168, 76, 0.025) 1px, transparent 1px);
-  background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px;
-}
-
-/* Greek-key / meander border */
-.border-meander {
-  border-top: 1px solid rgba(201, 168, 76, 0.35);
-  position: relative;
-}
-.border-meander::before {
-  content: '';
-  position: absolute;
-  top: -3px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: repeating-linear-gradient(
-    to right,
-    rgba(201, 168, 76, 0.5) 0px,
-    rgba(201, 168, 76, 0.5) 8px,
-    transparent 8px,
-    transparent 12px
-  );
-}
-
-/* ─── shadcn/ui Theme Variables ───────────────────────────────── */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -284,6 +77,7 @@ p, li { line-height: var(--leading-body); }
 
 :root {
   --radius: 0.625rem;
+  /* RAVOK dark theme — warm charcoal #1C1B14, gold #C9A84C */
   --background: oklch(0.13 0.012 80);
   --foreground: oklch(0.97 0 0);
   --card: oklch(0.17 0.010 80);
@@ -317,6 +111,41 @@ p, li { line-height: var(--leading-body); }
   --sidebar-ring: oklch(0.72 0.13 75 / 60%);
 }
 
+.dark {
+  /* Same warm charcoal palette — site is always dark */
+  --background: oklch(0.13 0.012 80);
+  --foreground: oklch(0.97 0 0);
+  --card: oklch(0.17 0.010 80);
+  --card-foreground: oklch(0.97 0 0);
+  --popover: oklch(0.17 0.010 80);
+  --popover-foreground: oklch(0.97 0 0);
+  --primary: oklch(0.72 0.13 75);
+  --primary-foreground: oklch(0.13 0.012 80);
+  --secondary: oklch(0.22 0.009 80);
+  --secondary-foreground: oklch(0.97 0 0);
+  --muted: oklch(0.22 0.009 80);
+  --muted-foreground: oklch(0.62 0.008 80);
+  --accent: oklch(0.22 0.009 80);
+  --accent-foreground: oklch(0.97 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.72 0.13 75 / 60%);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.17 0.010 80);
+  --sidebar-foreground: oklch(0.97 0 0);
+  --sidebar-primary: oklch(0.72 0.13 75);
+  --sidebar-primary-foreground: oklch(0.13 0.012 80);
+  --sidebar-accent: oklch(0.22 0.009 80);
+  --sidebar-accent-foreground: oklch(0.97 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.72 0.13 75 / 60%);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -324,4 +153,55 @@ p, li { line-height: var(--leading-body); }
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ─── Blueprint grid overlay ──────────────────────────────────────
+   Matches the technical-drawing grid from the Q2 pitch deck.
+   Applied as a subtle full-page texture via .blueprint-grid,
+   or directly on the <body> when the root layout adds the class.
+─────────────────────────────────────────────────────────────────── */
+.blueprint-grid {
+  background-image:
+    /* thick lines every 80px */
+    linear-gradient(to right,  rgba(201, 168, 76, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(201, 168, 76, 0.06) 1px, transparent 1px),
+    /* fine lines every 16px */
+    linear-gradient(to right,  rgba(201, 168, 76, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(201, 168, 76, 0.025) 1px, transparent 1px);
+  background-size:
+    80px 80px,
+    80px 80px,
+    16px 16px,
+    16px 16px;
+}
+
+/* Gold text utility */
+.text-gold { color: #C9A84C; }
+
+/* Thin heading weight — Cormorant looks best at 300 for display sizes */
+.font-heading-thin {
+  font-family: var(--font-heading);
+  font-weight: 300;
+  letter-spacing: 0.06em;
+}
+
+/* Greek-key / meander border utility (top edge only) */
+.border-meander {
+  border-top: 1px solid rgba(201, 168, 76, 0.35);
+  position: relative;
+}
+.border-meander::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(201, 168, 76, 0.5) 0px,
+    rgba(201, 168, 76, 0.5) 8px,
+    transparent 8px,
+    transparent 12px
+  );
 }

@@ -76,16 +76,32 @@ export default function Hero() {
   const taglineOpacity = useTransform(scrollY, [0, 250], [1, 0], { clamp: true });
   const taglineY = useTransform(scrollY, [0, 250], [0, 25], { clamp: true });
 
-  // Columns drift slightly slower for layered depth
+  const backgroundY = useTransform(scrollY, [0, 1200], ["0%", "25%"], { clamp: true });
+
+  // Columns drift slightly slower than background for layered depth
   const columnY = useTransform(scrollY, [0, 1200], ["0%", "12%"], { clamp: true });
   const columnOpacity = useTransform(scrollY, [0, 400], [1, 0], { clamp: true });
 
   return (
     <section
       ref={sectionRef}
-      className="relative h-screen w-full flex flex-col items-center justify-center bg-ravok-charcoal overflow-hidden"
+      className="relative h-screen w-full flex flex-col items-center justify-center bg-[#1C1B14] overflow-hidden"
     >
-      {/* Background — rendering stack shows through from layout */}
+      {/* Background Image — Smooth Parallax */}
+      <motion.div
+        className="absolute inset-0 z-0 will-change-transform"
+        style={{ y: backgroundY, transform: "translateZ(0)" }}
+      >
+        <img
+          src="/images/bg_image.png"
+          alt=""
+          className="w-full h-full object-cover opacity-60"
+          style={{ willChange: "transform", transform: "translateZ(0)" }}
+        />
+        {/* Warm charcoal overlay — replaces pure-black gradients */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1C1B14]/60 via-[#1C1B14]/10 to-[#1C1B14]" />
+        <div className="absolute inset-0 shadow-[inset_0_0_120px_60px_rgba(28,27,20,0.5)] pointer-events-none" />
+      </motion.div>
 
       {/* Architectural columns — left & right, blueprint style */}
       <motion.div
@@ -157,8 +173,8 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* Bottom fade into next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-ravok-charcoal to-transparent z-[3] pointer-events-none" />
+      {/* Bottom gradient fade into next section */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#1C1B14] to-transparent z-[3] pointer-events-none" />
     </section>
   );
 }

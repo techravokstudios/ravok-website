@@ -63,7 +63,7 @@ const ravokItems = [
 
 export default function OurModelPage() {
   return (
-    <main className="min-h-screen bg-black/90 text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
+    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
       <Navbar />
 
       {/* Section 1: Hero - OUR MODEL, EXPLAINED SIMPLY */}
@@ -114,58 +114,23 @@ export default function OurModelPage() {
             </motion.p>
           </div>
           <motion.div
-            className="relative order-first lg:order-last min-h-[400px] lg:min-h-[500px] rounded-2xl overflow-hidden border border-white/10 flex items-center justify-center"
+            className="relative order-first lg:order-last min-h-[400px] lg:min-h-[500px] rounded-2xl overflow-hidden border border-white/10"
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            {/* Wireframe SPV structure diagram */}
-            <svg viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-3/4 h-auto opacity-50" aria-hidden="true">
-              <g stroke="#C9A84C" strokeWidth="0.8">
-                {/* Top: Studio entity */}
-                <rect x="100" y="30" width="100" height="40" strokeOpacity="0.5" />
-                <text x="150" y="55" textAnchor="middle" fill="#C9A84C" fillOpacity="0.3" fontSize="8" fontFamily="monospace">STUDIO</text>
-
-                {/* Lines to SPVs */}
-                <line x1="120" y1="70" x2="60" y2="130" strokeOpacity="0.35" />
-                <line x1="150" y1="70" x2="150" y2="130" strokeOpacity="0.35" />
-                <line x1="180" y1="70" x2="240" y2="130" strokeOpacity="0.35" />
-
-                {/* SPV boxes */}
-                <rect x="30" y="130" width="60" height="35" strokeOpacity="0.4" />
-                <rect x="120" y="130" width="60" height="35" strokeOpacity="0.4" />
-                <rect x="210" y="130" width="60" height="35" strokeOpacity="0.4" />
-                <text x="60" y="152" textAnchor="middle" fill="#C9A84C" fillOpacity="0.25" fontSize="6" fontFamily="monospace">SPV 1</text>
-                <text x="150" y="152" textAnchor="middle" fill="#C9A84C" fillOpacity="0.25" fontSize="6" fontFamily="monospace">SPV 2</text>
-                <text x="240" y="152" textAnchor="middle" fill="#C9A84C" fillOpacity="0.25" fontSize="6" fontFamily="monospace">SPV 3</text>
-
-                {/* Equity splits — pie chart wireframes */}
-                <circle cx="60" cy="210" r="20" strokeOpacity="0.3" />
-                <line x1="60" y1="190" x2="60" y2="210" strokeOpacity="0.25" />
-                <line x1="60" y1="210" x2="77" y2="220" strokeOpacity="0.25" />
-
-                <circle cx="150" cy="210" r="20" strokeOpacity="0.3" />
-                <line x1="150" y1="190" x2="150" y2="210" strokeOpacity="0.25" />
-                <line x1="150" y1="210" x2="167" y2="220" strokeOpacity="0.25" />
-
-                <circle cx="240" cy="210" r="20" strokeOpacity="0.3" />
-                <line x1="240" y1="190" x2="240" y2="210" strokeOpacity="0.25" />
-                <line x1="240" y1="210" x2="257" y2="220" strokeOpacity="0.25" />
-
-                {/* Revenue flow arrows */}
-                <line x1="60" y1="230" x2="60" y2="290" strokeOpacity="0.2" strokeDasharray="4 4" />
-                <line x1="150" y1="230" x2="150" y2="290" strokeOpacity="0.2" strokeDasharray="4 4" />
-                <line x1="240" y1="230" x2="240" y2="290" strokeOpacity="0.2" strokeDasharray="4 4" />
-
-                {/* Returns bar */}
-                <rect x="30" y="290" width="240" height="30" strokeOpacity="0.3" />
-                <text x="150" y="310" textAnchor="middle" fill="#C9A84C" fillOpacity="0.2" fontSize="7" fontFamily="monospace">TRANSPARENT RETURNS</text>
-              </g>
-              <g stroke="#E8E4DC" strokeWidth="0.3" strokeOpacity="0.08" strokeDasharray="2 4">
-                <line x1="15" y1="20" x2="15" y2="340" />
-                <line x1="285" y1="20" x2="285" y2="340" />
-              </g>
-            </svg>
+            <div className="absolute inset-0 z-0">
+              <img
+                src="/images/3.png"
+                alt=""
+                className="w-full h-full object-cover object-top grayscale opacity-70"
+              />
+              <div className="absolute inset-0 bg-gradient-to-l from-black via-black/50 to-transparent lg:from-black/80" />
+            </div>
+            <div className="absolute top-6 right-6 flex gap-2 z-10">
+              <span className="w-3 h-3 rounded-full border border-white/60" />
+              <span className="w-3 h-3 rounded-full bg-white/60" />
+            </div>
           </motion.div>
         </div>
       </section>
@@ -329,10 +294,17 @@ export default function OurModelPage() {
         </div>
       </section>
 
-      {/* Section 6: CTA */}
+      {/* Section 6: CTA - We've been waiting for you! (matches About Us CTA style) */}
       <section className="min-h-screen flex flex-col justify-center relative px-6 py-32 overflow-hidden">
-        {/* Radial glow accent */}
-        <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_50%,rgba(201,168,76,0.06)_0%,transparent_70%)]" />
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/images/philosophy.png"
+            alt=""
+            className="w-full h-full object-cover opacity-30 grayscale"
+          />
+          <div className="absolute inset-0 bg-black/60" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_50%,transparent_0%,black_70%)]" />
+        </div>
         <div className="container mx-auto text-center relative z-10 max-w-4xl">
           <motion.h2
             className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-heading font-thin text-white uppercase tracking-wide leading-tight mb-8"

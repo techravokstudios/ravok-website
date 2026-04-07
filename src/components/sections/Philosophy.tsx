@@ -1,8 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 export default function Philosophy() {
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     const textVariants = {
         hidden: { opacity: 0, y: 30 },
         visible: (i: number) => ({
@@ -23,7 +30,42 @@ export default function Philosophy() {
     ];
 
     return (
-        <section className="py-24 lg:py-32 px-6 bg-ravok-charcoal/90 text-white relative border-t border-white/5 overflow-hidden rounded-t-3xl shadow-2xl">
+        <section className="py-24 lg:py-32 px-6 bg-[#1C1B14] text-white relative border-t border-white/5 overflow-hidden rounded-t-3xl shadow-2xl">
+            {/* Background Image Layer */}
+            <div className="absolute inset-0 z-0">
+                <img
+                    src="/images/philosophy.png"
+                    alt="Philosophy Background"
+                    className="w-full h-full object-cover opacity-30 grayscale"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/80 to-black" />
+            </div>
+
+            {/* Animated background particles - only render on client */}
+            {isMounted && (
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
+                    {[...Array(20)].map((_, i) => (
+                        <motion.div
+                            key={i}
+                            className="absolute w-1 h-1 bg-ravok-gold/20 rounded-full"
+                            initial={{
+                                x: Math.random() * window.innerWidth,
+                                y: Math.random() * 800,
+                                scale: Math.random() * 0.5 + 0.5
+                            }}
+                            animate={{
+                                y: [null, Math.random() * 800],
+                                opacity: [0, 1, 0]
+                            }}
+                            transition={{
+                                duration: Math.random() * 10 + 10,
+                                repeat: Infinity,
+                                ease: "linear"
+                            }}
+                        />
+                    ))}
+                </div>
+            )}
 
             <div className="container mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10">
                 {/* Text Content */}
@@ -104,58 +146,13 @@ export default function Philosophy() {
                     viewport={{ once: true }}
                     transition={{ duration: 1, delay: 0.3 }}
                 >
-                    {/* Wireframe R&D beaker/flask — scientific methodology motif */}
-                    <svg viewBox="0 0 360 460" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full max-w-sm h-auto" aria-hidden="true">
-                        {/* Erlenmeyer flask wireframe */}
-                        <g stroke="#C9A84C" strokeWidth="0.8">
-                            {/* Flask neck */}
-                            <line x1="155" y1="40" x2="155" y2="180" strokeOpacity="0.5" />
-                            <line x1="205" y1="40" x2="205" y2="180" strokeOpacity="0.5" />
-                            <line x1="145" y1="40" x2="215" y2="40" strokeOpacity="0.6" />
-                            {/* Flask body — expanding */}
-                            <line x1="155" y1="180" x2="80" y2="340" strokeOpacity="0.5" />
-                            <line x1="205" y1="180" x2="280" y2="340" strokeOpacity="0.5" />
-                            <line x1="80" y1="340" x2="280" y2="340" strokeOpacity="0.6" />
-                            {/* Base */}
-                            <rect x="70" y="340" width="220" height="12" strokeOpacity="0.4" />
-                        </g>
-
-                        {/* Internal reaction — bubbling circles */}
-                        <g stroke="#C9A84C" strokeWidth="0.6" fill="none">
-                            <circle cx="160" cy="280" r="12" strokeOpacity="0.3" />
-                            <circle cx="200" cy="300" r="8" strokeOpacity="0.25" />
-                            <circle cx="140" cy="310" r="10" strokeOpacity="0.2" />
-                            <circle cx="220" cy="270" r="6" strokeOpacity="0.2" />
-                            <circle cx="180" cy="250" r="5" strokeOpacity="0.15" />
-                        </g>
-
-                        {/* Connected nodes — R&D network */}
-                        <g stroke="#E8E4DC" strokeWidth="0.5" strokeOpacity="0.25">
-                            <circle cx="60" cy="120" r="4" />
-                            <circle cx="300" cy="100" r="4" />
-                            <circle cx="40" cy="240" r="4" />
-                            <circle cx="320" cy="220" r="4" />
-                            <line x1="60" y1="120" x2="155" y2="140" strokeDasharray="3 5" />
-                            <line x1="300" y1="100" x2="205" y2="130" strokeDasharray="3 5" />
-                            <line x1="40" y1="240" x2="120" y2="280" strokeDasharray="3 5" />
-                            <line x1="320" y1="220" x2="240" y2="270" strokeDasharray="3 5" />
-                        </g>
-
-                        {/* Blueprint dimension lines */}
-                        <g stroke="#E8E4DC" strokeWidth="0.3" strokeOpacity="0.12" strokeDasharray="2 4">
-                            <line x1="30" y1="40" x2="30" y2="355" />
-                            <line x1="330" y1="40" x2="330" y2="355" />
-                        </g>
-
-                        {/* Gold glow at reaction center */}
-                        <circle cx="180" cy="290" r="50" fill="url(#philGlow)" />
-                        <defs>
-                            <radialGradient id="philGlow">
-                                <stop offset="0%" stopColor="#C9A84C" stopOpacity="0.06" />
-                                <stop offset="100%" stopColor="#C9A84C" stopOpacity="0" />
-                            </radialGradient>
-                        </defs>
-                    </svg>
+                    <motion.img
+                        src="/images/slide1.png"
+                        alt="R&D Philosophy"
+                        className="w-full max-w-lg object-contain opacity-90"
+                        whileHover={{ scale: 1.05, opacity: 1 }}
+                        transition={{ duration: 0.4 }}
+                    />
                 </motion.div>
             </div>
         </section>

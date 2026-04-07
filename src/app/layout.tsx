@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Kanit, Instrument_Sans } from "next/font/google";
 import "@/styles/globals.css";
 import { CustomCursor } from "@/components/shared/CustomCursor";
-import { RenderingStack } from "@/components/rendering";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -36,13 +35,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${cormorant.variable} ${kanit.variable} ${instrument.variable} antialiased bg-ravok-charcoal text-white cursor-none`}
+        className={`${cormorant.variable} ${kanit.variable} ${instrument.variable} antialiased bg-[#1C1B14] text-white cursor-none blueprint-grid`}
       >
-        <RenderingStack layers={{ svg: true, p5: true, canvas: true, three: false }} />
         <CustomCursor />
-        <div className="relative" style={{ zIndex: 10 }}>
-          {children}
-        </div>
+        {children}
         <Toaster
           position="top-right"
           toastOptions={{
