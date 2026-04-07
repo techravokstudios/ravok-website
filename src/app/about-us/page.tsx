@@ -11,20 +11,11 @@ const sectionNumber = (n: number) => String(n).padStart(2, "0");
 
 export default function AboutUsPage() {
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
+    <main className="min-h-screen bg-black/90 text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
       <Navbar />
 
       {/* Section 1: Hero - We're Not Here to Play the Game */}
       <section className="min-h-screen flex flex-col justify-center relative px-6 pt-32 pb-24 overflow-hidden">
-        {/* Background + grain */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/images/bg_image.png"
-            alt=""
-            className="w-full h-full object-cover opacity-40 grayscale"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/80 to-black" />
-        </div>
         <div className="absolute top-1/4 right-0 w-40 h-px bg-gradient-to-l from-ravok-gold/40 to-transparent z-10" />
         <div className="absolute bottom-1/3 left-0 w-28 h-px bg-gradient-to-r from-ravok-gold/25 to-transparent z-10" />
         <div className="container mx-auto relative z-10 max-w-5xl">
@@ -121,17 +112,23 @@ export default function AboutUsPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="absolute inset-0 z-0">
-              <img
-                src="/images/1.png"
-                alt=""
-                className="w-full h-full object-cover object-top grayscale opacity-70"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent lg:from-black/80" />
-            </div>
-            <div className="absolute top-6 left-6 flex gap-2 z-10">
-              <span className="w-3 h-3 rounded-full border border-white/60" />
-              <span className="w-3 h-3 rounded-full bg-white/60" />
+            {/* Wireframe vision sculpture */}
+            <div className="absolute inset-0 flex items-center justify-center z-0">
+              <svg viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-3/4 h-auto opacity-50" aria-hidden="true">
+                <g stroke="#C9A84C" strokeWidth="0.7">
+                  {/* Telescope / looking forward */}
+                  <ellipse cx="150" cy="120" rx="40" ry="25" strokeOpacity="0.4" />
+                  <line x1="110" y1="120" x2="60" y2="200" strokeOpacity="0.35" />
+                  <line x1="190" y1="120" x2="240" y2="200" strokeOpacity="0.35" />
+                  <ellipse cx="150" cy="250" rx="70" ry="40" strokeOpacity="0.3" />
+                  {/* Rays of vision */}
+                  <line x1="150" y1="95" x2="150" y2="40" strokeOpacity="0.2" strokeDasharray="4 4" />
+                  <line x1="130" y1="98" x2="100" y2="50" strokeOpacity="0.15" strokeDasharray="3 5" />
+                  <line x1="170" y1="98" x2="200" y2="50" strokeOpacity="0.15" strokeDasharray="3 5" />
+                  {/* Base */}
+                  <rect x="120" y="290" width="60" height="80" strokeOpacity="0.25" />
+                </g>
+              </svg>
             </div>
           </motion.div>
           <div className="order-1 lg:order-2 relative z-10 pl-0 lg:pl-8">
@@ -223,13 +220,25 @@ export default function AboutUsPage() {
               RAVOK won&apos;t be the only venture studio doing this. That&apos;s the point. We&apos;re proving the model so others follow. Systemic change starts with a spark.
             </motion.p>
           </div>
-          <div className="relative hidden lg:block min-h-[500px] rounded-2xl overflow-hidden border border-white/10">
-            <img
-              src="/images/2.png"
-              alt=""
-              className="w-full h-full object-cover object-center grayscale opacity-50"
-            />
-            <div className="absolute inset-0 bg-gradient-to-l from-black to-transparent" />
+          <div className="relative hidden lg:flex min-h-[500px] rounded-2xl overflow-hidden border border-white/10 items-center justify-center">
+            {/* Wireframe ownership key */}
+            <svg viewBox="0 0 280 400" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-2/3 h-auto opacity-40" aria-hidden="true">
+              <g stroke="#C9A84C" strokeWidth="0.7">
+                {/* Key bow (circle) */}
+                <circle cx="140" cy="100" r="50" strokeOpacity="0.4" />
+                <circle cx="140" cy="100" r="35" strokeOpacity="0.25" />
+                {/* Key shaft */}
+                <rect x="134" y="150" width="12" height="160" strokeOpacity="0.35" />
+                {/* Key teeth */}
+                <rect x="146" y="260" width="25" height="8" strokeOpacity="0.3" />
+                <rect x="146" y="280" width="18" height="8" strokeOpacity="0.3" />
+                <rect x="146" y="300" width="30" height="8" strokeOpacity="0.3" />
+              </g>
+              <g stroke="#E8E4DC" strokeWidth="0.3" strokeOpacity="0.1" strokeDasharray="2 4">
+                <line x1="30" y1="50" x2="30" y2="350" />
+                <line x1="250" y1="50" x2="250" y2="350" />
+              </g>
+            </svg>
           </div>
         </div>
       </section>
@@ -361,17 +370,10 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* Section 7: Ready to Build the Future? (CTA) - glow CTA */}
+      {/* Section 7: Ready to Build the Future? (CTA) */}
       <section className="min-h-screen flex flex-col justify-center relative px-6 py-32 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/images/philosophy.png"
-            alt=""
-            className="w-full h-full object-cover opacity-30 grayscale"
-          />
-          <div className="absolute inset-0 bg-black/60" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_50%,transparent_0%,black_70%)]" />
-        </div>
+        {/* Radial glow accent */}
+        <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_50%,rgba(201,168,76,0.06)_0%,transparent_70%)]" />
         <div className="container mx-auto text-center relative z-10">
           <motion.h2
             className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-heading font-thin text-white uppercase tracking-wide drop-shadow-lg"

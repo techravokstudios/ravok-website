@@ -1,8 +1,94 @@
 "use client";
 
 import { FadeIn } from "@/components/shared/FadeIn";
-import { ArrowRight, ArrowUp } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+
+function OfferingIcon({ index }: { index: number }) {
+    if (index === 0) {
+        // Film Ventures — wireframe film reel / clapperboard
+        return (
+            <svg viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-auto max-h-[220px] opacity-70 group-hover:opacity-100 transition-opacity duration-700" aria-hidden="true">
+                <g stroke="#C9A84C" strokeWidth="0.8">
+                    {/* Film reel circle */}
+                    <circle cx="100" cy="120" r="70" strokeOpacity="0.4" />
+                    <circle cx="100" cy="120" r="50" strokeOpacity="0.3" />
+                    <circle cx="100" cy="120" r="12" strokeOpacity="0.5" />
+                    {/* Spokes */}
+                    {[0, 60, 120, 180, 240, 300].map((angle) => {
+                        const rad = (angle * Math.PI) / 180;
+                        return <line key={angle} x1={100 + 12 * Math.cos(rad)} y1={120 + 12 * Math.sin(rad)} x2={100 + 50 * Math.cos(rad)} y2={120 + 50 * Math.sin(rad)} strokeOpacity="0.25" />;
+                    })}
+                    {/* Sprocket holes */}
+                    {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => {
+                        const rad = (angle * Math.PI) / 180;
+                        return <circle key={angle} cx={100 + 60 * Math.cos(rad)} cy={120 + 60 * Math.sin(rad)} r="4" strokeOpacity="0.3" />;
+                    })}
+                </g>
+            </svg>
+        );
+    }
+    if (index === 1) {
+        // Production Labels — wireframe building/pillars
+        return (
+            <svg viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-auto max-h-[220px] opacity-70 group-hover:opacity-100 transition-opacity duration-700" aria-hidden="true">
+                <g stroke="#C9A84C" strokeWidth="0.8">
+                    {/* Pediment */}
+                    <polygon points="100,30 30,80 170,80" strokeOpacity="0.5" fill="none" />
+                    {/* Entablature */}
+                    <rect x="25" y="80" width="150" height="10" strokeOpacity="0.4" />
+                    {/* Columns */}
+                    {[50, 90, 110, 150].map((x) => (
+                        <g key={x}>
+                            <rect x={x - 6} y="90" width="12" height="120" strokeOpacity="0.35" />
+                            <line x1={x - 3} y1="92" x2={x - 3} y2="208" strokeOpacity="0.15" />
+                            <line x1={x + 3} y1="92" x2={x + 3} y2="208" strokeOpacity="0.15" />
+                        </g>
+                    ))}
+                    {/* Base */}
+                    <rect x="20" y="210" width="160" height="8" strokeOpacity="0.4" />
+                    <rect x="15" y="218" width="170" height="6" strokeOpacity="0.3" />
+                </g>
+            </svg>
+        );
+    }
+    // Tech Ventures — wireframe circuit/network
+    return (
+        <svg viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-auto max-h-[220px] opacity-70 group-hover:opacity-100 transition-opacity duration-700" aria-hidden="true">
+            <g stroke="#C9A84C" strokeWidth="0.8">
+                {/* Central processor */}
+                <rect x="70" y="90" width="60" height="60" strokeOpacity="0.5" />
+                <rect x="80" y="100" width="40" height="40" strokeOpacity="0.3" />
+                {/* Pins / connections */}
+                {[80, 100, 120].map((x) => (
+                    <g key={`v${x}`}>
+                        <line x1={x} y1="90" x2={x} y2="60" strokeOpacity="0.3" />
+                        <line x1={x} y1="150" x2={x} y2="180" strokeOpacity="0.3" />
+                        <circle cx={x} cy="55" r="3" strokeOpacity="0.25" />
+                        <circle cx={x} cy="185" r="3" strokeOpacity="0.25" />
+                    </g>
+                ))}
+                {[100, 120].map((y) => (
+                    <g key={`h${y}`}>
+                        <line x1="70" y1={y} x2="40" y2={y} strokeOpacity="0.3" />
+                        <line x1="130" y1={y} x2="160" y2={y} strokeOpacity="0.3" />
+                        <circle cx="35" cy={y} r="3" strokeOpacity="0.25" />
+                        <circle cx="165" cy={y} r="3" strokeOpacity="0.25" />
+                    </g>
+                ))}
+                {/* Outer network nodes */}
+                <circle cx="30" cy="50" r="5" strokeOpacity="0.2" />
+                <circle cx="170" cy="50" r="5" strokeOpacity="0.2" />
+                <circle cx="30" cy="190" r="5" strokeOpacity="0.2" />
+                <circle cx="170" cy="190" r="5" strokeOpacity="0.2" />
+                <line x1="33" y1="53" x2="77" y2="87" strokeOpacity="0.15" strokeDasharray="3 4" />
+                <line x1="167" y1="53" x2="123" y2="87" strokeOpacity="0.15" strokeDasharray="3 4" />
+                <line x1="33" y1="187" x2="77" y2="153" strokeOpacity="0.15" strokeDasharray="3 4" />
+                <line x1="167" y1="187" x2="123" y2="153" strokeOpacity="0.15" strokeDasharray="3 4" />
+            </g>
+        </svg>
+    );
+}
 
 export default function Offerings() {
     const offerings = [
@@ -27,18 +113,7 @@ export default function Offerings() {
     ];
 
     return (
-        <section className="py-32 bg-ravok-charcoal text-white px-6 relative z-10 rounded-t-3xl shadow-2xl overflow-hidden">
-            {/* Background Image Layer */}
-            <div className="absolute inset-0 z-0">
-                <img
-                    src="/images/bg_image.png"
-                    alt="Offerings Background"
-                    className="w-full h-full object-cover opacity-80 grayscale"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/85 to-black" />
-            </div>
-
-            <div className="absolute inset-0 bg-gradient-to-b from-black via-zinc-950/20 to-black pointer-events-none z-[1]" />
+        <section className="py-32 bg-ravok-charcoal/90 text-white px-6 relative z-10 rounded-t-3xl shadow-2xl overflow-hidden">
 
             <div className="container mx-auto relative z-10 pb-24">
                 <div className="text-center mb-24">
@@ -64,13 +139,9 @@ export default function Offerings() {
                     {offerings.map((offer, i) => (
                         <div key={`offering-${i}-${offer.title}`} className="relative isolate mb-12 lg:mb-0 w-full">
                             <FadeIn delay={0.2 + (i * 0.2)} className="relative group w-full">
-                                {/* Statue Image above the card */}
-                                <div className="h-56 lg:h-72 w-full mb-0 lg:mb-[-50px] relative z-[1] flex justify-center overflow-hidden">
-                                    <img
-                                        src={`/images/${i + 1}.png`}
-                                        alt={`${offer.title} sculpture`}
-                                        className="h-full w-auto max-w-full object-contain opacity-70 group-hover:blur-0 group-hover:opacity-100 transition-all duration-700 scale-100 group-hover:scale-105"
-                                    />
+                                {/* Wireframe icon above the card */}
+                                <div className="h-56 lg:h-72 w-full mb-0 lg:mb-[-50px] relative z-[1] flex justify-center items-center overflow-hidden">
+                                    <OfferingIcon index={i} />
                                 </div>
 
                                 <div className="border border-ravok-gold p-4 lg:p-5 bg-black/90 backdrop-blur-md relative z-[2] h-full flex flex-col items-center hover:bg-zinc-950 transition-colors duration-500 shadow-2xl shadow-black mt-8 lg:mt-0">

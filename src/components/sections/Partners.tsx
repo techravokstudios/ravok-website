@@ -36,16 +36,7 @@ export default function Partners() {
     ];
 
     return (
-        <section id="investors" className="relative py-32 bg-ravok-charcoal text-white overflow-hidden rounded-t-3xl shadow-2xl isolate">
-            {/* Background Image Layer */}
-            <div className="absolute inset-0 z-0">
-                <img
-                    src="/images/partners.png"
-                    alt="Partners Background"
-                    className="w-full h-full object-cover opacity-30 grayscale"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
-            </div>
+        <section id="investors" className="relative py-32 bg-ravok-charcoal/90 text-white overflow-hidden rounded-t-3xl shadow-2xl isolate">
 
             <div className="container mx-auto px-6 relative z-10">
                 <div className="text-center mb-20">

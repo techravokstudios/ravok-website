@@ -29,18 +29,10 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-ravok-charcoal text-white border-t border-white/10 font-sans rounded-t-3xl shadow-2xl relative">
+    <footer className="bg-ravok-charcoal/90 text-white border-t border-white/10 font-sans rounded-t-3xl shadow-2xl relative">
       {/* Main Split Layout */}
       <div className="flex flex-col lg:flex-row min-h-[400px] relative z-10">
-        {/* Background Image - Fixed Size */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <img
-            src="/images/footer.png"
-            alt="Partners Background"
-            className="absolute inset-0 w-full h-full object-cover opacity-30 grayscale"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
-        </div>
+        {/* Background — rendering stack shows through */}
         {/* Left Side - Logo */}
         <motion.div
           className="w-full lg:w-[35%] border-r border-white/10 flex items-center justify-center p-12 lg:p-0 relative z-10"

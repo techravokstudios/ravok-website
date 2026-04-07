@@ -76,9 +76,7 @@ export default function Hero() {
   const taglineOpacity = useTransform(scrollY, [0, 250], [1, 0], { clamp: true });
   const taglineY = useTransform(scrollY, [0, 250], [0, 25], { clamp: true });
 
-  const backgroundY = useTransform(scrollY, [0, 1200], ["0%", "25%"], { clamp: true });
-
-  // Columns drift slightly slower than background for layered depth
+  // Columns drift slightly slower for layered depth
   const columnY = useTransform(scrollY, [0, 1200], ["0%", "12%"], { clamp: true });
   const columnOpacity = useTransform(scrollY, [0, 400], [1, 0], { clamp: true });
 
@@ -87,21 +85,7 @@ export default function Hero() {
       ref={sectionRef}
       className="relative h-screen w-full flex flex-col items-center justify-center bg-ravok-charcoal overflow-hidden"
     >
-      {/* Background Image — Smooth Parallax */}
-      <motion.div
-        className="absolute inset-0 z-0 will-change-transform"
-        style={{ y: backgroundY, transform: "translateZ(0)" }}
-      >
-        <img
-          src="/images/bg_image.png"
-          alt=""
-          className="w-full h-full object-cover opacity-60"
-          style={{ willChange: "transform", transform: "translateZ(0)" }}
-        />
-        {/* Warm charcoal overlay — replaces pure-black gradients */}
-        <div className="absolute inset-0 bg-gradient-to-b from-ravok-charcoal/60 via-ravok-charcoal/10 to-ravok-charcoal" />
-        <div className="absolute inset-0 shadow-[inset_0_0_120px_60px_rgba(28, 27, 20,0.5)] pointer-events-none" />
-      </motion.div>
+      {/* Background — rendering stack shows through from layout */}
 
       {/* Architectural columns — left & right, blueprint style */}
       <motion.div
@@ -173,7 +157,7 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* Bottom gradient fade into next section */}
+      {/* Bottom fade into next section */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-ravok-charcoal to-transparent z-[3] pointer-events-none" />
     </section>
   );
