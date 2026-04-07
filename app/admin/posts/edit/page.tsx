@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { getStoredUser, getPost, getCategories, createCategory, updatePost, uploadPostImage, getPostImageUrl, type Category } from "@/lib/api";
 import { toast } from "@/lib/toast";
 import { ChevronLeft, Plus, X } from "lucide-react";
-import { RichTextEditor } from "@/components/RichTextEditor";
+import { RichTextEditor } from "@/modules/blog/components/RichTextEditor";
 
 export default function AdminPostsEditPage() {
   const router = useRouter();

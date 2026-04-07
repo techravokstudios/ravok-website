@@ -1,11 +1,5 @@
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import IntroSection from "@/components/IntroSection";
-import Philosophy from "@/components/Philosophy";
-import QuoteSection from "@/components/QuoteSection";
-import VentureModel from "@/components/VentureModel";
-import Offerings from "@/components/Offerings";
-import Partners from "@/components/Partners";
+import { Hero, IntroSection, Philosophy, QuoteSection, VentureModel, Offerings, Partners } from "@/modules/marketing/components";
 import Footer from "@/components/Footer";
 
 export default function Home() {
