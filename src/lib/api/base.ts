@@ -21,15 +21,6 @@ export function getApiBase(): string {
   }
   if (typeof window !== "undefined") {
     const origin = window.location.origin;
-    try {
-      const url = new URL(origin);
-      const host = url.hostname;
-      if (host.endsWith("ravokstudios.com")) {
-        return "";
-      }
-    } catch {
-      // ignore parse errors
-    }
     if (origin !== "http://localhost:3000" && origin !== "http://127.0.0.1:3000") {
       return origin;
     }
