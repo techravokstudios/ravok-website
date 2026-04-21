@@ -1,14 +1,20 @@
 name: Bootstrap branch protection
 
-# One-shot workflow: applies branch protection rules to `main`.
-# Trigger manually via Actions → "Bootstrap branch protection" → "Run workflow".
+# Applies / refreshes branch protection rules on `main`. Idempotent — safe to
+# re-run. Auto-triggers on push to main (if this file or the CI workflow
+# changes) and can also be triggered manually.
 #
-# If the built-in GITHUB_TOKEN has insufficient permissions, this will 403.
-# In that case: create a PAT with `repo` + `admin:repo` scope, add it as a
-# repo secret named `ADMIN_TOKEN`, and change the `token:` line below.
+# If GITHUB_TOKEN lacks admin:repo permission, this will 403. In that case:
+# create a PAT at github.com/settings/tokens with `repo` + `admin:repo` scope,
+# add it as a repo secret named `ADMIN_TOKEN`, then re-run the workflow.
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/bootstrap-branch-protection.yml'
+      - '.github/workflows/ci.yml'
 
 permissions:
   administration: write
