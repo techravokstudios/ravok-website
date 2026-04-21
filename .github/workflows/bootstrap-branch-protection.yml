@@ -1,0 +1,74 @@
+name: Bootstrap branch protection
+
+# One-shot workflow: applies branch protection rules to `main`.
+# Trigger manually via Actions → "Bootstrap branch protection" → "Run workflow".
+#
+# If the built-in GITHUB_TOKEN has insufficient permissions, this will 403.
+# In that case: create a PAT with `repo` + `admin:repo` scope, add it as a
+# repo secret named `ADMIN_TOKEN`, and change the `token:` line below.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  administration: write
+  contents: read
+
+jobs:
+  apply:
+    name: Apply protection to main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set branch protection on main
+        env:
+          GH_TOKEN: ${{ secrets.ADMIN_TOKEN || secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+        run: |
+          set -e
+          echo "Applying branch protection to ${OWNER}/${REPO}:main"
+
+          curl -sS -X PUT \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${OWNER}/${REPO}/branches/main/protection \
+            -d '{
+              "required_status_checks": {
+                "strict": true,
+                "contexts": [
+                  "Frontend (type check, lint, build)",
+                  "Backend (Pint, PHPUnit)"
+                ]
+              },
+              "enforce_admins": false,
+              "required_pull_request_reviews": {
+                "dismiss_stale_reviews": true,
+                "require_code_owner_reviews": false,
+                "required_approving_review_count": 0
+              },
+              "restrictions": null,
+              "allow_force_pushes": false,
+              "allow_deletions": false,
+              "required_linear_history": false,
+              "required_conversation_resolution": true
+            }' \
+            -w "\nHTTP %{http_code}\n" \
+            -o /tmp/response.json
+
+          echo "---Response---"
+          cat /tmp/response.json
+          echo "---"
+
+          # Fail if not 200
+          CODE=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${OWNER}/${REPO}/branches/main/protection)
+
+          if [ "$CODE" != "200" ]; then
+            echo "::error::Branch protection request did not succeed (HTTP $CODE). If 403, GITHUB_TOKEN lacks admin:repo. Create a PAT with admin:repo scope, add it as repo secret ADMIN_TOKEN, and re-run."
+            exit 1
+          fi
+
+          echo "Branch protection applied successfully."
