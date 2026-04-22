@@ -257,7 +257,7 @@ export default function PdfViewer({ fileUrl, authToken, documentId, watermark, o
       {/* Scrollable page area */}
       <div
         ref={scrollRef}
-        className={`flex-1 overflow-auto ${isMobile ? "" : "flex items-center justify-center"}`}
+        className="flex flex-1 items-center justify-center overflow-auto"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -279,7 +279,7 @@ export default function PdfViewer({ fileUrl, authToken, documentId, watermark, o
                 Loading document…
               </div>
             }
-            className={`select-none ${isMobile ? "" : "flex items-center justify-center"}`}
+            className="flex select-none items-center justify-center"
           >
             <div className={`transition-all duration-150 ease-in-out ${animClass} ${isMobile ? "" : "shadow-[0_8px_40px_rgba(0,0,0,0.6)]"}`}>
               <Page
