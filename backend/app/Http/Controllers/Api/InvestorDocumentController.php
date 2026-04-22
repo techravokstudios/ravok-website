@@ -10,9 +10,14 @@ use Illuminate\Support\Str;
 
 class InvestorDocumentController extends Controller
 {
+    private function diskName(): string
+    {
+        return config('filesystems.default') === 's3' ? 's3' : 'public';
+    }
+
     private function disk(): \Illuminate\Contracts\Filesystem\Filesystem
     {
-        return Storage::disk(config('filesystems.default') === 's3' ? 's3' : 'public');
+        return Storage::disk($this->diskName());
     }
 
     public function index(Request $request)
@@ -76,7 +81,7 @@ class InvestorDocumentController extends Controller
         $saved = [];
         $groupKey = (string) Str::uuid();
         foreach ($request->file('files') as $file) {
-            $path = $file->store('investor-docs', $this->disk() === Storage::disk('s3') ? 's3' : 'public');
+            $path = $file->store('investor-docs', $this->diskName());
             $doc = InvestorDocument::create([
                 'document_category_id' => $request->integer('document_category_id'),
                 'name' => (string) $request->string('name'),
