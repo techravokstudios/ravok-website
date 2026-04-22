@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\UploadController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\DocumentCategoryController;
+use App\Http\Controllers\Api\DocumentAnalyticsController;
 use App\Http\Controllers\Api\DocumentViewController;
 use App\Http\Controllers\Api\InvestorDocumentController;
 use App\Http\Controllers\Api\FormSubmissionController;
@@ -83,6 +84,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/documents', [InvestorDocumentController::class, 'store']); // multiple upload
         Route::put('/documents/{document}', [InvestorDocumentController::class, 'update']);
         Route::delete('/documents/{document}', [InvestorDocumentController::class, 'destroy']);
+
+        // Document analytics
+        Route::get('/analytics/documents', [DocumentAnalyticsController::class, 'index']);
+        Route::get('/analytics/documents/{document}', [DocumentAnalyticsController::class, 'show']);
+        Route::get('/analytics/views/{sessionToken}', [DocumentAnalyticsController::class, 'viewDetail']);
 
         // Form submissions
         Route::get('/forms', [FormSubmissionController::class, 'index']);

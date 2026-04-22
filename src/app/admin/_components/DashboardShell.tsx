@@ -17,6 +17,7 @@ import {
   Settings,
   FolderOpen,
   Upload,
+  BarChart3,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -62,7 +63,7 @@ export function DashboardShell({
       setCategoriesOpen(true);
     } else if (pathname.startsWith("/admin/posts")) setPostsOpen(true);
     else if (pathname.startsWith("/admin/settings")) setSettingsOpen(true);
-    else if (pathname.startsWith("/admin/documents")) setDocsOpen(true);
+    else if (pathname.startsWith("/admin/documents") || pathname.startsWith("/admin/analytics")) setDocsOpen(true);
     else if (pathname.startsWith("/admin/forms")) setFormsOpen(true);
   }, [pathname]);
 
@@ -234,7 +235,7 @@ export function DashboardShell({
                     aria-controls="sidebar-docs"
                     className={cn(
                       "flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 font-sans text-sm transition-colors",
-                      pathname.startsWith("/admin/documents")
+                      pathname.startsWith("/admin/documents") || pathname.startsWith("/admin/analytics")
                         ? "bg-ravok-gold/10 text-ravok-gold border border-ravok-gold/20"
                         : "text-white/80 hover:bg-white/10 hover:text-white"
                     )}
@@ -249,6 +250,7 @@ export function DashboardShell({
                     <div id="sidebar-docs" className="ml-4 mt-1 flex flex-col gap-0.5 border-l border-white/10 pl-3">
                       <Link href="/admin/documents/categories" className={cn("rounded px-2 py-1.5 text-sm font-sans", pathname === "/admin/documents/categories" ? "text-ravok-gold" : "text-white/70 hover:text-white")}>Document Categories</Link>
                       <Link href="/admin/documents/uploads" className={cn("rounded px-2 py-1.5 text-sm font-sans", pathname === "/admin/documents/uploads" ? "text-ravok-gold" : "text-white/70 hover:text-white")}>Upload Documents</Link>
+                      <Link href="/admin/analytics" className={cn("flex items-center gap-1.5 rounded px-2 py-1.5 text-sm font-sans", pathname.startsWith("/admin/analytics") ? "text-ravok-gold" : "text-white/70 hover:text-white")}><BarChart3 className="h-3.5 w-3.5" />Analytics</Link>
                     </div>
                   )}
                 </div>
