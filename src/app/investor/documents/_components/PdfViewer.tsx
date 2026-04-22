@@ -114,8 +114,8 @@ export default function PdfViewer({ fileUrl, authToken, documentId, watermark, o
   const toggleFullscreen = useCallback(() => {
     if (!containerRef.current) return;
     if (document.fullscreenElement) {
-      document.exitFullscreen().catch(() => {});
-    } else {
+      document.exitFullscreen?.().catch(() => {});
+    } else if (containerRef.current.requestFullscreen) {
       containerRef.current.requestFullscreen().catch(() => {});
     }
   }, []);
@@ -128,7 +128,7 @@ export default function PdfViewer({ fileUrl, authToken, documentId, watermark, o
 
   // Auto-fullscreen on mobile after load
   useEffect(() => {
-    if (isMobile && numPages && numPages > 0 && containerRef.current && !document.fullscreenElement) {
+    if (isMobile && numPages && numPages > 0 && containerRef.current?.requestFullscreen && !document.fullscreenElement) {
       containerRef.current.requestFullscreen().catch(() => {});
     }
   }, [isMobile, numPages]);
@@ -281,17 +281,10 @@ export default function PdfViewer({ fileUrl, authToken, documentId, watermark, o
             }
             className={`select-none ${isMobile ? "" : "flex items-center justify-center"}`}
           >
-            <div
-              className={`transition-all duration-150 ease-in-out ${animClass} ${isMobile ? "" : "shadow-[0_8px_40px_rgba(0,0,0,0.6)]"}`}
-              style={{
-                transform: scale > 1 ? `scale(${scale})` : undefined,
-                transformOrigin: "center top",
-                transition: animDir ? "transform 150ms ease-in-out, opacity 150ms ease-in-out" : undefined,
-              }}
-            >
+            <div className={`transition-all duration-150 ease-in-out ${animClass} ${isMobile ? "" : "shadow-[0_8px_40px_rgba(0,0,0,0.6)]"}`}>
               <Page
                 pageNumber={pageNumber}
-                width={pageWidth}
+                width={pageWidth ? pageWidth * scale : undefined}
                 renderAnnotationLayer={false}
                 renderTextLayer={false}
               />
