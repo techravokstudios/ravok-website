@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   getInvestorDocument,
-  getDocumentFileUrl,
+  investorDocumentFileUrl,
   storageUrl,
   getStoredUser,
   getToken,
@@ -24,7 +24,6 @@ export default function DocumentViewerPage() {
   const [authChecked, setAuthChecked] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [doc, setDoc] = useState<InvestorDocument | null>(null);
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -65,9 +64,6 @@ export default function DocumentViewerPage() {
 
         const d = await getInvestorDocument(id);
         setDoc(d);
-
-        const url = await getDocumentFileUrl(id);
-        setFileUrl(url);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to load document.");
       } finally {
@@ -78,10 +74,10 @@ export default function DocumentViewerPage() {
   }, [id, router]);
 
   const token = getToken();
+  const fileUrl = Number.isFinite(id) && id > 0 ? investorDocumentFileUrl(id) : "";
   const mime = doc?.mime_type ?? "";
   const isPdf = mime === "application/pdf";
   const isImage = mime.startsWith("image/");
-  const isPresigned = fileUrl ? fileUrl.includes("?") || fileUrl.includes("X-Amz") : false;
   const watermark = user?.email ? `${user.email} · viewed ${new Date().toLocaleDateString()}` : null;
 
   return (
@@ -123,8 +119,8 @@ export default function DocumentViewerPage() {
             <div className="mt-3 h-0.5 w-12 bg-ravok-gold" />
           </div>
 
-          {isPdf && fileUrl ? (
-            <PdfViewer fileUrl={fileUrl} authToken={isPresigned ? null : token} watermark={watermark} />
+          {isPdf ? (
+            <PdfViewer fileUrl={fileUrl} authToken={token} watermark={watermark} />
           ) : isImage ? (
             <div className="flex justify-center py-6" onContextMenu={(e) => e.preventDefault()}>
               {/* eslint-disable-next-line @next/next/no-img-element */}

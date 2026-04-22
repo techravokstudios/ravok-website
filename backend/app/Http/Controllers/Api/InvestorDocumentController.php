@@ -5,19 +5,47 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\InvestorDocument;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class InvestorDocumentController extends Controller
 {
-    private function diskName(): string
+    private function useR2(): bool
     {
-        return config('filesystems.default') === 's3' ? 's3' : 'public';
+        return ! empty(config('services.r2.token'));
     }
 
-    private function disk(): \Illuminate\Contracts\Filesystem\Filesystem
+    private function r2Url(string $key): string
     {
-        return Storage::disk($this->diskName());
+        $account = config('services.r2.account_id');
+        $bucket = config('services.r2.bucket');
+
+        return "https://api.cloudflare.com/client/v4/accounts/{$account}/r2/buckets/{$bucket}/objects/{$key}";
+    }
+
+    private function r2Put(string $key, string $content, string $contentType): bool
+    {
+        $response = Http::withToken(config('services.r2.token'))
+            ->withHeaders(['Content-Type' => $contentType])
+            ->withBody($content, $contentType)
+            ->put($this->r2Url($key));
+
+        return $response->successful();
+    }
+
+    private function r2Get(string $key): ?string
+    {
+        $response = Http::withToken(config('services.r2.token'))
+            ->get($this->r2Url($key));
+
+        return $response->successful() ? $response->body() : null;
+    }
+
+    private function r2Delete(string $key): void
+    {
+        Http::withToken(config('services.r2.token'))
+            ->delete($this->r2Url($key));
     }
 
     public function index(Request $request)
@@ -39,26 +67,35 @@ class InvestorDocumentController extends Controller
 
     public function streamFile(InvestorDocument $document)
     {
-        if (! $document->file_path || ! $this->disk()->exists($document->file_path)) {
+        if (! $document->file_path) {
             abort(404);
         }
 
-        $disk = $this->disk();
+        if ($this->useR2()) {
+            $body = $this->r2Get($document->file_path);
+            if (! $body) {
+                abort(404);
+            }
 
-        if (config('filesystems.default') === 's3') {
-            $url = $disk->temporaryUrl($document->file_path, now()->addMinutes(15));
-
-            return response()->json(['url' => $url]);
+            return response($body, 200, [
+                'Content-Type' => $document->mime_type ?? 'application/octet-stream',
+                'Content-Disposition' => 'inline; filename="'.($document->original_name ?? $document->name).'"',
+                'Cache-Control' => 'private, no-store, no-cache, must-revalidate, max-age=0',
+                'X-Content-Type-Options' => 'nosniff',
+            ]);
         }
 
-        return $disk->response(
+        if (! Storage::disk('public')->exists($document->file_path)) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->response(
             $document->file_path,
             $document->original_name ?? $document->name,
             [
                 'Content-Type' => $document->mime_type ?? 'application/octet-stream',
                 'Content-Disposition' => 'inline; filename="'.($document->original_name ?? $document->name).'"',
                 'Cache-Control' => 'private, no-store, no-cache, must-revalidate, max-age=0',
-                'Pragma' => 'no-cache',
                 'X-Content-Type-Options' => 'nosniff',
             ]
         );
@@ -81,7 +118,19 @@ class InvestorDocumentController extends Controller
         $saved = [];
         $groupKey = (string) Str::uuid();
         foreach ($request->file('files') as $file) {
-            $path = $file->store('investor-docs', $this->diskName());
+            $key = 'investor-docs/'.Str::random(40).'.'.$file->getClientOriginalExtension();
+
+            if ($this->useR2()) {
+                $ok = $this->r2Put($key, $file->getContent(), $file->getMimeType());
+                $path = $ok ? $key : false;
+            } else {
+                $path = $file->store('investor-docs', 'public');
+            }
+
+            if (! $path) {
+                continue;
+            }
+
             $doc = InvestorDocument::create([
                 'document_category_id' => $request->integer('document_category_id'),
                 'name' => (string) $request->string('name'),
@@ -114,7 +163,11 @@ class InvestorDocumentController extends Controller
     public function destroy(InvestorDocument $document)
     {
         if ($document->file_path) {
-            $this->disk()->delete($document->file_path);
+            if ($this->useR2()) {
+                $this->r2Delete($document->file_path);
+            } else {
+                Storage::disk('public')->delete($document->file_path);
+            }
         }
         $document->delete();
 

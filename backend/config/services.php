@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'r2' => [
+        'token' => env('R2_API_TOKEN'),
+        'account_id' => env('R2_ACCOUNT_ID'),
+        'bucket' => env('R2_BUCKET', 'ravok-investor-docs'),
+    ],
+
 ];
