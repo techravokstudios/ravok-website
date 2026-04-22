@@ -30,6 +30,10 @@ export type { DocumentCategory, InvestorDocument, InvestorDocumentsResponse } fr
 export { getPostImageUrl, getCategories, getCategory, createCategory, updateCategory, deleteCategory, getPosts, getPost, uploadPostImage, createPost, updatePost, deletePost, getPublicCategories, getPublicFeaturedPosts, getPublicPosts, getPublicPostBySlug, getPublicPostComments, createPublicPostComment } from './api/v1/posts';
 export type { Category, CategoryListResponse, CategoryWithCount, Post, PostListResponse, PostComment } from './api/v1/posts';
 
+// Document Views (tracking)
+export { startViewSession, logPageEvents, endViewSession } from './api/v1/document-views';
+export type { ViewSession, PageEvent } from './api/v1/document-views';
+
 // Forms
 export { submitPublicForm, listFormSubmissions, exportFormSubmissionsCsvUrl, getFormSubmission, deleteFormSubmission } from './api/v1/forms';
 export type { FormType, FormSubmission, FormSubmissionList } from './api/v1/forms';
