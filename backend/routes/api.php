@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\UploadController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\DocumentCategoryController;
+use App\Http\Controllers\Api\DocumentViewController;
 use App\Http\Controllers\Api\InvestorDocumentController;
 use App\Http\Controllers\Api\FormSubmissionController;
 use Illuminate\Support\Facades\Route;
@@ -52,6 +53,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/documents/{document}/file', [InvestorDocumentController::class, 'streamFile']);
         // Document categories (view only)
         Route::get('/document-categories', [DocumentCategoryController::class, 'index']);
+        // Document view tracking
+        Route::post('/documents/{document}/views', [DocumentViewController::class, 'startSession']);
+        Route::post('/document-views/{sessionToken}/pages', [DocumentViewController::class, 'logPages']);
+        Route::post('/document-views/{sessionToken}/end', [DocumentViewController::class, 'endSession']);
     });
 
     // Admin only

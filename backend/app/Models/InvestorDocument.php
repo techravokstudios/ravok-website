@@ -30,4 +30,9 @@ class InvestorDocument extends Model
     {
         return $this->belongsTo(User::class, 'uploaded_by');
     }
+
+    public function views()
+    {
+        return $this->hasMany(DocumentView::class, 'investor_document_id');
+    }
 }

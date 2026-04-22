@@ -14,7 +14,7 @@ import {
   type InvestorDocument,
   type User,
 } from "@/lib/api";
-import PdfViewer from "../_components/PdfViewer";
+import ReflowableViewer from "../_components/ReflowableViewer";
 
 export default function DocumentViewerPage() {
   const params = useParams<{ id: string }>();
@@ -120,7 +120,7 @@ export default function DocumentViewerPage() {
           </div>
 
           {isPdf ? (
-            <PdfViewer fileUrl={fileUrl} authToken={token} watermark={watermark} />
+            <ReflowableViewer fileUrl={fileUrl} authToken={token} documentId={id} watermark={watermark} />
           ) : isImage ? (
             <div className="flex justify-center py-6" onContextMenu={(e) => e.preventDefault()}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
