@@ -35,4 +35,9 @@ class InvestorDocument extends Model
     {
         return $this->hasMany(DocumentView::class, 'investor_document_id');
     }
+
+    public function dataRooms()
+    {
+        return $this->belongsToMany(DataRoom::class, 'data_room_documents');
+    }
 }

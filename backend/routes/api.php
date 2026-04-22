@@ -13,6 +13,10 @@ use App\Http\Controllers\Api\DocumentCategoryController;
 use App\Http\Controllers\Api\DocumentAnalyticsController;
 use App\Http\Controllers\Api\DocumentViewController;
 use App\Http\Controllers\Api\InvestorDocumentController;
+use App\Http\Controllers\Api\DataRoomController;
+use App\Http\Controllers\Api\DataRoomAnalyticsController;
+use App\Http\Controllers\Api\PublicRoomController;
+use App\Http\Controllers\Api\PublicRoomViewController;
 use App\Http\Controllers\Api\FormSubmissionController;
 use Illuminate\Support\Facades\Route;
 
@@ -90,6 +94,22 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/analytics/documents/{document}', [DocumentAnalyticsController::class, 'show']);
         Route::get('/analytics/views/{sessionToken}', [DocumentAnalyticsController::class, 'viewDetail']);
 
+        // Data rooms (admin CRUD)
+        Route::get('/rooms', [DataRoomController::class, 'index']);
+        Route::post('/rooms', [DataRoomController::class, 'store']);
+        Route::get('/rooms/{room}', [DataRoomController::class, 'show']);
+        Route::put('/rooms/{room}', [DataRoomController::class, 'update']);
+        Route::delete('/rooms/{room}', [DataRoomController::class, 'destroy']);
+        Route::post('/rooms/{room}/documents', [DataRoomController::class, 'addDocuments']);
+        Route::delete('/rooms/{room}/documents/{document}', [DataRoomController::class, 'removeDocument']);
+        Route::put('/rooms/{room}/documents/reorder', [DataRoomController::class, 'reorderDocuments']);
+
+        // Room analytics (admin)
+        Route::get('/analytics/rooms', [DataRoomAnalyticsController::class, 'index']);
+        Route::get('/analytics/rooms/{room}', [DataRoomAnalyticsController::class, 'show']);
+        Route::get('/analytics/rooms/{room}/visitors', [DataRoomAnalyticsController::class, 'visitors']);
+        Route::get('/analytics/rooms/{room}/visitors/{visitor}', [DataRoomAnalyticsController::class, 'visitorDetail']);
+
         // Form submissions
         Route::get('/forms', [FormSubmissionController::class, 'index']);
         Route::get('/forms/{submission}', [FormSubmissionController::class, 'show']);
@@ -97,4 +117,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/forms/{submission}', [FormSubmissionController::class, 'destroy']);
         Route::post('/settings/email/test', [SettingsController::class, 'testMail']);
     });
+});
+
+// Public data room endpoints (no auth)
+Route::get('/public/rooms/{slug}', [PublicRoomController::class, 'show']);
+Route::post('/public/rooms/{slug}/enter', [PublicRoomController::class, 'enter']);
+
+Route::middleware(\App\Http\Middleware\ResolveRoomVisitor::class)->group(function () {
+    Route::get('/public/rooms/{slug}/documents', [PublicRoomController::class, 'documents']);
+    Route::get('/public/rooms/{slug}/documents/{document}/file', [PublicRoomController::class, 'streamFile']);
+    Route::post('/public/rooms/{slug}/documents/{document}/views', [PublicRoomViewController::class, 'startSession']);
+    Route::post('/public/room-views/{sessionToken}/pages', [PublicRoomViewController::class, 'logPages']);
+    Route::post('/public/room-views/{sessionToken}/end', [PublicRoomViewController::class, 'endSession']);
 });

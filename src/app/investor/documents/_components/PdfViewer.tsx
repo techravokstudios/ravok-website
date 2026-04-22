@@ -13,10 +13,12 @@ type PdfViewerProps = {
   authToken: string | null;
   documentId: number;
   watermark?: string | null;
+  customHeaders?: Record<string, string>;
   onLoad?: (numPages: number) => void;
+  onPageChange?: (page: number) => void;
 };
 
-export default function PdfViewer({ fileUrl, authToken, documentId, watermark, onLoad }: PdfViewerProps) {
+export default function PdfViewer({ fileUrl, authToken, documentId, watermark, customHeaders, onLoad, onPageChange }: PdfViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const touchStartX = useRef(0);
@@ -41,16 +43,20 @@ export default function PdfViewer({ fileUrl, authToken, documentId, watermark, o
   useEffect(() => {
     if (numPages && numPages > 0) {
       trackPageChange(pageNumber);
+      onPageChange?.(pageNumber);
     }
-  }, [pageNumber, numPages, trackPageChange]);
+  }, [pageNumber, numPages, trackPageChange, onPageChange]);
 
   const fileProp = useMemo(
     () => ({
       url: fileUrl,
-      httpHeaders: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+      httpHeaders: {
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+        ...(customHeaders ?? {}),
+      },
       withCredentials: false,
     }),
-    [fileUrl, authToken]
+    [fileUrl, authToken, customHeaders]
   );
 
   const goNext = useCallback(() => {

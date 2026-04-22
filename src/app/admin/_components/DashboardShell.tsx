@@ -255,6 +255,22 @@ export function DashboardShell({
                   )}
                 </div>
 
+                {/* Data Rooms */}
+                <div className="mt-1">
+                  <Link
+                    href="/admin/rooms"
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 font-sans text-sm transition-colors",
+                      pathname.startsWith("/admin/rooms")
+                        ? "bg-ravok-gold/10 text-ravok-gold border border-ravok-gold/20"
+                        : "text-white/80 hover:bg-white/10 hover:text-white"
+                    )}
+                  >
+                    <FolderOpen className="h-4 w-4 shrink-0" />
+                    Data Rooms
+                  </Link>
+                </div>
+
                 {/* Forms */}
                 <div className="mt-1">
                   <Link
