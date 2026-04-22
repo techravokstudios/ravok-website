@@ -4,17 +4,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import { useDocumentTracking } from "./useDocumentTracking";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 type PdfViewerProps = {
   fileUrl: string;
   authToken: string | null;
+  documentId: number;
   watermark?: string | null;
   onLoad?: (numPages: number) => void;
 };
 
-export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: PdfViewerProps) {
+export default function PdfViewer({ fileUrl, authToken, documentId, watermark, onLoad }: PdfViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const touchStartX = useRef(0);
@@ -25,6 +27,22 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
   const [isMobile, setIsMobile] = useState(false);
   const [animDir, setAnimDir] = useState<"left" | "right" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Pinch-to-zoom state
+  const [scale, setScale] = useState(1);
+  const pinchStartDist = useRef(0);
+  const pinchStartScale = useRef(1);
+  const lastTapTime = useRef(0);
+
+  const { trackPageChange } = useDocumentTracking(documentId, numPages ?? 0);
+
+  // Track page changes
+  useEffect(() => {
+    if (numPages && numPages > 0) {
+      trackPageChange(pageNumber);
+    }
+  }, [pageNumber, numPages, trackPageChange]);
 
   const fileProp = useMemo(
     () => ({
@@ -40,6 +58,7 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
     setAnimDir("left");
     setTimeout(() => {
       setPageNumber((p) => p + 1);
+      setScale(1);
       setAnimDir(null);
       scrollRef.current?.scrollTo({ top: 0 });
     }, 150);
@@ -50,11 +69,13 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
     setAnimDir("right");
     setTimeout(() => {
       setPageNumber((p) => p - 1);
+      setScale(1);
       setAnimDir(null);
       scrollRef.current?.scrollTo({ top: 0 });
     }, 150);
   }, [pageNumber]);
 
+  // Viewport measurement
   useEffect(() => {
     const measure = () => {
       const vw = window.innerWidth;
@@ -72,6 +93,7 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
     return () => window.removeEventListener("resize", measure);
   }, []);
 
+  // Keyboard navigation
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "ArrowRight" || e.key === "PageDown") {
@@ -80,27 +102,94 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
       } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
         e.preventDefault();
         goPrev();
+      } else if (e.key === "Escape" && scale > 1) {
+        setScale(1);
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [goNext, goPrev]);
+  }, [goNext, goPrev, scale]);
 
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
+  // Fullscreen API
+  const toggleFullscreen = useCallback(() => {
+    if (!containerRef.current) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    } else {
+      containerRef.current.requestFullscreen().catch(() => {});
+    }
   }, []);
+
+  useEffect(() => {
+    const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onFsChange);
+    return () => document.removeEventListener("fullscreenchange", onFsChange);
+  }, []);
+
+  // Auto-fullscreen on mobile after load
+  useEffect(() => {
+    if (isMobile && numPages && numPages > 0 && containerRef.current && !document.fullscreenElement) {
+      containerRef.current.requestFullscreen().catch(() => {});
+    }
+  }, [isMobile, numPages]);
+
+  // Swipe navigation (single-finger, only when not zoomed)
+  const onTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (e.touches.length === 1 && scale <= 1) {
+        touchStartX.current = e.touches[0].clientX;
+        touchStartY.current = e.touches[0].clientY;
+      }
+      // Pinch start (two fingers)
+      if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        pinchStartDist.current = Math.sqrt(dx * dx + dy * dy);
+        pinchStartScale.current = scale;
+      }
+    },
+    [scale]
+  );
+
+  const onTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (pinchStartDist.current > 0) {
+          const newScale = Math.min(3, Math.max(1, pinchStartScale.current * (dist / pinchStartDist.current)));
+          setScale(newScale);
+        }
+      }
+    },
+    []
+  );
 
   const onTouchEnd = useCallback(
     (e: React.TouchEvent) => {
-      const dx = e.changedTouches[0].clientX - touchStartX.current;
-      const dy = e.changedTouches[0].clientY - touchStartY.current;
-      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-        if (dx < 0) goNext();
-        else goPrev();
+      pinchStartDist.current = 0;
+
+      // Single-finger swipe (only when not zoomed)
+      if (e.changedTouches.length === 1 && scale <= 1) {
+        const dx = e.changedTouches[0].clientX - touchStartX.current;
+        const dy = e.changedTouches[0].clientY - touchStartY.current;
+        if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+          if (dx < 0) goNext();
+          else goPrev();
+        }
+      }
+
+      // Double-tap to toggle zoom
+      if (e.changedTouches.length === 1) {
+        const now = Date.now();
+        if (now - lastTapTime.current < 300) {
+          setScale((s) => (s > 1 ? 1 : 2));
+        }
+        lastTapTime.current = now;
       }
     },
-    [goNext, goPrev]
+    [goNext, goPrev, scale]
   );
 
   const animClass =
@@ -126,7 +215,10 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
       <div className="flex h-11 shrink-0 items-center justify-between border-b border-white/10 bg-black/95 px-4 backdrop-blur-sm">
         <button
           type="button"
-          onClick={() => window.history.back()}
+          onClick={() => {
+            if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+            window.history.back();
+          }}
           className="font-sans text-xs uppercase tracking-[0.2em] text-ravok-slate hover:text-ravok-gold"
         >
           ← Back
@@ -152,14 +244,22 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
             ▸
           </button>
         </div>
-        <div className="w-14" />
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          className="font-sans text-xs text-ravok-slate hover:text-ravok-gold"
+          title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+        >
+          {isFullscreen ? "⊡" : "⊞"}
+        </button>
       </div>
 
-      {/* Scrollable page area — scroll vertically within a page on mobile */}
+      {/* Scrollable page area */}
       <div
         ref={scrollRef}
-        className={`flex-1 overflow-y-auto overflow-x-hidden ${isMobile ? "" : "flex items-center justify-center"}`}
+        className={`flex-1 overflow-auto ${isMobile ? "" : "flex items-center justify-center"}`}
         onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
         {error ? (
@@ -181,7 +281,14 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
             }
             className={`select-none ${isMobile ? "" : "flex items-center justify-center"}`}
           >
-            <div className={`transition-all duration-150 ease-in-out ${animClass} ${isMobile ? "" : "shadow-[0_8px_40px_rgba(0,0,0,0.6)]"}`}>
+            <div
+              className={`transition-all duration-150 ease-in-out ${animClass} ${isMobile ? "" : "shadow-[0_8px_40px_rgba(0,0,0,0.6)]"}`}
+              style={{
+                transform: scale > 1 ? `scale(${scale})` : undefined,
+                transformOrigin: "center top",
+                transition: animDir ? "transform 150ms ease-in-out, opacity 150ms ease-in-out" : undefined,
+              }}
+            >
               <Page
                 pageNumber={pageNumber}
                 width={pageWidth}
@@ -192,6 +299,17 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
           </Document>
         )}
       </div>
+
+      {/* Zoom indicator */}
+      {scale > 1 && (
+        <button
+          type="button"
+          onClick={() => setScale(1)}
+          className="absolute bottom-14 left-1/2 z-30 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 font-sans text-[10px] uppercase tracking-[0.2em] text-white/60 backdrop-blur-sm hover:bg-white/20"
+        >
+          {Math.round(scale * 100)}% · tap to reset
+        </button>
+      )}
 
       {/* Tap zones — only on desktop (mobile uses swipe + scroll) */}
       {!isMobile && (

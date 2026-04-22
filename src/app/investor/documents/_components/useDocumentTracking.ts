@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { startViewSession, logPageEvents, endViewSession, type PageEvent } from "@/lib/api/v1/document-views";
 import { getApiBase, getAuthHeaders } from "@/lib/api/base";
 
@@ -8,9 +8,6 @@ export function useDocumentTracking(documentId: number, numPages: number) {
   const sessionToken = useRef<string | null>(null);
   const pendingEvents = useRef<PageEvent[]>([]);
   const pageEnteredAt = useRef<Map<number, number>>(new Map());
-  const [currentPage, setCurrentPage] = useState(1);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const pageElements = useRef<Map<number, Element>>(new Map());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -98,56 +95,19 @@ export function useDocumentTracking(documentId: number, numPages: number) {
     sessionToken.current = null;
   }, []);
 
-  const observePage = useCallback(
-    (pageNumber: number, element: HTMLDivElement | null) => {
-      if (!element) {
-        pageElements.current.delete(pageNumber);
-        return;
-      }
-      pageElements.current.set(pageNumber, element);
+  const trackPageChange = useCallback((newPage: number) => {
+    const now = Date.now();
+    pageEnteredAt.current.forEach((enteredAt, page) => {
+      pendingEvents.current.push({
+        page_number: page,
+        entered_at: enteredAt,
+        exited_at: now,
+        duration_ms: now - enteredAt,
+      });
+    });
+    pageEnteredAt.current.clear();
+    pageEnteredAt.current.set(newPage, now);
+  }, []);
 
-      if (!observerRef.current) {
-        observerRef.current = new IntersectionObserver(
-          (entries) => {
-            let bestPage = 0;
-            let bestRatio = 0;
-
-            for (const entry of entries) {
-              const page = Number(entry.target.getAttribute("data-page"));
-              if (!page) continue;
-
-              if (entry.intersectionRatio > 0.25 && !pageEnteredAt.current.has(page)) {
-                pageEnteredAt.current.set(page, Date.now());
-              }
-
-              if (entry.intersectionRatio < 0.1 && pageEnteredAt.current.has(page)) {
-                const enteredAt = pageEnteredAt.current.get(page)!;
-                const now = Date.now();
-                pendingEvents.current.push({
-                  page_number: page,
-                  entered_at: enteredAt,
-                  exited_at: now,
-                  duration_ms: now - enteredAt,
-                });
-                pageEnteredAt.current.delete(page);
-              }
-
-              if (entry.intersectionRatio > bestRatio) {
-                bestRatio = entry.intersectionRatio;
-                bestPage = page;
-              }
-            }
-
-            if (bestPage > 0) setCurrentPage(bestPage);
-          },
-          { threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] }
-        );
-      }
-
-      observerRef.current.observe(element);
-    },
-    []
-  );
-
-  return { currentPage, observePage };
+  return { trackPageChange };
 }
