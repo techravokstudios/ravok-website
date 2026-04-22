@@ -61,7 +61,7 @@ jobs:
           restore-keys: composer-
 
       - name: Install composer dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
       - name: Prepare test env
         run: |
