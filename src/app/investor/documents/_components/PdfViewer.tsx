@@ -16,11 +16,13 @@ type PdfViewerProps = {
 
 export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: PdfViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageWidth, setPageWidth] = useState<number | undefined>(undefined);
-  const [pageHeight, setPageHeight] = useState<number | undefined>(undefined);
+  const [isMobile, setIsMobile] = useState(false);
   const [animDir, setAnimDir] = useState<"left" | "right" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,6 +41,7 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
     setTimeout(() => {
       setPageNumber((p) => p + 1);
       setAnimDir(null);
+      scrollRef.current?.scrollTo({ top: 0 });
     }, 150);
   }, [numPages, pageNumber]);
 
@@ -48,24 +51,21 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
     setTimeout(() => {
       setPageNumber((p) => p - 1);
       setAnimDir(null);
+      scrollRef.current?.scrollTo({ top: 0 });
     }, 150);
   }, [pageNumber]);
 
   useEffect(() => {
     const measure = () => {
       const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const toolbarH = 48;
-      const availH = vh - toolbarH - 24;
-      const pdfRatio = 1 / 1.29;
-      let w = Math.min(vw - 32, 1100);
-      let h = w / pdfRatio;
-      if (h > availH) {
-        h = availH;
-        w = h * pdfRatio;
+      const mobile = vw < 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setPageWidth(vw);
+      } else {
+        const maxW = Math.min(vw - 80, 1000);
+        setPageWidth(maxW > 0 ? maxW : undefined);
       }
-      setPageWidth(Math.floor(w));
-      setPageHeight(Math.floor(h));
     };
     measure();
     window.addEventListener("resize", measure);
@@ -74,7 +74,7 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+      if (e.key === "ArrowRight" || e.key === "PageDown") {
         e.preventDefault();
         goNext();
       } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
@@ -88,12 +88,14 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
 
   const onTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
   }, []);
 
   const onTouchEnd = useCallback(
     (e: React.TouchEvent) => {
       const dx = e.changedTouches[0].clientX - touchStartX.current;
-      if (Math.abs(dx) > 50) {
+      const dy = e.changedTouches[0].clientY - touchStartY.current;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
         if (dx < 0) goNext();
         else goPrev();
       }
@@ -113,8 +115,6 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
       ref={containerRef}
       className="fixed inset-0 z-50 flex flex-col bg-black"
       onContextMenu={(e) => e.preventDefault()}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
     >
       <style jsx global>{`
         @media print {
@@ -123,7 +123,7 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
       `}</style>
 
       {/* Top bar */}
-      <div className="flex h-12 shrink-0 items-center justify-between px-4">
+      <div className="flex h-11 shrink-0 items-center justify-between border-b border-white/10 bg-black/95 px-4 backdrop-blur-sm">
         <button
           type="button"
           onClick={() => window.history.back()}
@@ -134,7 +134,7 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
         <div className="flex items-center gap-3 font-sans text-xs text-white/70">
           <button
             type="button"
-            className="px-1 hover:text-ravok-gold disabled:opacity-30"
+            className="px-2 py-1 hover:text-ravok-gold disabled:opacity-30"
             onClick={goPrev}
             disabled={pageNumber <= 1}
           >
@@ -145,20 +145,25 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
           </span>
           <button
             type="button"
-            className="px-1 hover:text-ravok-gold disabled:opacity-30"
+            className="px-2 py-1 hover:text-ravok-gold disabled:opacity-30"
             onClick={goNext}
             disabled={!numPages || pageNumber >= numPages}
           >
             ▸
           </button>
         </div>
-        <div className="w-16" />
+        <div className="w-14" />
       </div>
 
-      {/* Page area */}
-      <div className="flex flex-1 items-center justify-center overflow-hidden">
+      {/* Scrollable page area — scroll vertically within a page on mobile */}
+      <div
+        ref={scrollRef}
+        className={`flex-1 overflow-y-auto overflow-x-hidden ${isMobile ? "" : "flex items-center justify-center"}`}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         {error ? (
-          <div className="rounded border border-red-500/30 bg-red-500/10 p-4 font-sans text-sm text-red-300">
+          <div className="m-4 rounded border border-red-500/30 bg-red-500/10 p-4 font-sans text-sm text-red-300">
             {error}
           </div>
         ) : (
@@ -170,37 +175,41 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
             }}
             onLoadError={(err) => setError(err?.message ?? "Failed to load document.")}
             loading={
-              <div className="font-sans text-sm text-ravok-slate">Loading document…</div>
+              <div className="flex min-h-[50vh] items-center justify-center font-sans text-sm text-ravok-slate">
+                Loading document…
+              </div>
             }
-            className="flex select-none items-center justify-center"
+            className={`select-none ${isMobile ? "" : "flex items-center justify-center"}`}
           >
-            <div className={`transition-all duration-150 ease-in-out ${animClass}`}>
+            <div className={`transition-all duration-150 ease-in-out ${animClass} ${isMobile ? "" : "shadow-[0_8px_40px_rgba(0,0,0,0.6)]"}`}>
               <Page
                 pageNumber={pageNumber}
                 width={pageWidth}
-                height={pageHeight}
                 renderAnnotationLayer={false}
                 renderTextLayer={false}
-                className="shadow-[0_8px_40px_rgba(0,0,0,0.6)]"
               />
             </div>
           </Document>
         )}
       </div>
 
-      {/* Tap zones */}
-      <div
-        className="absolute left-0 top-12 bottom-0 w-1/4 cursor-w-resize"
-        onClick={goPrev}
-      />
-      <div
-        className="absolute right-0 top-12 bottom-0 w-1/4 cursor-e-resize"
-        onClick={goNext}
-      />
+      {/* Tap zones — only on desktop (mobile uses swipe + scroll) */}
+      {!isMobile && (
+        <>
+          <div
+            className="absolute left-0 top-11 bottom-0 w-1/5 cursor-w-resize"
+            onClick={goPrev}
+          />
+          <div
+            className="absolute right-0 top-11 bottom-0 w-1/5 cursor-e-resize"
+            onClick={goNext}
+          />
+        </>
+      )}
 
       {watermark && (
         <div
-          className="pointer-events-none absolute bottom-3 right-4 z-30 font-sans text-[8px] uppercase tracking-[0.25em] text-white/25 sm:text-[9px] sm:tracking-[0.3em]"
+          className="pointer-events-none fixed bottom-2 right-3 z-30 font-sans text-[7px] uppercase tracking-[0.2em] text-white/20 sm:bottom-3 sm:right-4 sm:text-[9px] sm:tracking-[0.3em]"
           aria-hidden
         >
           {watermark}
