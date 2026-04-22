@@ -16,11 +16,12 @@ type PdfViewerProps = {
 
 export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: PdfViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const pageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+  const touchStartX = useRef(0);
   const [numPages, setNumPages] = useState<number | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [scale, setScale] = useState(1);
-  const [width, setWidth] = useState<number | undefined>(undefined);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageWidth, setPageWidth] = useState<number | undefined>(undefined);
+  const [pageHeight, setPageHeight] = useState<number | undefined>(undefined);
+  const [animDir, setAnimDir] = useState<"left" | "right" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const fileProp = useMemo(
@@ -32,52 +33,88 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
     [fileUrl, authToken]
   );
 
+  const goNext = useCallback(() => {
+    if (!numPages || pageNumber >= numPages) return;
+    setAnimDir("left");
+    setTimeout(() => {
+      setPageNumber((p) => p + 1);
+      setAnimDir(null);
+    }, 150);
+  }, [numPages, pageNumber]);
+
+  const goPrev = useCallback(() => {
+    if (pageNumber <= 1) return;
+    setAnimDir("right");
+    setTimeout(() => {
+      setPageNumber((p) => p - 1);
+      setAnimDir(null);
+    }, 150);
+  }, [pageNumber]);
+
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
     const measure = () => {
-      const w = el.clientWidth - 16;
-      setWidth(w > 0 ? Math.min(w, 1100) : undefined);
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const toolbarH = 48;
+      const availH = vh - toolbarH - 24;
+      const pdfRatio = 1 / 1.29;
+      let w = Math.min(vw - 32, 1100);
+      let h = w / pdfRatio;
+      if (h > availH) {
+        h = availH;
+        w = h * pdfRatio;
+      }
+      setPageWidth(Math.floor(w));
+      setPageHeight(Math.floor(h));
     };
     measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  const setPageRef = useCallback((page: number, el: HTMLDivElement | null) => {
-    if (el) pageRefs.current.set(page, el);
-    else pageRefs.current.delete(page);
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
   }, []);
 
   useEffect(() => {
-    if (!numPages) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        let bestPage = currentPage;
-        let bestRatio = 0;
-        for (const entry of entries) {
-          if (entry.intersectionRatio > bestRatio) {
-            const p = Number(entry.target.getAttribute("data-page"));
-            if (p) {
-              bestRatio = entry.intersectionRatio;
-              bestPage = p;
-            }
-          }
-        }
-        if (bestRatio > 0) setCurrentPage(bestPage);
-      },
-      { threshold: [0, 0.25, 0.5, 0.75, 1] }
-    );
-    for (const el of pageRefs.current.values()) observer.observe(el);
-    return () => observer.disconnect();
-  }, [numPages, currentPage]);
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+        e.preventDefault();
+        goNext();
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        e.preventDefault();
+        goPrev();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [goNext, goPrev]);
+
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const onTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - touchStartX.current;
+      if (Math.abs(dx) > 50) {
+        if (dx < 0) goNext();
+        else goPrev();
+      }
+    },
+    [goNext, goPrev]
+  );
+
+  const animClass =
+    animDir === "left"
+      ? "translate-x-[-8%] opacity-0"
+      : animDir === "right"
+        ? "translate-x-[8%] opacity-0"
+        : "translate-x-0 opacity-100";
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full"
+      className="fixed inset-0 z-50 flex flex-col bg-black"
       onContextMenu={(e) => e.preventDefault()}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     >
       <style jsx global>{`
         @media print {
@@ -85,73 +122,85 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
         }
       `}</style>
 
-      {/* Floating toolbar */}
-      <div className="sticky top-2 z-20 mx-auto mb-3 flex w-fit items-center gap-2 rounded-full border border-white/15 bg-black/85 px-3 py-1.5 font-sans text-xs text-white/80 backdrop-blur-sm">
-        <span className="tabular-nums text-ravok-beige">
-          {numPages ? `${currentPage} / ${numPages}` : "…"}
-        </span>
-        <span className="mx-1 h-3 w-px bg-white/15" />
+      {/* Top bar */}
+      <div className="flex h-12 shrink-0 items-center justify-between px-4">
         <button
           type="button"
-          className="px-1.5 py-0.5 hover:text-ravok-gold"
-          onClick={() => setScale((s) => Math.max(0.5, +(s - 0.15).toFixed(2)))}
-          aria-label="Zoom out"
+          onClick={() => window.history.back()}
+          className="font-sans text-xs uppercase tracking-[0.2em] text-ravok-slate hover:text-ravok-gold"
         >
-          −
+          ← Back
         </button>
-        <span className="tabular-nums text-ravok-slate">{Math.round(scale * 100)}%</span>
-        <button
-          type="button"
-          className="px-1.5 py-0.5 hover:text-ravok-gold"
-          onClick={() => setScale((s) => Math.min(2.5, +(s + 0.15).toFixed(2)))}
-          aria-label="Zoom in"
-        >
-          +
-        </button>
+        <div className="flex items-center gap-3 font-sans text-xs text-white/70">
+          <button
+            type="button"
+            className="px-1 hover:text-ravok-gold disabled:opacity-30"
+            onClick={goPrev}
+            disabled={pageNumber <= 1}
+          >
+            ◂
+          </button>
+          <span className="tabular-nums text-ravok-beige">
+            {numPages ? `${pageNumber} / ${numPages}` : "…"}
+          </span>
+          <button
+            type="button"
+            className="px-1 hover:text-ravok-gold disabled:opacity-30"
+            onClick={goNext}
+            disabled={!numPages || pageNumber >= numPages}
+          >
+            ▸
+          </button>
+        </div>
+        <div className="w-16" />
       </div>
 
-      {error ? (
-        <div className="mt-12 rounded border border-red-500/30 bg-red-500/10 p-4 font-sans text-sm text-red-300">
-          {error}
-        </div>
-      ) : (
-        <Document
-          file={fileProp}
-          onLoadSuccess={({ numPages: n }) => {
-            setNumPages(n);
-            onLoad?.(n);
-          }}
-          onLoadError={(err) => setError(err?.message ?? "Failed to load document.")}
-          loading={
-            <div className="flex min-h-[60vh] items-center justify-center font-sans text-sm text-ravok-slate">
-              Loading document…
+      {/* Page area */}
+      <div className="flex flex-1 items-center justify-center overflow-hidden">
+        {error ? (
+          <div className="rounded border border-red-500/30 bg-red-500/10 p-4 font-sans text-sm text-red-300">
+            {error}
+          </div>
+        ) : (
+          <Document
+            file={fileProp}
+            onLoadSuccess={({ numPages: n }) => {
+              setNumPages(n);
+              onLoad?.(n);
+            }}
+            onLoadError={(err) => setError(err?.message ?? "Failed to load document.")}
+            loading={
+              <div className="font-sans text-sm text-ravok-slate">Loading document…</div>
+            }
+            className="flex select-none items-center justify-center"
+          >
+            <div className={`transition-all duration-150 ease-in-out ${animClass}`}>
+              <Page
+                pageNumber={pageNumber}
+                width={pageWidth}
+                height={pageHeight}
+                renderAnnotationLayer={false}
+                renderTextLayer={false}
+                className="shadow-[0_8px_40px_rgba(0,0,0,0.6)]"
+              />
             </div>
-          }
-          className="flex select-none flex-col items-center gap-4 pb-16"
-        >
-          {numPages &&
-            Array.from({ length: numPages }, (_, i) => i + 1).map((page) => (
-              <div
-                key={page}
-                ref={(el) => setPageRef(page, el)}
-                data-page={page}
-              >
-                <Page
-                  pageNumber={page}
-                  width={width}
-                  scale={scale}
-                  renderAnnotationLayer={false}
-                  renderTextLayer={false}
-                  className="shadow-[0_4px_24px_rgba(0,0,0,0.4)]"
-                />
-              </div>
-            ))}
-        </Document>
-      )}
+          </Document>
+        )}
+      </div>
+
+      {/* Tap zones */}
+      <div
+        className="absolute left-0 top-12 bottom-0 w-1/4 cursor-w-resize"
+        onClick={goPrev}
+      />
+      <div
+        className="absolute right-0 top-12 bottom-0 w-1/4 cursor-e-resize"
+        onClick={goNext}
+      />
 
       {watermark && (
         <div
-          className="pointer-events-none fixed bottom-3 right-4 z-30 font-sans text-[8px] uppercase tracking-[0.25em] text-white/30 sm:text-[9px] sm:tracking-[0.3em]"
+          className="pointer-events-none absolute bottom-3 right-4 z-30 font-sans text-[8px] uppercase tracking-[0.25em] text-white/25 sm:text-[9px] sm:tracking-[0.3em]"
           aria-hidden
         >
           {watermark}
