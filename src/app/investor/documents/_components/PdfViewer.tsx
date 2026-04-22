@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
-// Load the pdf.js worker from the CDN matched to the installed pdfjs-dist version.
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 type PdfViewerProps = {
@@ -17,8 +16,9 @@ type PdfViewerProps = {
 
 export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: PdfViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const pageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const [numPages, setNumPages] = useState<number | null>(null);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [scale, setScale] = useState(1);
   const [width, setWidth] = useState<number | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
@@ -36,8 +36,8 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
     const el = containerRef.current;
     if (!el) return;
     const measure = () => {
-      const maxW = Math.min(el.clientWidth - 32, 1100);
-      setWidth(maxW > 0 ? maxW : undefined);
+      const w = el.clientWidth - 16;
+      setWidth(w > 0 ? Math.min(w, 1100) : undefined);
     };
     measure();
     const ro = new ResizeObserver(measure);
@@ -45,60 +45,56 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
     return () => ro.disconnect();
   }, []);
 
+  const setPageRef = useCallback((page: number, el: HTMLDivElement | null) => {
+    if (el) pageRefs.current.set(page, el);
+    else pageRefs.current.delete(page);
+  }, []);
+
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "ArrowRight" || e.key === "PageDown") {
-        setPageNumber((p) => (numPages ? Math.min(numPages, p + 1) : p));
-      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
-        setPageNumber((p) => Math.max(1, p - 1));
-      }
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [numPages]);
+    if (!numPages) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let bestPage = currentPage;
+        let bestRatio = 0;
+        for (const entry of entries) {
+          if (entry.intersectionRatio > bestRatio) {
+            const p = Number(entry.target.getAttribute("data-page"));
+            if (p) {
+              bestRatio = entry.intersectionRatio;
+              bestPage = p;
+            }
+          }
+        }
+        if (bestRatio > 0) setCurrentPage(bestPage);
+      },
+      { threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+    for (const el of pageRefs.current.values()) observer.observe(el);
+    return () => observer.disconnect();
+  }, [numPages, currentPage]);
 
   return (
     <div
       ref={containerRef}
-      className="relative flex min-h-[70vh] w-full flex-col items-center"
+      className="relative w-full"
       onContextMenu={(e) => e.preventDefault()}
     >
-      {/* Print-disable + selection deterrents */}
       <style jsx global>{`
         @media print {
-          body {
-            display: none !important;
-          }
+          body { display: none !important; }
         }
       `}</style>
 
-      {/* Toolbar overlay */}
-      <div className="sticky top-4 z-20 mb-4 flex items-center gap-2 rounded-full border border-white/15 bg-black/80 px-3 py-2 font-sans text-xs text-white/80 backdrop-blur">
-        <button
-          type="button"
-          className="rounded px-2 py-1 hover:text-ravok-gold disabled:opacity-40"
-          onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
-          disabled={pageNumber <= 1}
-          aria-label="Previous page"
-        >
-          ◂
-        </button>
-        <span className="border-x border-white/15 px-3 tabular-nums text-ravok-beige">
-          {numPages ? `${pageNumber} / ${numPages}` : "…"}
+      {/* Floating toolbar */}
+      <div className="sticky top-2 z-20 mx-auto mb-3 flex w-fit items-center gap-2 rounded-full border border-white/15 bg-black/85 px-3 py-1.5 font-sans text-xs text-white/80 backdrop-blur-sm">
+        <span className="tabular-nums text-ravok-beige">
+          {numPages ? `${currentPage} / ${numPages}` : "…"}
         </span>
+        <span className="mx-1 h-3 w-px bg-white/15" />
         <button
           type="button"
-          className="rounded px-2 py-1 hover:text-ravok-gold disabled:opacity-40"
-          onClick={() => setPageNumber((p) => (numPages ? Math.min(numPages, p + 1) : p))}
-          disabled={!numPages || pageNumber >= numPages}
-          aria-label="Next page"
-        >
-          ▸
-        </button>
-        <button
-          type="button"
-          className="rounded px-2 py-1 hover:text-ravok-gold"
-          onClick={() => setScale((s) => Math.max(0.5, +(s - 0.1).toFixed(2)))}
+          className="px-1.5 py-0.5 hover:text-ravok-gold"
+          onClick={() => setScale((s) => Math.max(0.5, +(s - 0.15).toFixed(2)))}
           aria-label="Zoom out"
         >
           −
@@ -106,8 +102,8 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
         <span className="tabular-nums text-ravok-slate">{Math.round(scale * 100)}%</span>
         <button
           type="button"
-          className="rounded px-2 py-1 hover:text-ravok-gold"
-          onClick={() => setScale((s) => Math.min(2.5, +(s + 0.1).toFixed(2)))}
+          className="px-1.5 py-0.5 hover:text-ravok-gold"
+          onClick={() => setScale((s) => Math.min(2.5, +(s + 0.15).toFixed(2)))}
           aria-label="Zoom in"
         >
           +
@@ -127,24 +123,35 @@ export default function PdfViewer({ fileUrl, authToken, watermark, onLoad }: Pdf
           }}
           onLoadError={(err) => setError(err?.message ?? "Failed to load document.")}
           loading={
-            <div className="mt-16 font-sans text-sm text-ravok-slate">Loading document…</div>
+            <div className="flex min-h-[60vh] items-center justify-center font-sans text-sm text-ravok-slate">
+              Loading document…
+            </div>
           }
-          className="flex justify-center select-none"
+          className="flex select-none flex-col items-center gap-4 pb-16"
         >
-          <Page
-            pageNumber={pageNumber}
-            width={width}
-            scale={scale}
-            renderAnnotationLayer={false}
-            renderTextLayer={false}
-            className="shadow-[0_10px_40px_rgba(0,0,0,0.5)]"
-          />
+          {numPages &&
+            Array.from({ length: numPages }, (_, i) => i + 1).map((page) => (
+              <div
+                key={page}
+                ref={(el) => setPageRef(page, el)}
+                data-page={page}
+              >
+                <Page
+                  pageNumber={page}
+                  width={width}
+                  scale={scale}
+                  renderAnnotationLayer={false}
+                  renderTextLayer={false}
+                  className="shadow-[0_4px_24px_rgba(0,0,0,0.4)]"
+                />
+              </div>
+            ))}
         </Document>
       )}
 
       {watermark && (
         <div
-          className="pointer-events-none fixed bottom-4 right-6 z-30 font-sans text-[9px] uppercase tracking-[0.3em] text-white/40"
+          className="pointer-events-none fixed bottom-3 right-4 z-30 font-sans text-[8px] uppercase tracking-[0.25em] text-white/30 sm:text-[9px] sm:tracking-[0.3em]"
           aria-hidden
         >
           {watermark}
