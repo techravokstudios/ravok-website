@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   async rewrites() {
     // const base = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "http://localhost:8000";
-    const base = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "https://backend.ravokstudios.com";
+    const base = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "https://ravokbackend-production.up.railway.app";
 
     return [
       {
