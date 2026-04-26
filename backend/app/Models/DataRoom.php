@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class DataRoom extends Model
 {
     protected $fillable = [
-        'name', 'slug', 'description', 'created_by',
+        'name', 'slug', 'description', 'nda_text', 'created_by',
         'is_active', 'passcode', 'expires_at',
         'allow_download', 'notify_on_visit',
     ];

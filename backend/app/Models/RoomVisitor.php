@@ -9,7 +9,8 @@ class RoomVisitor extends Model
 {
     protected $fillable = [
         'data_room_id', 'email', 'name', 'access_token',
-        'verified_at', 'last_accessed_at', 'ip_address', 'user_agent',
+        'verified_at', 'nda_accepted_at', 'last_accessed_at',
+        'ip_address', 'user_agent',
         'city', 'region', 'country',
     ];
 
@@ -17,6 +18,7 @@ class RoomVisitor extends Model
     {
         return [
             'verified_at' => 'datetime',
+            'nda_accepted_at' => 'datetime',
             'last_accessed_at' => 'datetime',
         ];
     }

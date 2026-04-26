@@ -9,6 +9,7 @@ export default function CreateRoomPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [ndaText, setNdaText] = useState("");
   const [passcode, setPasscode] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [allowDownload, setAllowDownload] = useState(false);
@@ -37,6 +38,7 @@ export default function CreateRoomPage() {
       const room = await createRoom({
         name,
         description: description || undefined,
+        nda_text: ndaText || undefined,
         passcode: passcode || undefined,
         expires_at: expiresAt || undefined,
         allow_download: allowDownload,
@@ -114,6 +116,22 @@ export default function CreateRoomPage() {
             placeholder="Welcome message for visitors"
             className="w-full rounded border border-white/10 bg-white/5 px-4 py-2.5 font-sans text-sm text-white placeholder-white/30 outline-none focus:border-ravok-gold/50"
           />
+        </div>
+
+        <div>
+          <label className="mb-1 block font-sans text-xs uppercase tracking-[0.2em] text-white/60">
+            NDA / Confidentiality Agreement (optional)
+          </label>
+          <textarea
+            value={ndaText}
+            onChange={(e) => setNdaText(e.target.value)}
+            rows={5}
+            placeholder="If set, visitors must accept this before viewing"
+            className="w-full rounded border border-white/10 bg-white/5 px-4 py-2.5 font-sans text-sm text-white placeholder-white/30 outline-none focus:border-ravok-gold/50"
+          />
+          <p className="mt-1 font-sans text-[10px] text-white/30">
+            Visitors will see this text and must check &quot;I agree&quot; before continuing.
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">

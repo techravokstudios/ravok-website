@@ -7,6 +7,7 @@ export type DataRoom = {
   name: string;
   slug: string;
   description: string | null;
+  nda_text?: string | null;
   is_active: boolean;
   expires_at: string | null;
   allow_download: boolean;
@@ -33,6 +34,7 @@ export async function getRoom(id: number): Promise<DataRoomDetail> {
 export async function createRoom(data: {
   name: string;
   description?: string;
+  nda_text?: string;
   passcode?: string;
   expires_at?: string;
   allow_download?: boolean;
@@ -49,6 +51,7 @@ export async function createRoom(data: {
 export async function updateRoom(id: number, data: Partial<{
   name: string;
   description: string | null;
+  nda_text: string | null;
   passcode: string | null;
   expires_at: string | null;
   is_active: boolean;
@@ -122,7 +125,9 @@ function roomHeaders(slug: string): Record<string, string> {
 export type PublicRoomInfo = {
   name: string;
   description: string | null;
+  nda_text: string | null;
   requires_passcode: boolean;
+  requires_nda: boolean;
   is_expired: boolean;
   is_active: boolean;
   document_count: number;
@@ -134,7 +139,7 @@ export async function getPublicRoomInfo(slug: string): Promise<PublicRoomInfo> {
   });
 }
 
-export async function enterRoom(slug: string, data: { email: string; name: string; passcode?: string }): Promise<{
+export async function enterRoom(slug: string, data: { email: string; name: string; passcode?: string; accept_nda?: boolean }): Promise<{
   access_token: string;
   visitor: { id: number; name: string; email: string };
 }> {

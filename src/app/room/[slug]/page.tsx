@@ -21,6 +21,7 @@ export default function RoomEntryPage() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [passcode, setPasscode] = useState("");
+  const [acceptNda, setAcceptNda] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -56,7 +57,17 @@ export default function RoomEntryPage() {
     setError("");
     setSubmitting(true);
     try {
-      const res = await enterRoom(slug, { email, name, passcode: passcode || undefined });
+      if (room?.requires_nda && !acceptNda) {
+        setError("You must accept the NDA to continue.");
+        setSubmitting(false);
+        return;
+      }
+      const res = await enterRoom(slug, {
+        email,
+        name,
+        passcode: passcode || undefined,
+        accept_nda: room?.requires_nda ? true : undefined,
+      });
       setRoomToken(slug, res.access_token);
       setRoomVisitorEmail(slug, res.visitor.email);
       router.push(`/room/${slug}/documents`);
@@ -137,6 +148,24 @@ export default function RoomEntryPage() {
                 required
                 className="w-full rounded border border-white/10 bg-white/5 px-4 py-3 font-sans text-sm text-white placeholder-white/30 outline-none focus:border-ravok-gold/50"
               />
+            </div>
+          )}
+          {room.requires_nda && room.nda_text && (
+            <div className="space-y-2">
+              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-white/40">Confidentiality Agreement</p>
+              <div className="max-h-40 overflow-y-auto rounded border border-white/10 bg-white/[0.03] p-3 font-sans text-xs leading-relaxed text-white/70 whitespace-pre-line">
+                {room.nda_text}
+              </div>
+              <label className="flex items-start gap-2 font-sans text-xs text-white/80">
+                <input
+                  type="checkbox"
+                  checked={acceptNda}
+                  onChange={(e) => setAcceptNda(e.target.checked)}
+                  required
+                  className="mt-0.5 accent-ravok-gold"
+                />
+                <span>I have read and agree to the terms above.</span>
+              </label>
             </div>
           )}
           {error && (

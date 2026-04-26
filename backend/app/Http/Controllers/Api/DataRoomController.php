@@ -24,6 +24,7 @@ class DataRoomController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'nda_text' => ['nullable', 'string'],
             'passcode' => ['nullable', 'string', 'min:4'],
             'expires_at' => ['nullable', 'date'],
             'allow_download' => ['boolean'],
@@ -35,6 +36,7 @@ class DataRoomController extends Controller
         $room = DataRoom::create([
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
+            'nda_text' => $validated['nda_text'] ?? null,
             'created_by' => $request->user()->id,
             'passcode' => isset($validated['passcode']) ? Hash::make($validated['passcode']) : null,
             'expires_at' => $validated['expires_at'] ?? null,
@@ -67,6 +69,7 @@ class DataRoomController extends Controller
         $validated = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'nda_text' => ['nullable', 'string'],
             'passcode' => ['nullable', 'string', 'min:4'],
             'expires_at' => ['nullable', 'date'],
             'is_active' => ['boolean'],

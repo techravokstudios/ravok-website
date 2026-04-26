@@ -22,7 +22,9 @@ class PublicRoomController extends Controller
         return response()->json([
             'name' => $room->name,
             'description' => $room->description,
+            'nda_text' => $room->nda_text,
             'requires_passcode' => !empty($room->passcode),
+            'requires_nda' => !empty($room->nda_text),
             'is_expired' => $room->isExpired(),
             'is_active' => $room->is_active,
             'document_count' => $room->documents()->count(),
@@ -41,10 +43,15 @@ class PublicRoomController extends Controller
             'email' => ['required', 'email', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'passcode' => ['nullable', 'string'],
+            'accept_nda' => ['nullable', 'boolean'],
         ]);
 
         if ($room->passcode && !Hash::check($validated['passcode'] ?? '', $room->passcode)) {
             return response()->json(['message' => 'Invalid passcode.'], 403);
+        }
+
+        if ($room->nda_text && empty($validated['accept_nda'])) {
+            return response()->json(['message' => 'You must accept the NDA to continue.'], 403);
         }
 
         $geo = GeolocateIp::resolve($request->ip());
@@ -66,6 +73,9 @@ class PublicRoomController extends Controller
         $visitor->update([
             'last_accessed_at' => now(),
             'verified_at' => $visitor->verified_at ?? now(),
+            'nda_accepted_at' => $room->nda_text
+                ? ($visitor->nda_accepted_at ?? now())
+                : $visitor->nda_accepted_at,
         ]);
 
         if ($isNew && $room->notify_on_visit) {
