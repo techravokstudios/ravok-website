@@ -74,6 +74,13 @@ export async function addRoomDocuments(roomId: number, documentIds: number[]): P
   });
 }
 
+export async function quickShareDocument(documentId: number): Promise<DataRoom> {
+  return fetchApi<DataRoom>(`${getApiBase()}/api/documents/${documentId}/quick-share`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+  });
+}
+
 export async function removeRoomDocument(roomId: number, documentId: number): Promise<void> {
   await fetchApi(`${getApiBase()}/api/rooms/${roomId}/documents/${documentId}`, {
     method: 'DELETE',

@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 import { toast } from "@/lib/toast";
+import { quickShareDocument } from "@/lib/api/v1/rooms";
 
 export default function AdminDocumentsUploadPage() {
   const [categories, setCategories] = useState<DocumentCategory[]>([]);
@@ -215,7 +216,23 @@ export default function AdminDocumentsUploadPage() {
                               {isImage ? "View / Download" : "Download"}
                             </Link>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex flex-col items-end gap-1">
+                            <Button
+                              size="xs"
+                              variant="outline"
+                              onClick={async () => {
+                                try {
+                                  const room = await quickShareDocument(d.id);
+                                  const link = `${window.location.origin}/room/${room.slug}`;
+                                  await navigator.clipboard.writeText(link);
+                                  toast.success(`Share link copied: ${link}`);
+                                } catch (e) {
+                                  toast.error(e instanceof Error ? e.message : "Failed to create share link");
+                                }
+                              }}
+                            >
+                              Share
+                            </Button>
                             <Button
                               size="xs"
                               variant="destructive"

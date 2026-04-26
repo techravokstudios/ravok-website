@@ -103,6 +103,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/rooms/{room}/documents', [DataRoomController::class, 'addDocuments']);
         Route::delete('/rooms/{room}/documents/{document}', [DataRoomController::class, 'removeDocument']);
         Route::put('/rooms/{room}/documents/reorder', [DataRoomController::class, 'reorderDocuments']);
+        Route::post('/documents/{document}/quick-share', [DataRoomController::class, 'quickShare']);
 
         // Room analytics (admin)
         Route::get('/analytics/rooms', [DataRoomAnalyticsController::class, 'index']);
