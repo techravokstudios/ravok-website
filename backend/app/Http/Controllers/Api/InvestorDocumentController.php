@@ -160,6 +160,57 @@ class InvestorDocumentController extends Controller
         return response()->json($document);
     }
 
+    public function replaceFile(Request $request, InvestorDocument $document)
+    {
+        $request->validate([
+            'file' => [
+                'required',
+                'file',
+                'max:20480',
+                'mimetypes:image/jpeg,image/png,image/gif,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain,application/rtf,application/zip',
+            ],
+        ]);
+
+        $file = $request->file('file');
+        $key = 'investor-docs/'.Str::random(40).'.'.$file->getClientOriginalExtension();
+
+        if ($this->useR2()) {
+            $ok = $this->r2Put($key, $file->getContent(), $file->getMimeType());
+            if (! $ok) {
+                return response()->json(['message' => 'Upload failed.'], 500);
+            }
+            $newPath = $key;
+        } else {
+            $newPath = $file->store('investor-docs', 'public');
+            if (! $newPath) {
+                return response()->json(['message' => 'Upload failed.'], 500);
+            }
+        }
+
+        $oldPath = $document->file_path;
+        $document->update([
+            'file_path' => $newPath,
+            'mime_type' => $file->getMimeType(),
+            'size_bytes' => $file->getSize(),
+            'original_name' => $file->getClientOriginalName(),
+        ]);
+
+        // Clean up old file after successful replacement
+        if ($oldPath && $oldPath !== $newPath) {
+            try {
+                if ($this->useR2()) {
+                    $this->r2Delete($oldPath);
+                } else {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            } catch (\Throwable $e) {
+                // Old file removal is best-effort
+            }
+        }
+
+        return response()->json($document);
+    }
+
     public function destroy(InvestorDocument $document)
     {
         if ($document->file_path) {

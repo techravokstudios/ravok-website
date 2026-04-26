@@ -87,6 +87,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('document-categories', DocumentCategoryController::class)->except(['show', 'index']);
         Route::post('/documents', [InvestorDocumentController::class, 'store']); // multiple upload
         Route::put('/documents/{document}', [InvestorDocumentController::class, 'update']);
+        Route::post('/documents/{document}/file', [InvestorDocumentController::class, 'replaceFile']);
         Route::delete('/documents/{document}', [InvestorDocumentController::class, 'destroy']);
 
         // Document analytics

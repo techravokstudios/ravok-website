@@ -7,6 +7,7 @@ import {
   uploadInvestorDocuments,
   listInvestorDocuments,
   deleteInvestorDocument,
+  replaceInvestorDocumentFile,
   type InvestorDocument,
   storageUrl,
 } from "@/lib/api";
@@ -233,6 +234,27 @@ export default function AdminDocumentsUploadPage() {
                             >
                               Share
                             </Button>
+                            <label className="cursor-pointer">
+                              <input
+                                type="file"
+                                className="hidden"
+                                onChange={async (e) => {
+                                  const file = e.target.files?.[0];
+                                  if (!file) return;
+                                  try {
+                                    await replaceInvestorDocumentFile(d.id, file);
+                                    toast.success("File replaced. All existing share links now point to the new version.");
+                                    await refreshList();
+                                  } catch (err) {
+                                    toast.error(err instanceof Error ? err.message : "Replace failed");
+                                  }
+                                  e.target.value = "";
+                                }}
+                              />
+                              <span className="inline-flex h-7 items-center rounded border border-white/20 px-2 text-xs font-sans text-white/80 hover:border-ravok-gold/40 hover:text-ravok-gold">
+                                Replace
+                              </span>
+                            </label>
                             <Button
                               size="xs"
                               variant="destructive"

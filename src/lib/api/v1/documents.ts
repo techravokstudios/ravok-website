@@ -122,6 +122,27 @@ export async function uploadInvestorDocuments(input: {
   return res.json();
 }
 
+export async function replaceInvestorDocumentFile(id: number, file: File): Promise<InvestorDocument> {
+  const token = getToken();
+  if (!token) throw new Error("Not authenticated");
+  const form = new FormData();
+  form.set("file", file);
+  const res = await fetch(`${getApiBase()}/api/documents/${id}/file`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    body: form,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message ?? "Replace failed");
+  }
+  return res.json();
+}
+
 export async function updateInvestorDocument(id: number, data: Partial<Pick<InvestorDocument, "document_category_id" | "name" | "description">>): Promise<InvestorDocument> {
   return fetchApi<InvestorDocument>(`${getApiBase()}/api/documents/${id}`, {
     method: "PUT",

@@ -23,7 +23,7 @@ export type { UserListResponse } from './api/v1/users';
 export { getAvatarUrl, getProfile, updateProfile, updateProfileWithAvatar, changePassword } from './api/v1/profile';
 
 // Documents
-export { storageUrl, getDocumentCategories, createDocumentCategory, updateDocumentCategory, deleteDocumentCategory, listInvestorDocuments, getInvestorDocument, investorDocumentFileUrl, getDocumentFileUrl, uploadInvestorDocuments, updateInvestorDocument, deleteInvestorDocument } from './api/v1/documents';
+export { storageUrl, getDocumentCategories, createDocumentCategory, updateDocumentCategory, deleteDocumentCategory, listInvestorDocuments, getInvestorDocument, investorDocumentFileUrl, getDocumentFileUrl, uploadInvestorDocuments, updateInvestorDocument, replaceInvestorDocumentFile, deleteInvestorDocument } from './api/v1/documents';
 export type { DocumentCategory, InvestorDocument, InvestorDocumentsResponse } from './api/v1/documents';
 
 // Posts & Categories
