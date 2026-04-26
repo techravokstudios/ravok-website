@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\DataRoom;
+use App\Models\InvestorDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -128,5 +129,37 @@ class DataRoomController extends Controller
         }
 
         return response()->json(['status' => 'ok']);
+    }
+
+    public function quickShare(Request $request, InvestorDocument $document)
+    {
+        // Reuse existing single-doc room for this document if one exists
+        $existing = DataRoom::whereHas('documents', function ($q) use ($document) {
+            $q->where('investor_documents.id', $document->id);
+        })
+            ->withCount('documents')
+            ->where('created_by', $request->user()->id)
+            ->where('is_active', true)
+            ->whereNull('expires_at')
+            ->whereNull('passcode')
+            ->get()
+            ->firstWhere('documents_count', 1);
+
+        if ($existing) {
+            return response()->json($existing);
+        }
+
+        $room = DataRoom::create([
+            'name' => $document->original_name ?: $document->name,
+            'description' => null,
+            'created_by' => $request->user()->id,
+            'allow_download' => false,
+            'notify_on_visit' => true,
+        ]);
+
+        $room->documents()->attach($document->id, ['sort_order' => 0]);
+        $room->load('documents');
+
+        return response()->json($room, 201);
     }
 }
