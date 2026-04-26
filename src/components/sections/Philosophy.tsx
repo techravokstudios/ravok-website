@@ -1,117 +1,66 @@
 "use client";
 
+/**
+ * Philosophy — Multi-step thesis (every other industry → Hollywood).
+ * Per rules §12: ideal pattern is ScrollytellSection (multi-step thesis).
+ * That primitive isn't built yet — using CRevealSection for now with a
+ * staggered-reveal panel list as a v1. Upgrade to ScrollytellSection later.
+ */
+
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { CRevealSection } from "@/components/design-system";
+
+const items = [
+    "Tech startups get seed funding to build MVPs.",
+    "Hardware companies get capital for prototypes.",
+    "Software founders get invested in before revenue.",
+];
 
 export default function Philosophy() {
-    const [isMounted, setIsMounted] = useState(false);
-
-    useEffect(() => {
-        setIsMounted(true);
-    }, []);
-
-    const textVariants = {
-        hidden: { opacity: 0, y: 30 },
-        visible: (i: number) => ({
-            opacity: 1,
-            y: 0,
-            transition: {
-                delay: i * 0.2,
-                duration: 0.8,
-                ease: [0.22, 1, 0.36, 1] as const
-            }
-        })
-    };
-
-    const items = [
-        "Tech startups get seed funding to build MVPs.",
-        "Hardware companies get capital for prototypes.",
-        "Software founders get invested in before revenue."
-    ];
-
     return (
-        <section className="py-24 lg:py-32 px-6 bg-[#1c1c1a] text-white relative overflow-hidden section-card">
-            {/* Background Image Layer */}
-            <div className="absolute inset-0 z-0">
-                <img
-                    src="/images/philosophy.png"
-                    alt="Philosophy Background"
-                    className="w-full h-full object-cover opacity-30 grayscale"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/80 to-black" />
-                {/* Gold top fade — C-reveal landing */}
-                <div className="absolute inset-x-0 top-0 h-[200px] bg-gradient-to-b from-[rgba(196,149,58,0.06)] to-transparent pointer-events-none" />
-            </div>
-
-            {/* Animated background particles - only render on client */}
-            {isMounted && (
-                <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-                    {[...Array(20)].map((_, i) => (
-                        <motion.div
-                            key={i}
-                            className="absolute w-1 h-1 bg-ravok-gold/20 rounded-full"
-                            initial={{
-                                x: Math.random() * window.innerWidth,
-                                y: Math.random() * 800,
-                                scale: Math.random() * 0.5 + 0.5
-                            }}
-                            animate={{
-                                y: [null, Math.random() * 800],
-                                opacity: [0, 1, 0]
-                            }}
-                            transition={{
-                                duration: Math.random() * 10 + 10,
-                                repeat: Infinity,
-                                ease: "linear"
-                            }}
-                        />
-                    ))}
-                </div>
-            )}
-
-            <div className="container mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10">
-                {/* Text Content */}
+        <CRevealSection zIndex={11} centerHeader={false} contentMaxWidth="1400px">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+                {/* Left — text */}
                 <div className="order-2 lg:order-1">
                     <motion.p
-                        className="text-xs font-sans tracking-widest text-ravok-slate uppercase mb-4"
+                        className="font-sans text-[0.62rem] font-semibold tracking-[0.3em] text-[var(--ds-ink-muted)] uppercase mb-6"
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
+                        transition={{ duration: 0.6, ease: [0.2, 0.6, 0.2, 1] }}
                     >
-                        Here's what we realized.
+                        Here&apos;s what we realized.
                     </motion.p>
 
                     <motion.h2
-                        className="text-5xl lg:text-7xl font-heading font-thin leading-none mb-2"
+                        className="font-heading font-normal text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.05] tracking-[-0.015em] mb-2"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
+                        transition={{ duration: 0.8, delay: 0.1, ease: [0.2, 0.6, 0.2, 1] }}
                     >
                         In Every Other <br />
                         Industry,
                     </motion.h2>
 
                     <motion.h2
-                        className="text-5xl lg:text-7xl font-heading text-ravok-gold leading-none mb-12"
+                        className="font-heading font-normal italic text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.05] tracking-[-0.015em] text-ravok-gold mb-12"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
+                        transition={{ duration: 0.8, delay: 0.25, ease: [0.2, 0.6, 0.2, 1] }}
                     >
-                        This Is Just Called R&D
+                        This Is Just Called R&amp;D
                     </motion.h2>
 
-                    <div className="space-y-4 text-xl font-sans font-light leading-relaxed text-gray-300">
+                    <div className="space-y-5 font-heading text-[1.15rem] leading-[1.6] text-[var(--ds-ink-dim)]">
                         {items.map((text, i) => (
                             <motion.p
                                 key={i}
-                                custom={i}
-                                variants={textVariants}
-                                initial="hidden"
-                                whileInView="visible"
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
+                                transition={{ duration: 0.8, delay: i * 0.15, ease: [0.2, 0.6, 0.2, 1] }}
                                 className="relative pl-6 before:content-[''] before:absolute before:left-0 before:top-3 before:w-2 before:h-2 before:bg-ravok-gold before:rounded-full"
                             >
                                 {text}
@@ -119,44 +68,42 @@ export default function Philosophy() {
                         ))}
 
                         <motion.p
-                            className="pt-4 text-white"
+                            className="pt-4 text-[var(--ds-ink)]"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: 0.8 }}
+                            transition={{ duration: 0.8, delay: 0.7 }}
                         >
-                            But in Hollywood? Early-stage development is called "too risky."
+                            But in Hollywood? Early-stage development is called &ldquo;too risky.&rdquo;
                         </motion.p>
                     </div>
 
                     <motion.p
-                        className="mt-8 text-xl lg:text-2xl text-ravok-gold font-heading italic"
+                        className="mt-8 font-heading italic text-[1.4rem] lg:text-[1.6rem] text-ravok-gold leading-[1.5]"
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 1 }}
+                        transition={{ duration: 0.8, delay: 0.9 }}
                     >
                         The real risk is letting gatekeepers decide what gets made.
                     </motion.p>
                 </div>
 
-                {/* Visual/Image */}
+                {/* Right — visual */}
                 <motion.div
                     className="order-1 lg:order-2 relative flex items-center justify-center"
-                    initial={{ opacity: 0, x: 50 }}
+                    initial={{ opacity: 0, x: 40 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.3 }}
+                    transition={{ duration: 1, delay: 0.2, ease: [0.2, 0.6, 0.2, 1] }}
                 >
-                    <motion.img
+                    <img
                         src="/images/slide1.png"
-                        alt="R&D Philosophy"
+                        alt=""
                         className="w-full max-w-lg object-contain opacity-90"
-                        whileHover={{ scale: 1.05, opacity: 1 }}
-                        transition={{ duration: 0.4 }}
                     />
                 </motion.div>
             </div>
-        </section>
+        </CRevealSection>
     );
 }

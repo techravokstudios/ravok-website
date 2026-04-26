@@ -1,84 +1,69 @@
 "use client";
 
-import { FadeIn } from "@/components/shared/FadeIn";
-import { Eye, ArrowRight } from "lucide-react";
-import Link from "next/link";
+/**
+ * IntroSection — Manifesto / brand statement.
+ * Per rules §12: "Manifesto / brand statement" → C-Reveal, single column, max-width 820px.
+ *
+ * Refactored to use CRevealSection. First reveal section after hero —
+ * lives outside the sticky stack (nonSticky=true) so the hero scrolls away cleanly.
+ */
+
+import { Eye } from "lucide-react";
 import { motion } from "framer-motion";
+import { CRevealSection, Button } from "@/components/design-system";
 
 export default function IntroSection() {
     return (
-        <section className="py-24 lg:py-32 px-6 bg-[#1c1c1a] text-white relative overflow-hidden section-card">
-            {/* Background Image Layer - Fixed Size */}
-            <div className="absolute inset-0 z-0 overflow-hidden">
-                <img
-                    src="/images/bg_image.png"
-                    alt="Intro Background"
-                    className="absolute inset-0 w-full h-full object-cover opacity-20 grayscale"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/85 to-black" />
-                {/* Gold top fade — C-reveal landing */}
-                <div className="absolute inset-x-0 top-0 h-[200px] bg-gradient-to-b from-[rgba(196,149,58,0.06)] to-transparent pointer-events-none" />
-            </div>
-
-            <div className="container mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
-                {/* Left Side - Text Content */}
+        <CRevealSection
+            zIndex={9}
+            nonSticky
+            eyebrow="2025 Slate: Fully Committed"
+            centerHeader={false}
+            paddingY="py-32"
+            contentMaxWidth="1200px"
+        >
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                {/* Left — text */}
                 <div className="order-2 lg:order-1">
-                    <FadeIn>
-                        {/* Badge */}
-                        <div className="mb-6">
-                            <span className="inline-block rounded-md bg-ravok-gold/20 px-3 py-1.5 font-sans text-xs font-medium uppercase tracking-wider text-white sm:px-4 sm:py-2 sm:text-sm">
-                                2025 Slate: Fully Committed
-                            </span>
-                        </div>
+                    <h2 className="font-heading font-normal text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.05] tracking-[-0.015em] text-[var(--ds-ink)] mb-6">
+                        The System Is Broken.
+                        <br />
+                        <em className="text-ravok-gold not-italic font-heading italic">We Built a New One.</em>
+                    </h2>
 
-                        {/* Main Headline */}
-                        <h2 className="text-4xl lg:text-6xl font-heading mb-4 leading-tight">
-                            <span className="text-white">The System Is Broken.</span>
-                            <br />
-                            <span className="text-ravok-gold">We Built a New One.</span>
-                        </h2>
+                    <p className="font-heading text-[1.15rem] leading-[1.65] text-[var(--ds-ink-dim)] mb-8 max-w-[520px]">
+                        RAVOK STUDIOS is the first venture studio turning filmmakers into founders—and films into sustainable businesses.
+                    </p>
 
-                        {/* Description */}
-                        <p className="text-base lg:text-lg text-gray-300 font-sans leading-relaxed mb-8 max-w-xl">
-                            RAVOK STUDIOS is the first venture studio turning filmmakers into founders—and films into sustainable businesses.
-                        </p>
-
-                        {/* CTA Buttons */}
-                        <div className="flex flex-wrap items-center gap-4">
-                            <Link
-                                href="#investors"
-                                className="rounded-full bg-ravok-gold px-6 py-[0.85rem] font-sans text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#1c1c1a] transition-all duration-[250ms] hover:bg-[#d4a54a] hover:-translate-y-px hover:shadow-[0_10px_25px_-10px_rgba(196,149,58,0.5)]"
-                            >
-                                Partner with us
-                            </Link>
-                            <button
-                                type="button"
-                                className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-transparent transition-all duration-[250ms] hover:border-ravok-gold hover:-translate-y-px"
-                                aria-label="Watch"
-                            >
-                                <Eye className="h-5 w-5 text-ravok-gold" />
-                            </button>
-                        </div>
-                    </FadeIn>
+                    <div className="flex flex-wrap items-center gap-4">
+                        <Button href="#investors" variant="primary">
+                            Partner with us
+                        </Button>
+                        <button
+                            type="button"
+                            className="flex h-12 w-12 items-center justify-center rounded-full border border-[rgba(232,228,218,0.15)] bg-transparent transition-all duration-[250ms] ease-[cubic-bezier(0.2,0.6,0.2,1)] hover:border-ravok-gold hover:-translate-y-px"
+                            aria-label="Watch"
+                        >
+                            <Eye className="h-5 w-5 text-ravok-gold" />
+                        </button>
+                    </div>
                 </div>
 
-                {/* Right Side - Image */}
+                {/* Right — image */}
                 <motion.div
                     className="order-1 lg:order-2 relative flex items-center justify-center"
                     initial={{ opacity: 0, x: 50 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.3 }}
+                    transition={{ duration: 1, delay: 0.3, ease: [0.2, 0.6, 0.2, 1] }}
                 >
-                    <div className="w-full min-h-[500px] lg:min-h-[600px] relative flex items-center justify-center">
-                        <img
-                            src="/images/broken.png"
-                            alt="Sculpture with laptop"
-                            className="w-full h-auto max-h-[600px] lg:max-h-[700px] object-contain opacity-90 grayscale"
-                        />
-                    </div>
+                    <img
+                        src="/images/broken.png"
+                        alt=""
+                        className="w-full h-auto max-h-[600px] lg:max-h-[700px] object-contain opacity-90 grayscale"
+                    />
                 </motion.div>
             </div>
-        </section>
+        </CRevealSection>
     );
 }
