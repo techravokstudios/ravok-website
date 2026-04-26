@@ -7,6 +7,7 @@ import {
   getRoomToken,
   getRoomVisitorEmail,
   publicRoomFileUrl,
+  getPublicRoomDocuments,
   startRoomViewSession,
   logRoomPageEvents,
   endRoomViewSession,
@@ -24,6 +25,8 @@ export default function RoomDocumentViewerPage() {
   const docId = Number(params?.id);
 
   const [ready, setReady] = useState(false);
+  const [allowDownload, setAllowDownload] = useState(false);
+  const [docName, setDocName] = useState("");
   const token = getRoomToken(slug);
   const email = getRoomVisitorEmail(slug);
 
@@ -40,7 +43,14 @@ export default function RoomDocumentViewerPage() {
       return;
     }
     setReady(true);
-  }, [slug, token, router]);
+    getPublicRoomDocuments(slug)
+      .then((res) => {
+        setAllowDownload(res.room.allow_download);
+        const found = res.documents.find((d) => d.id === docId);
+        if (found) setDocName(found.name);
+      })
+      .catch(() => {});
+  }, [slug, token, router, docId]);
 
   // Start session
   useEffect(() => {
@@ -108,6 +118,26 @@ export default function RoomDocumentViewerPage() {
   const fileUrl = publicRoomFileUrl(slug, docId);
   const watermark = email ? `${email} · ${new Date().toLocaleDateString()}` : null;
 
+  const handleDownload = async () => {
+    try {
+      const res = await fetch(`${fileUrl}?download=1`, {
+        headers: { "X-Room-Token": token || "" },
+      });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = docName || `document-${docId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      // silent
+    }
+  };
+
   return (
     <PdfViewerInner
       fileUrl={fileUrl}
@@ -115,6 +145,8 @@ export default function RoomDocumentViewerPage() {
       documentId={docId}
       watermark={watermark}
       customHeaders={{ "X-Room-Token": token || "" }}
+      allowDownload={allowDownload}
+      onDownload={handleDownload}
       onPageChange={handlePageChange}
       onLoad={(n: number) => {
         setNumPages(n);

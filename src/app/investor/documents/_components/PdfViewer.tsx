@@ -14,11 +14,13 @@ type PdfViewerProps = {
   documentId: number;
   watermark?: string | null;
   customHeaders?: Record<string, string>;
+  allowDownload?: boolean;
+  onDownload?: () => void;
   onLoad?: (numPages: number) => void;
   onPageChange?: (page: number) => void;
 };
 
-export default function PdfViewer({ fileUrl, authToken, documentId, watermark, customHeaders, onLoad, onPageChange }: PdfViewerProps) {
+export default function PdfViewer({ fileUrl, authToken, documentId, watermark, customHeaders, allowDownload, onDownload, onLoad, onPageChange }: PdfViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const touchStartX = useRef(0);
@@ -250,14 +252,26 @@ export default function PdfViewer({ fileUrl, authToken, documentId, watermark, c
             ▸
           </button>
         </div>
-        <button
-          type="button"
-          onClick={toggleFullscreen}
-          className="font-sans text-xs text-ravok-slate hover:text-ravok-gold"
-          title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
-        >
-          {isFullscreen ? "⊡" : "⊞"}
-        </button>
+        <div className="flex items-center gap-3">
+          {allowDownload && onDownload && (
+            <button
+              type="button"
+              onClick={onDownload}
+              className="font-sans text-xs text-ravok-slate hover:text-ravok-gold"
+              title="Download"
+            >
+              ↓
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            className="font-sans text-xs text-ravok-slate hover:text-ravok-gold"
+            title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+          >
+            {isFullscreen ? "⊡" : "⊞"}
+          </button>
+        </div>
       </div>
 
       {/* Scrollable page area */}

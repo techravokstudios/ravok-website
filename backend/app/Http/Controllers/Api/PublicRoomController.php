@@ -108,6 +108,13 @@ class PublicRoomController extends Controller
 
         $doc = $room->documents()->where('investor_documents.id', $documentId)->firstOrFail();
 
+        $wantsDownload = $request->boolean('download');
+        if ($wantsDownload && !$room->allow_download) {
+            return response()->json(['message' => 'Download is not allowed for this room.'], 403);
+        }
+        $disposition = $wantsDownload ? 'attachment' : 'inline';
+        $filename = $doc->original_name ?: $doc->name;
+
         $r2Bucket = env('R2_BUCKET');
         $r2AccountId = env('R2_ACCOUNT_ID');
         $r2Token = env('R2_API_TOKEN');
@@ -121,7 +128,7 @@ class PublicRoomController extends Controller
             if ($response->successful()) {
                 return response($response->body(), 200, [
                     'Content-Type' => $doc->mime_type,
-                    'Content-Disposition' => 'inline; filename="' . ($doc->original_name ?: $doc->name) . '"',
+                    'Content-Disposition' => $disposition . '; filename="' . $filename . '"',
                     'Cache-Control' => 'no-store',
                 ]);
             }
@@ -132,7 +139,7 @@ class PublicRoomController extends Controller
                 storage_path('app/public/' . $doc->file_path),
                 [
                     'Content-Type' => $doc->mime_type,
-                    'Content-Disposition' => 'inline; filename="' . ($doc->original_name ?: $doc->name) . '"',
+                    'Content-Disposition' => $disposition . '; filename="' . $filename . '"',
                     'Cache-Control' => 'no-store',
                 ]
             );
