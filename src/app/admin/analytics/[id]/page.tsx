@@ -165,6 +165,9 @@ export default function DocumentAnalyticsDetailPage() {
                     </p>
                     <p className="font-sans text-xs text-ravok-slate">
                       {v.user?.email || v.ip_address || "—"}
+                      {v.location && (
+                        <span className="ml-2 text-white/30">· {v.location}</span>
+                      )}
                     </p>
                   </div>
                   <div className="text-right">

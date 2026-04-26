@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\DataRoom;
 use App\Models\RoomVisitor;
+use App\Services\GeolocateIp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -42,12 +43,17 @@ class PublicRoomController extends Controller
             return response()->json(['message' => 'Invalid passcode.'], 403);
         }
 
+        $geo = GeolocateIp::resolve($request->ip());
+
         $visitor = RoomVisitor::firstOrCreate(
             ['data_room_id' => $room->id, 'email' => $validated['email']],
             [
                 'name' => $validated['name'],
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
+                'city' => $geo['city'],
+                'region' => $geo['region'],
+                'country' => $geo['country'],
             ]
         );
 

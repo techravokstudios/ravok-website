@@ -22,6 +22,7 @@ export type ViewerEntry = {
   total_pages_viewed: number;
   ip_address: string | null;
   user_agent: string | null;
+  location: string | null;
 };
 
 export type PageStat = {

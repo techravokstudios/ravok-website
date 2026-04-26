@@ -78,6 +78,7 @@ class DataRoomAnalyticsController extends Controller
                 'last_accessed_at' => $v->last_accessed_at,
                 'total_views' => $v->document_views_count,
                 'total_duration_seconds' => (int) ($v->document_views_sum_total_duration_seconds ?? 0),
+                'location' => $v->city ? trim("{$v->city}, {$v->region}, {$v->country}", ', ') : null,
             ]);
 
         return response()->json($visitors);

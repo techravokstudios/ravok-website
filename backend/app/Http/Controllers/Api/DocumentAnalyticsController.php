@@ -60,6 +60,7 @@ class DocumentAnalyticsController extends Controller
                 'total_pages_viewed' => $v->total_pages_viewed,
                 'ip_address' => $v->ip_address,
                 'user_agent' => $v->user_agent,
+                'location' => $v->city ? trim("{$v->city}, {$v->region}, {$v->country}", ', ') : null,
             ]);
 
         $pageStats = DocumentPageView::whereHas('documentView', function ($q) use ($document) {

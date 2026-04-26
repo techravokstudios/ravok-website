@@ -18,6 +18,9 @@ class DocumentView extends Model
         'total_pages_viewed',
         'user_agent',
         'ip_address',
+        'city',
+        'region',
+        'country',
     ];
 
     protected function casts(): array

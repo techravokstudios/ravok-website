@@ -111,7 +111,12 @@ export default function RoomAnalyticsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-sans text-sm text-white">{v.name}</p>
-                    <p className="font-sans text-xs text-ravok-slate">{v.email}</p>
+                    <p className="font-sans text-xs text-ravok-slate">
+                      {v.email}
+                      {v.location && (
+                        <span className="ml-1 text-white/30">· {v.location}</span>
+                      )}
+                    </p>
                   </div>
                   <div className="text-right">
                     <p className="font-sans text-sm tabular-nums text-ravok-gold">{formatDuration(v.total_duration_seconds)}</p>

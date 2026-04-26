@@ -34,6 +34,7 @@ export type RoomVisitorStat = {
   last_accessed_at: string | null;
   total_views: number;
   total_duration_seconds: number;
+  location: string | null;
 };
 
 export type RoomVisitorDetail = {

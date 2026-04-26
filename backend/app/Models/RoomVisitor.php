@@ -10,6 +10,7 @@ class RoomVisitor extends Model
     protected $fillable = [
         'data_room_id', 'email', 'name', 'access_token',
         'verified_at', 'last_accessed_at', 'ip_address', 'user_agent',
+        'city', 'region', 'country',
     ];
 
     protected function casts(): array

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DocumentPageView;
 use App\Models\DocumentView;
 use App\Models\InvestorDocument;
+use App\Services\GeolocateIp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -13,6 +14,8 @@ class DocumentViewController extends Controller
 {
     public function startSession(Request $request, InvestorDocument $document)
     {
+        $geo = GeolocateIp::resolve($request->ip());
+
         $view = DocumentView::create([
             'investor_document_id' => $document->id,
             'user_id' => $request->user()->id,
@@ -20,6 +23,9 @@ class DocumentViewController extends Controller
             'started_at' => now(),
             'user_agent' => $request->userAgent(),
             'ip_address' => $request->ip(),
+            'city' => $geo['city'],
+            'region' => $geo['region'],
+            'country' => $geo['country'],
         ]);
 
         return response()->json([

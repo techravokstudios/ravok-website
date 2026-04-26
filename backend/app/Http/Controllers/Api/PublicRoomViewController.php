@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\DocumentPageView;
 use App\Models\DocumentView;
+use App\Services\GeolocateIp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -17,6 +18,8 @@ class PublicRoomViewController extends Controller
 
         $doc = $room->documents()->where('investor_documents.id', $documentId)->firstOrFail();
 
+        $geo = GeolocateIp::resolve($request->ip());
+
         $view = DocumentView::create([
             'investor_document_id' => $doc->id,
             'room_visitor_id' => $visitor->id,
@@ -25,6 +28,9 @@ class PublicRoomViewController extends Controller
             'started_at' => now(),
             'user_agent' => $request->userAgent(),
             'ip_address' => $request->ip(),
+            'city' => $geo['city'],
+            'region' => $geo['region'],
+            'country' => $geo['country'],
         ]);
 
         return response()->json([
