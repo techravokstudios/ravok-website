@@ -83,6 +83,14 @@ export async function getDocumentAnalyticsDetail(documentId: number): Promise<Do
   });
 }
 
+export async function exportDocumentAnalyticsCsv(documentId: number): Promise<Blob> {
+  const res = await fetch(`${getApiBase()}/api/analytics/documents/${documentId}/export`, {
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) throw new Error("Export failed");
+  return res.blob();
+}
+
 export async function getViewDetail(sessionToken: string): Promise<ViewDetail> {
   return fetchApi<ViewDetail>(`${getApiBase()}/api/analytics/views/${sessionToken}`, {
     headers: getAuthHeaders(),

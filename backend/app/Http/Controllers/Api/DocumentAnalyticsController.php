@@ -8,6 +8,7 @@ use App\Models\DocumentView;
 use App\Models\InvestorDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DocumentAnalyticsController extends Controller
 {
@@ -146,5 +147,45 @@ class DocumentAnalyticsController extends Controller
             'page_views' => $pageViews,
             'page_summary' => $pageSummary,
         ]);
+    }
+
+    public function export(InvestorDocument $document): StreamedResponse
+    {
+        $filename = 'analytics_'.preg_replace('/[^A-Za-z0-9_-]/', '_', $document->original_name ?: $document->name).'.csv';
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ];
+
+        $callback = function () use ($document) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['Viewer Name', 'Viewer Email', 'Type', 'Location', 'Started At', 'Ended At', 'Duration (sec)', 'Pages Viewed', 'IP Address']);
+
+            DocumentView::where('investor_document_id', $document->id)
+                ->with('user:id,name,email', 'roomVisitor:id,name,email')
+                ->orderBy('started_at')
+                ->chunk(200, function ($rows) use ($out) {
+                    foreach ($rows as $v) {
+                        $name = $v->user?->name ?? $v->roomVisitor?->name ?? '';
+                        $email = $v->user?->email ?? $v->roomVisitor?->email ?? '';
+                        $type = $v->user_id ? 'investor' : ($v->room_visitor_id ? 'room visitor' : 'unknown');
+                        $location = trim(implode(', ', array_filter([$v->city, $v->region, $v->country])));
+                        fputcsv($out, [
+                            $name,
+                            $email,
+                            $type,
+                            $location,
+                            $v->started_at,
+                            $v->ended_at,
+                            $v->total_duration_seconds,
+                            $v->total_pages_viewed,
+                            $v->ip_address,
+                        ]);
+                    }
+                });
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

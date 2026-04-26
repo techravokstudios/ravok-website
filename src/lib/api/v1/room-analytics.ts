@@ -64,3 +64,11 @@ export async function getRoomVisitors(roomId: number): Promise<RoomVisitorStat[]
 export async function getRoomVisitorDetail(roomId: number, visitorId: number): Promise<RoomVisitorDetail> {
   return fetchApi<RoomVisitorDetail>(`${getApiBase()}/api/analytics/rooms/${roomId}/visitors/${visitorId}`, { headers: getAuthHeaders() });
 }
+
+export async function exportRoomAnalyticsCsv(roomId: number): Promise<Blob> {
+  const res = await fetch(`${getApiBase()}/api/analytics/rooms/${roomId}/export`, {
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) throw new Error("Export failed");
+  return res.blob();
+}

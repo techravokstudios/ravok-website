@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DataRoom;
 use App\Models\DocumentView;
 use App\Models\RoomVisitor;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DataRoomAnalyticsController extends Controller
 {
@@ -119,5 +120,43 @@ class DataRoomAnalyticsController extends Controller
             ],
             'views' => $views,
         ]);
+    }
+
+    public function export(DataRoom $room): StreamedResponse
+    {
+        $filename = 'room_analytics_'.preg_replace('/[^A-Za-z0-9_-]/', '_', $room->name).'.csv';
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ];
+
+        $callback = function () use ($room) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['Visitor Name', 'Visitor Email', 'Document', 'Location', 'Started At', 'Ended At', 'Duration (sec)', 'Pages Viewed', 'IP Address', 'NDA Accepted At']);
+
+            DocumentView::where('data_room_id', $room->id)
+                ->with('roomVisitor:id,name,email,nda_accepted_at', 'document:id,name,original_name')
+                ->orderBy('started_at')
+                ->chunk(200, function ($rows) use ($out) {
+                    foreach ($rows as $v) {
+                        $location = trim(implode(', ', array_filter([$v->city, $v->region, $v->country])));
+                        fputcsv($out, [
+                            $v->roomVisitor?->name ?? '',
+                            $v->roomVisitor?->email ?? '',
+                            $v->document?->original_name ?? $v->document?->name ?? '',
+                            $location,
+                            $v->started_at,
+                            $v->ended_at,
+                            $v->total_duration_seconds,
+                            $v->total_pages_viewed,
+                            $v->ip_address,
+                            $v->roomVisitor?->nda_accepted_at,
+                        ]);
+                    }
+                });
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

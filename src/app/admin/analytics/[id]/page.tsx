@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
   getDocumentAnalyticsDetail,
   getViewDetail,
+  exportDocumentAnalyticsCsv,
   type DocumentDetail,
   type ViewDetail,
   type ViewerEntry,
@@ -144,9 +145,32 @@ export default function DocumentAnalyticsDetailPage() {
 
       {/* Viewer list */}
       <div className="mb-8">
-        <h2 className="mb-4 font-sans text-xs font-medium uppercase tracking-[0.2em] text-white/60">
-          Viewers
-        </h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="font-sans text-xs font-medium uppercase tracking-[0.2em] text-white/60">
+            Viewers
+          </h2>
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                const blob = await exportDocumentAnalyticsCsv(id);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `analytics_${data.document.name}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+              } catch {
+                // silent
+              }
+            }}
+            className="rounded border border-white/15 px-3 py-1 font-sans text-xs text-white/70 hover:border-ravok-gold/40 hover:text-ravok-gold"
+          >
+            Export CSV
+          </button>
+        </div>
         {data.views.length === 0 ? (
           <p className="font-sans text-sm text-ravok-slate">No views yet.</p>
         ) : (

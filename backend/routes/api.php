@@ -93,6 +93,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Document analytics
         Route::get('/analytics/documents', [DocumentAnalyticsController::class, 'index']);
         Route::get('/analytics/documents/{document}', [DocumentAnalyticsController::class, 'show']);
+        Route::get('/analytics/documents/{document}/export', [DocumentAnalyticsController::class, 'export']);
         Route::get('/analytics/views/{sessionToken}', [DocumentAnalyticsController::class, 'viewDetail']);
 
         // Data rooms (admin CRUD)
@@ -111,6 +112,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/analytics/rooms/{room}', [DataRoomAnalyticsController::class, 'show']);
         Route::get('/analytics/rooms/{room}/visitors', [DataRoomAnalyticsController::class, 'visitors']);
         Route::get('/analytics/rooms/{room}/visitors/{visitor}', [DataRoomAnalyticsController::class, 'visitorDetail']);
+        Route::get('/analytics/rooms/{room}/export', [DataRoomAnalyticsController::class, 'export']);
 
         // Form submissions
         Route::get('/forms', [FormSubmissionController::class, 'index']);

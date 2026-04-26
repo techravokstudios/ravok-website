@@ -7,6 +7,7 @@ import {
   getRoomAnalyticsDetail,
   getRoomVisitors,
   getRoomVisitorDetail,
+  exportRoomAnalyticsCsv,
   type RoomDetail,
   type RoomVisitorStat,
   type RoomVisitorDetail,
@@ -94,9 +95,32 @@ export default function RoomAnalyticsPage() {
 
       {/* Visitors */}
       <div className="mb-8">
-        <h2 className="mb-3 font-sans text-xs font-medium uppercase tracking-[0.2em] text-white/60">
-          Visitors
-        </h2>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-sans text-xs font-medium uppercase tracking-[0.2em] text-white/60">
+            Visitors
+          </h2>
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                const blob = await exportRoomAnalyticsCsv(id);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `room_analytics_${data.room.name}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+              } catch {
+                // silent
+              }
+            }}
+            className="rounded border border-white/15 px-3 py-1 font-sans text-xs text-white/70 hover:border-ravok-gold/40 hover:text-ravok-gold"
+          >
+            Export CSV
+          </button>
+        </div>
         {visitors.length === 0 ? (
           <p className="font-sans text-sm text-ravok-slate">No visitors yet.</p>
         ) : (
