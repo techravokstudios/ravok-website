@@ -29,7 +29,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-black text-white border-t border-white/10 font-sans rounded-t-3xl shadow-2xl relative">
+    <footer className="bg-[var(--ds-bg)] text-[var(--ds-ink)] border-t border-[var(--ds-border)] font-sans rounded-t-3xl shadow-2xl relative">
       {/* Main Split Layout */}
       <div className="flex flex-col lg:flex-row min-h-[400px] relative z-10">
         {/* Background Image - Fixed Size */}
@@ -39,11 +39,11 @@ export default function Footer() {
             alt="Partners Background"
             className="absolute inset-0 w-full h-full object-cover opacity-30 grayscale"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--ds-bg)] via-[rgba(28,28,26,0.8)] to-transparent" />
         </div>
         {/* Left Side - Logo */}
         <motion.div
-          className="w-full lg:w-[35%] border-r border-white/10 flex items-center justify-center p-12 lg:p-0 relative z-10"
+          className="w-full lg:w-[35%] border-r border-[var(--ds-border)] flex items-center justify-center p-12 lg:p-0 relative z-10"
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
@@ -73,7 +73,7 @@ export default function Footer() {
             {/* Company */}
             <motion.div className="space-y-6" variants={itemVariants}>
               <h4 className="text-ravok-gold text-xl font-heading tracking-wide">Company</h4>
-              <nav className="flex flex-col space-y-4 text-sm text-gray-400 font-light tracking-wide">
+              <nav className="flex flex-col space-y-4 text-sm text-[var(--ds-ink-dim)] font-light tracking-wide">
                 {[
                   { href: "/", label: "Home" },
                   { href: "/about-us", label: "About Us" },
@@ -86,7 +86,7 @@ export default function Footer() {
                     href={link.href}
                     className="group relative inline-block w-fit"
                   >
-                    <span className="group-hover:text-white transition-colors duration-300">
+                    <span className="group-hover:text-[var(--ds-ink)] transition-colors duration-300">
                       {link.label}
                     </span>
                     <motion.span
@@ -100,7 +100,7 @@ export default function Footer() {
             {/* Policies */}
             <motion.div className="space-y-6" variants={itemVariants}>
               <h4 className="text-ravok-gold text-xl font-heading tracking-wide">Policies</h4>
-              <nav className="flex flex-col space-y-4 text-sm text-gray-400 font-light tracking-wide">
+              <nav className="flex flex-col space-y-4 text-sm text-[var(--ds-ink-dim)] font-light tracking-wide">
                 {[
                   { href: "/terms-and-conditions", label: "Terms and Conditions" },
                   { href: "/privacy-policy", label: "Privacy Policy" },
@@ -111,7 +111,7 @@ export default function Footer() {
                     href={link.href}
                     className="group relative inline-block w-fit"
                   >
-                    <span className="group-hover:text-white transition-colors duration-300">
+                    <span className="group-hover:text-[var(--ds-ink)] transition-colors duration-300">
                       {link.label}
                     </span>
                     <motion.span
@@ -125,7 +125,7 @@ export default function Footer() {
             {/* Portal & Follow */}
             <motion.div className="space-y-6" variants={itemVariants}>
               <h4 className="text-ravok-gold text-xl font-heading tracking-wide">Portal</h4>
-              <nav className="flex flex-col space-y-4 text-sm text-gray-400 font-light tracking-wide">
+              <nav className="flex flex-col space-y-4 text-sm text-[var(--ds-ink-dim)] font-light tracking-wide">
                 {[
                   { href: "/login", label: "Investor Portal" },
                   { href: "/admin", label: "Admin Portal" },
@@ -135,7 +135,7 @@ export default function Footer() {
                     href={link.href}
                     className="group relative inline-block w-fit"
                   >
-                    <span className="group-hover:text-white transition-colors duration-300">
+                    <span className="group-hover:text-[var(--ds-ink)] transition-colors duration-300">
                       {link.label}
                     </span>
                     <motion.span
@@ -154,7 +154,7 @@ export default function Footer() {
                   <motion.a
                     key={i}
                     href={href}
-                    className="text-gray-400"
+                    className="text-[var(--ds-ink-dim)]"
                     whileHover={{
                       scale: 1.2,
                       color: "var(--color-ravok-gold)",
@@ -179,12 +179,12 @@ export default function Footer() {
           >
             <motion.button
               onClick={scrollToTop}
-              className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group bg-black/20 backdrop-blur-sm"
+              className="w-10 h-10 rounded-full border border-[var(--ds-border-strong)] flex items-center justify-center group bg-[rgba(28,28,26,0.2)] backdrop-blur-sm"
               whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.1)" }}
               whileTap={{ scale: 0.9 }}
               aria-label="Scroll to top"
             >
-              <div className="w-1.5 h-1.5 bg-white rounded-full group-hover:bg-ravok-gold transition-colors" />
+              <div className="w-1.5 h-1.5 bg-[var(--ds-ink)] rounded-full group-hover:bg-ravok-gold transition-colors" />
             </motion.button>
           </motion.div>
         </motion.div>
@@ -192,13 +192,13 @@ export default function Footer() {
 
       {/* Copyright Bar */}
       <motion.div
-        className="border-t border-white/10 py-6 text-center relative z-10"
+        className="border-t border-[var(--ds-border)] py-6 text-center relative z-10"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
       >
-        <p className="text-[10px] text-gray-500 font-sans tracking-widest uppercase">
+        <p className="text-[10px] text-[var(--ds-ink-muted)] font-sans tracking-widest uppercase">
           © 2026 Ravok Studios | All Rights Reserved.
         </p>
       </motion.div>
@@ -212,7 +212,7 @@ export default function Footer() {
       >
         <motion.button
           onClick={scrollToTop}
-          className="w-10 h-10 bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center rounded"
+          className="w-10 h-10 bg-[rgba(232,228,218,0.08)] backdrop-blur-sm border border-[var(--ds-border-strong)] flex items-center justify-center rounded-full"
           whileHover={{
             scale: 1.1,
             backgroundColor: "rgba(169, 129, 71, 0.2)",

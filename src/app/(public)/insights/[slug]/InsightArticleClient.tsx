@@ -88,12 +88,12 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
 
   if (notFoundState) {
     return (
-      <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
+      <main className="min-h-screen bg-[var(--ds-bg)] text-[var(--ds-ink)] selection:bg-ravok-gold selection:text-black overflow-x-hidden">
         <Navbar />
         <div className="pt-32 pb-24 px-6">
           <div className="container mx-auto max-w-3xl">
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-6">
-              <h1 className="font-heading text-2xl font-bold text-white">Article not found</h1>
+            <div className="rounded-xl border border-[var(--ds-border)] bg-[rgba(232,228,218,0.04)] p-6">
+              <h1 className="font-heading text-2xl font-bold text-[var(--ds-ink)]">Article not found</h1>
               <p className="mt-2 font-sans text-sm text-ravok-slate">
                 The article you are looking for does not exist or has been removed.
               </p>
@@ -116,7 +116,7 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
 
   if (loading || !post) {
     return (
-      <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
+      <main className="min-h-screen bg-[var(--ds-bg)] text-[var(--ds-ink)] selection:bg-ravok-gold selection:text-black overflow-x-hidden">
         <Navbar />
         <div className="pt-32 pb-24 px-6">
           <div className="container mx-auto max-w-3xl">
@@ -134,7 +134,7 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
   const imageUrl = getPostImageUrl(post.featured_image);
 
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
+    <main className="min-h-screen bg-[var(--ds-bg)] text-[var(--ds-ink)] selection:bg-ravok-gold selection:text-black overflow-x-hidden">
       <Navbar />
 
       <article className="pt-32 pb-24 px-6">
@@ -158,7 +158,7 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
           {/* Featured image */}
           {imageUrl && (
             <motion.div
-              className="mb-10 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-lg"
+              className="mb-10 overflow-hidden rounded-2xl border border-[var(--ds-border)] bg-[rgba(232,228,218,0.04)] shadow-lg"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.05 }}
@@ -197,7 +197,7 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
 
           {/* Title */}
           <motion.h1
-            className="font-heading text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl"
+            className="font-heading text-4xl font-bold leading-tight text-[var(--ds-ink)] sm:text-5xl lg:text-6xl"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
@@ -207,7 +207,7 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
 
           {/* Article body */}
           <motion.div
-            className="article-body mt-10 font-sans text-lg leading-relaxed text-white/90 [&_a]:text-ravok-gold [&_a]:underline [&_a]:hover:text-ravok-beige [&_img]:my-6 [&_img]:w-full [&_img]:rounded-xl [&_img]:border [&_img]:border-white/10 [&_p]:mb-6 [&_ul]:mb-6 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_h2]:font-heading [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-white [&_h3]:font-heading [&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-white [&_blockquote]:border-l-2 [&_blockquote]:border-ravok-gold/50 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-ravok-slate [&_blockquote]:my-6"
+            className="article-body mt-10 font-sans text-lg leading-relaxed text-[var(--ds-ink-dim)] [&_a]:text-ravok-gold [&_a]:underline [&_a]:hover:text-ravok-beige [&_img]:my-6 [&_img]:w-full [&_img]:rounded-xl [&_img]:border [&_img]:border-[var(--ds-border)] [&_p]:mb-6 [&_ul]:mb-6 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2 [&_h2]:font-heading [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-[var(--ds-ink)] [&_h3]:font-heading [&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-[var(--ds-ink)] [&_blockquote]:border-l-2 [&_blockquote]:border-ravok-gold/50 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-ravok-slate [&_blockquote]:my-6"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -216,12 +216,12 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
 
           {/* Comments */}
           <motion.section
-            className="mt-20 border-t border-white/10 pt-12"
+            className="mt-20 border-t border-[var(--ds-border)] pt-12"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.25 }}
           >
-            <h2 className="font-heading text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            <h2 className="font-heading text-2xl font-bold tracking-tight text-[var(--ds-ink)] sm:text-3xl">
               Comments
             </h2>
             <p className="mt-1 font-sans text-sm text-ravok-slate">
@@ -235,9 +235,9 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
                 {comments.map((c) => (
                   <li
                     key={c.id}
-                    className="rounded-xl border border-white/10 bg-white/[0.03] p-5"
+                    className="rounded-xl border border-[var(--ds-border)] bg-[rgba(232,228,218,0.04)] p-5"
                   >
-                    <p className="font-sans font-medium text-white">{c.author_name}</p>
+                    <p className="font-sans font-medium text-[var(--ds-ink)]">{c.author_name}</p>
                     <p className="mt-0.5 font-sans text-xs text-ravok-slate">
                       {new Date(c.created_at).toLocaleDateString("en-US", {
                         month: "short",
@@ -245,7 +245,7 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
                         year: "numeric",
                       })}
                     </p>
-                    <p className="mt-3 font-sans text-sm leading-relaxed text-white/90">
+                    <p className="mt-3 font-sans text-sm leading-relaxed text-[var(--ds-ink-dim)]">
                       {c.body}
                     </p>
                   </li>
@@ -253,8 +253,8 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
               </ul>
             )}
 
-            <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
-              <h3 className="font-heading text-lg font-semibold text-white">
+            <div className="mt-10 rounded-2xl border border-[var(--ds-border)] bg-[rgba(232,228,218,0.04)] p-6 sm:p-8">
+              <h3 className="font-heading text-lg font-semibold text-[var(--ds-ink)]">
                 Leave a comment
               </h3>
               <form onSubmit={handleCommentSubmit} className="mt-6 space-y-5">
@@ -263,7 +263,7 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
                     <div>
                       <Label
                         htmlFor="comment-name"
-                        className="font-sans text-sm font-medium text-white/90"
+                        className="font-sans text-sm font-medium text-[var(--ds-ink-dim)]"
                       >
                         Name
                       </Label>
@@ -271,7 +271,7 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
                         id="comment-name"
                         value={commentName}
                         onChange={(e) => setCommentName(e.target.value)}
-                        className="mt-2 rounded-xl border-white/20 bg-black/30 font-sans text-white placeholder:text-ravok-slate/60"
+                        className="mt-2 rounded-xl border-[var(--ds-border-strong)] bg-[rgba(28,28,26,0.3)] font-sans text-[var(--ds-ink)] placeholder:text-ravok-slate/60"
                         placeholder="Your name"
                         required
                       />
@@ -279,7 +279,7 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
                     <div>
                       <Label
                         htmlFor="comment-email"
-                        className="font-sans text-sm font-medium text-white/90"
+                        className="font-sans text-sm font-medium text-[var(--ds-ink-dim)]"
                       >
                         Email (optional)
                       </Label>
@@ -288,7 +288,7 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
                         type="email"
                         value={commentEmail}
                         onChange={(e) => setCommentEmail(e.target.value)}
-                        className="mt-2 rounded-xl border-white/20 bg-black/30 font-sans text-white placeholder:text-ravok-slate/60"
+                        className="mt-2 rounded-xl border-[var(--ds-border-strong)] bg-[rgba(28,28,26,0.3)] font-sans text-[var(--ds-ink)] placeholder:text-ravok-slate/60"
                         placeholder="you@example.com"
                       />
                     </div>
@@ -297,7 +297,7 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
                 <div>
                   <Label
                     htmlFor="comment-body"
-                    className="font-sans text-sm font-medium text-white/90"
+                    className="font-sans text-sm font-medium text-[var(--ds-ink-dim)]"
                   >
                     Comment
                   </Label>
@@ -306,14 +306,14 @@ export default function InsightArticleClient({ slug }: { slug: string }) {
                     value={commentBody}
                     onChange={(e) => setCommentBody(e.target.value)}
                     rows={4}
-                    className="mt-2 w-full rounded-xl border border-white/20 bg-black/30 px-4 py-3 font-sans text-sm text-white placeholder:text-ravok-slate/60 focus:border-ravok-gold/50 focus:outline-none focus:ring-1 focus:ring-ravok-gold/30"
+                    className="mt-2 w-full rounded-xl border border-[var(--ds-border-strong)] bg-[rgba(28,28,26,0.3)] px-4 py-3 font-sans text-sm text-[var(--ds-ink)] placeholder:text-ravok-slate/60 focus:border-ravok-gold/50 focus:outline-none focus:ring-1 focus:ring-ravok-gold/30"
                     placeholder="Share your thoughts…"
                     required
                   />
                 </div>
                 <Button
                   type="submit"
-                  className="rounded-xl bg-ravok-gold px-6 py-2.5 font-sans text-sm font-medium text-black transition-colors hover:bg-ravok-gold/90"
+                  className="rounded-full bg-ravok-gold px-6 py-2.5 font-sans text-sm font-medium text-black transition-colors hover:bg-ravok-gold/90"
                   disabled={
                     commentSubmitting ||
                     !commentBody.trim() ||

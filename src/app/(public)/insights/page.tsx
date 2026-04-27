@@ -40,10 +40,10 @@ function PostCard({ post, index = 0 }: { post: Post; index?: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="group flex flex-col rounded-2xl overflow-hidden bg-gradient-to-b from-white/[0.06] to-transparent border border-white/10 hover:border-ravok-gold/40 shadow-lg hover:shadow-xl hover:shadow-ravok-gold/5 transition-all duration-300"
+      className="group flex flex-col rounded-2xl overflow-hidden bg-gradient-to-b from-[rgba(232,228,218,0.06)] to-transparent border border-[var(--ds-border)] hover:border-ravok-gold/40 shadow-lg hover:shadow-xl hover:shadow-ravok-gold/5 transition-all duration-300"
     >
       {imageUrl ? (
-        <Link href={`/insights/${post.slug}`} className="block aspect-[16/10] overflow-hidden bg-white/5">
+        <Link href={`/insights/${post.slug}`} className="block aspect-[16/10] overflow-hidden bg-[rgba(232,228,218,0.04)]">
           <img
             src={imageUrl}
             alt=""
@@ -51,7 +51,7 @@ function PostCard({ post, index = 0 }: { post: Post; index?: number }) {
           />
         </Link>
       ) : (
-        <div className="aspect-[16/10] bg-white/5 border-b border-white/5" />
+        <div className="aspect-[16/10] bg-[rgba(232,228,218,0.04)] border-b border-[var(--ds-border)]" />
       )}
       <div className="flex flex-1 flex-col p-6">
         {post.category && (
@@ -60,7 +60,7 @@ function PostCard({ post, index = 0 }: { post: Post; index?: number }) {
           </span>
         )}
         <Link href={`/insights/${post.slug}`} className="mb-2 block flex-1">
-          <h3 className="font-heading text-xl font-semibold leading-snug text-white transition-colors line-clamp-2 group-hover:text-ravok-gold lg:text-2xl">
+          <h3 className="font-heading text-xl font-semibold leading-snug text-[var(--ds-ink)] transition-colors line-clamp-2 group-hover:text-ravok-gold lg:text-2xl">
             {post.title}
           </h3>
         </Link>
@@ -126,7 +126,7 @@ export default function InsightsPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
+    <main className="min-h-screen bg-[var(--ds-bg)] text-[var(--ds-ink)] selection:bg-ravok-gold selection:text-black overflow-x-hidden">
       <Navbar />
 
       {error && (
@@ -138,10 +138,10 @@ export default function InsightsPage() {
       )}
 
       {/* Page title */}
-      <header className="border-b border-white/10 px-6 pt-32 pb-12">
+      <header className="border-b border-[var(--ds-border)] px-6 pt-32 pb-12">
         <div className="container mx-auto max-w-6xl">
           <motion.h1
-            className="font-heading text-4xl font-bold tracking-tight text-white sm:text-5xl"
+            className="font-heading text-4xl font-bold tracking-tight text-[var(--ds-ink)] sm:text-5xl"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -190,7 +190,7 @@ export default function InsightsPage() {
                   <p className="mb-1 font-sans text-xs font-medium uppercase tracking-widest text-ravok-slate">
                     Editor&apos;s pick
                   </p>
-                  <h2 className="font-heading text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                  <h2 className="font-heading text-2xl font-bold tracking-tight text-[var(--ds-ink)] sm:text-3xl">
                     Featured Posts
                   </h2>
                 </motion.div>
@@ -210,7 +210,7 @@ export default function InsightsPage() {
                 <section
                   key={category.id}
                   id={category.slug}
-                  className="border-t border-white/10 px-6 py-16 lg:py-20"
+                  className="border-t border-[var(--ds-border)] px-6 py-16 lg:py-20"
                 >
                   <div className="container mx-auto max-w-6xl">
                     <motion.div
@@ -220,7 +220,7 @@ export default function InsightsPage() {
                       viewport={{ once: true }}
                     >
                       <div>
-                        <h2 className="font-heading text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                        <h2 className="font-heading text-2xl font-bold tracking-tight text-[var(--ds-ink)] sm:text-3xl">
                           {category.name}
                         </h2>
                         {posts.length > 0 && (

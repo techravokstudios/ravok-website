@@ -65,7 +65,7 @@ export default function Navbar() {
 
     return (
         <motion.nav
-            className={`fixed top-0 left-0 w-full z-[100] text-white transition-all duration-500 ${scrolled ? 'bg-black/80 backdrop-blur-xl border-b border-white/10' : ''
+            className={`fixed top-0 left-0 w-full z-[100] text-[var(--ds-ink)] transition-all duration-500 ${scrolled ? 'bg-[rgba(28,28,26,0.8)] backdrop-blur-xl border-b border-[var(--ds-border)]' : ''
                 }`}
             initial={{ y: -100 }}
             animate={{ y: 0 }}
@@ -106,7 +106,7 @@ export default function Navbar() {
                 </motion.div>
 
                 {/* Desktop Navigation */}
-                <div className="hidden lg:flex items-center gap-12 font-sans text-sm tracking-widest text-white">
+                <div className="hidden lg:flex items-center gap-12 font-sans text-sm tracking-widest text-[var(--ds-ink)]">
                     {navItems.map((item, i) => (
                         <motion.div
                             key={item.href}
@@ -122,7 +122,7 @@ export default function Navbar() {
                                 href={item.href}
                                 className="relative group"
                             >
-                                <span className="relative z-10 text-white group-hover:text-ravok-gold transition-colors duration-300">
+                                <span className="relative z-10 text-[var(--ds-ink)] group-hover:text-ravok-gold transition-colors duration-300">
                                     {item.label}
                                 </span>
                                 <motion.span
@@ -165,7 +165,7 @@ export default function Navbar() {
                         role="dialog"
                         aria-modal="true"
                         aria-label="Navigation menu"
-                        className="fixed inset-0 min-h-screen min-h-[100dvh] bg-black z-[90] flex flex-col items-center justify-center gap-8 text-xl font-heading touch-manipulation"
+                        className="fixed inset-0 min-h-screen min-h-[100dvh] bg-[var(--ds-bg)] z-[90] flex flex-col items-center justify-center gap-8 text-xl font-heading touch-manipulation"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -195,7 +195,7 @@ export default function Navbar() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 20 }}
                                 transition={{ delay: navItems.length * 0.1 }}
-                                className="flex gap-6 pt-4 border-t border-white/10"
+                                className="flex gap-6 pt-4 border-t border-[var(--ds-border)]"
                             >
                                 <Link
                                     href={user.role === "admin" ? "/admin" : user.status === "approved" ? "/investor" : "/pending"}

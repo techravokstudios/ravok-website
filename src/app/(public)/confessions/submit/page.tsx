@@ -79,7 +79,7 @@ export default function SubmitConfessionPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black">
+    <main className="min-h-screen bg-[var(--ds-bg)] text-[var(--ds-ink)] selection:bg-ravok-gold selection:text-black">
       <Navbar />
 
       <div className="max-w-2xl mx-auto px-6 pt-32 pb-24">
@@ -96,7 +96,7 @@ export default function SubmitConfessionPage() {
           >
             ← Back to Blog
           </Link>
-          <h1 className="font-heading text-4xl font-bold tracking-tight text-white sm:text-5xl mb-3">
+          <h1 className="font-heading text-4xl font-bold tracking-tight text-[var(--ds-ink)] sm:text-5xl mb-3">
             Share Your Confession
           </h1>
           <p className="font-sans text-base text-ravok-slate/90">
@@ -107,7 +107,7 @@ export default function SubmitConfessionPage() {
 
         {/* Form Card */}
         <motion.div
-          className="bg-gradient-to-b from-white/[0.06] to-transparent rounded-2xl border border-white/10 p-8"
+          className="bg-gradient-to-b from-[rgba(232,228,218,0.06)] to-transparent rounded-2xl border border-[var(--ds-border)] p-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
@@ -132,7 +132,7 @@ export default function SubmitConfessionPage() {
 
             {/* Confession text */}
             <div>
-              <label htmlFor="body" className="block font-sans text-sm font-medium text-white mb-2">
+              <label htmlFor="body" className="block font-sans text-sm font-medium text-[var(--ds-ink)] mb-2">
                 Your Confession *
               </label>
               <textarea
@@ -141,7 +141,7 @@ export default function SubmitConfessionPage() {
                 value={formData.body}
                 onChange={handleChange}
                 placeholder="Share what's really on your mind... (20-500 characters)"
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-ravok-slate/60 font-sans focus:outline-none focus:ring-2 focus:ring-ravok-gold/50 focus:border-ravok-gold/50 resize-none transition-colors"
+                className="w-full px-4 py-3 bg-[rgba(232,228,218,0.04)] border border-[var(--ds-border)] rounded-xl text-[var(--ds-ink)] placeholder:text-ravok-slate/60 font-sans focus:outline-none focus:ring-2 focus:ring-ravok-gold/50 focus:border-ravok-gold/50 resize-none transition-colors"
                 rows={6}
                 disabled={loading}
               />
@@ -159,7 +159,7 @@ export default function SubmitConfessionPage() {
 
             {/* Category */}
             <div>
-              <label htmlFor="category" className="block font-sans text-sm font-medium text-white mb-2">
+              <label htmlFor="category" className="block font-sans text-sm font-medium text-[var(--ds-ink)] mb-2">
                 Category (Optional)
               </label>
               <select
@@ -167,19 +167,19 @@ export default function SubmitConfessionPage() {
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white font-sans focus:outline-none focus:ring-2 focus:ring-ravok-gold/50 focus:border-ravok-gold/50 transition-colors"
+                className="w-full px-4 py-2 bg-[rgba(232,228,218,0.04)] border border-[var(--ds-border)] rounded-xl text-[var(--ds-ink)] font-sans focus:outline-none focus:ring-2 focus:ring-ravok-gold/50 focus:border-ravok-gold/50 transition-colors"
                 disabled={loading}
               >
-                <option value="" className="bg-black">Select a category...</option>
+                <option value="" className="bg-[var(--ds-bg)]">Select a category...</option>
                 {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat} className="bg-black">{cat}</option>
+                  <option key={cat} value={cat} className="bg-[var(--ds-bg)]">{cat}</option>
                 ))}
               </select>
             </div>
 
             {/* Email */}
             <div>
-              <label htmlFor="notify_email" className="block font-sans text-sm font-medium text-white mb-2">
+              <label htmlFor="notify_email" className="block font-sans text-sm font-medium text-[var(--ds-ink)] mb-2">
                 Email (Optional)
               </label>
               <input
@@ -189,7 +189,7 @@ export default function SubmitConfessionPage() {
                 value={formData.notify_email}
                 onChange={handleChange}
                 placeholder="your@email.com (only for featured confession notifications)"
-                className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-ravok-slate/60 font-sans focus:outline-none focus:ring-2 focus:ring-ravok-gold/50 focus:border-ravok-gold/50 transition-colors"
+                className="w-full px-4 py-2 bg-[rgba(232,228,218,0.04)] border border-[var(--ds-border)] rounded-xl text-[var(--ds-ink)] placeholder:text-ravok-slate/60 font-sans focus:outline-none focus:ring-2 focus:ring-ravok-gold/50 focus:border-ravok-gold/50 transition-colors"
                 disabled={loading}
               />
               <p className="mt-1 font-sans text-xs text-ravok-slate">
@@ -207,7 +207,7 @@ export default function SubmitConfessionPage() {
             </button>
 
             {/* Disclaimer */}
-            <div className="pt-4 border-t border-white/10">
+            <div className="pt-4 border-t border-[var(--ds-border)]">
               <p className="font-sans text-xs text-ravok-slate/60">
                 By submitting a confession, you agree that it may be published anonymously on our
                 platform. RAVOK takes no responsibility for unverified claims made in confessions.
@@ -225,13 +225,13 @@ export default function SubmitConfessionPage() {
           ].map((item, i) => (
             <motion.div
               key={item.title}
-              className="bg-gradient-to-b from-white/[0.04] to-transparent rounded-2xl border border-white/10 p-6"
+              className="bg-gradient-to-b from-[rgba(232,228,218,0.04)] to-transparent rounded-2xl border border-[var(--ds-border)] p-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
             >
               <item.icon className="h-6 w-6 text-ravok-gold mb-3" />
-              <h3 className="font-heading text-lg text-white mb-2">{item.title}</h3>
+              <h3 className="font-heading text-lg text-[var(--ds-ink)] mb-2">{item.title}</h3>
               <p className="font-sans text-sm text-ravok-slate leading-relaxed">{item.desc}</p>
             </motion.div>
           ))}

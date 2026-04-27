@@ -36,18 +36,18 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
+    <main className="min-h-screen bg-[var(--ds-bg)] text-[var(--ds-ink)] selection:bg-ravok-gold selection:text-black overflow-x-hidden">
       <Navbar />
 
       <section className="min-h-screen flex flex-col justify-center pt-32 pb-24 px-6">
         <div className="container mx-auto max-w-md">
           <motion.div
-            className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 lg:p-10"
+            className="rounded-2xl border border-[var(--ds-border)] bg-[rgba(232,228,218,0.04)] p-8 lg:p-10"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
           >
-            <h1 className="text-3xl lg:text-4xl font-heading font-bold text-white uppercase tracking-wide mb-2">
+            <h1 className="text-3xl lg:text-4xl font-heading font-bold text-[var(--ds-ink)] uppercase tracking-wide mb-2">
               Register
             </h1>
             <p className="text-ravok-slate font-sans text-sm mb-8">
@@ -66,7 +66,7 @@ export default function RegisterPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full bg-black border border-white/10 px-4 py-3 text-white font-sans placeholder:text-white/30 focus:border-ravok-gold focus:outline-none transition-colors"
+                  className="w-full bg-[var(--ds-bg)] border border-[var(--ds-border)] px-4 py-3 text-[var(--ds-ink)] font-sans placeholder:text-[var(--ds-ink-muted)] focus:border-ravok-gold focus:outline-none transition-colors"
                 />
               </div>
               <div>
@@ -80,7 +80,7 @@ export default function RegisterPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-black border border-white/10 px-4 py-3 text-white font-sans placeholder:text-white/30 focus:border-ravok-gold focus:outline-none transition-colors"
+                  className="w-full bg-[var(--ds-bg)] border border-[var(--ds-border)] px-4 py-3 text-[var(--ds-ink)] font-sans placeholder:text-[var(--ds-ink-muted)] focus:border-ravok-gold focus:outline-none transition-colors"
                 />
               </div>
               <div>
@@ -95,7 +95,7 @@ export default function RegisterPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="w-full bg-black border border-white/10 px-4 py-3 text-white font-sans placeholder:text-white/30 focus:border-ravok-gold focus:outline-none transition-colors"
+                  className="w-full bg-[var(--ds-bg)] border border-[var(--ds-border)] px-4 py-3 text-[var(--ds-ink)] font-sans placeholder:text-[var(--ds-ink-muted)] focus:border-ravok-gold focus:outline-none transition-colors"
                 />
               </div>
               <div>
@@ -110,13 +110,13 @@ export default function RegisterPage() {
                   onChange={(e) => setPasswordConfirmation(e.target.value)}
                   required
                   minLength={8}
-                  className="w-full bg-black border border-white/10 px-4 py-3 text-white font-sans placeholder:text-white/30 focus:border-ravok-gold focus:outline-none transition-colors"
+                  className="w-full bg-[var(--ds-bg)] border border-[var(--ds-border)] px-4 py-3 text-[var(--ds-ink)] font-sans placeholder:text-[var(--ds-ink-muted)] focus:border-ravok-gold focus:outline-none transition-colors"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-ravok-gold text-black py-4 font-sans text-sm font-semibold uppercase tracking-widest hover:bg-ravok-beige transition-colors rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full bg-ravok-gold text-black py-4 font-sans text-sm font-semibold uppercase tracking-widest hover:bg-ravok-beige transition-colors rounded-full disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading ? "Creating account…" : "Create account"}
               </button>
