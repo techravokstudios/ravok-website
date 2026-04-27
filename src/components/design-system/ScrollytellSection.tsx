@@ -95,6 +95,9 @@ export function ScrollytellSection({
             style={{
                 zIndex,
                 backgroundColor: "var(--ds-bg)",
+                // Grid uses fixed attachment so it stays continuous across the corner
+                // transition with the previous/next sticky section. Gold fade stays
+                // scroll so it rises with this section.
                 backgroundImage: [
                     !noTopFade && "linear-gradient(to bottom, rgba(196,149,58,0.06) 0, transparent 200px)",
                     "linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px)",
@@ -105,6 +108,9 @@ export function ScrollytellSection({
                 backgroundSize: noTopFade
                     ? "80px 80px, 80px 80px"
                     : "100% 100%, 80px 80px, 80px 80px",
+                backgroundAttachment: noTopFade
+                    ? "fixed, fixed"
+                    : "scroll, fixed, fixed",
             }}
         >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 px-6 lg:px-[6vw] pt-24 pb-0">

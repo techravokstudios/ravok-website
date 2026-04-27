@@ -74,7 +74,11 @@ export function CRevealSection({
             className={`${positionClass} ${heightClass} ${paddingY} px-6 lg:px-10 section-card ${className}`.trim()}
             style={{
                 zIndex,
-                // Layered background: gold top fade + per-section grid (vertical + horizontal) + solid bg
+                // Layered background: gold top fade + per-section grid (vertical + horizontal) + solid bg.
+                // Grid uses `fixed` attachment so it stays aligned to the viewport across stacked
+                // sticky sections — without this, each section's grid origin sits at its own
+                // top-left and the lines visibly "jump" at the corner transition between sections.
+                // Gold top-fade stays `scroll` so it rises with each section.
                 backgroundImage: [
                     !noTopFade && "linear-gradient(to bottom, rgba(196,149,58,0.06) 0, transparent 200px)",
                     "linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px)",
@@ -85,6 +89,9 @@ export function CRevealSection({
                 backgroundSize: noTopFade
                     ? "80px 80px, 80px 80px"
                     : "100% 100%, 80px 80px, 80px 80px",
+                backgroundAttachment: noTopFade
+                    ? "fixed, fixed"
+                    : "scroll, fixed, fixed",
                 backgroundColor: "var(--ds-bg)",
             }}
         >

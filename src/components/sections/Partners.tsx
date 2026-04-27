@@ -102,6 +102,7 @@ export default function Partners() {
                         "linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px)",
                     ].join(", "),
                     backgroundSize: "100% 100%, 80px 80px, 80px 80px",
+                    backgroundAttachment: "scroll, fixed, fixed",
                 }}
             >
                 <div className="max-w-[900px] mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 bg-[rgba(15,15,13,0.5)] backdrop-blur-sm border-y border-[var(--ds-border)] px-8 py-8">
