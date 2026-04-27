@@ -72,14 +72,19 @@ export function ScrollytellSection({
             const tracker = trackerRef.current;
             if (!tracker) return;
             const r = tracker.getBoundingClientRect();
-            // Progress = how far we've scrolled past tracker top, normalized 0..1
-            const totalRange = Math.max(1, r.height);
+            // The transition phase uses the FIRST (N-1)*100vh of the tracker.
+            // After that, the track stays at max translate (last step at top)
+            // while the user scrolls the remaining tracker — which is when
+            // section 7 rises up to cover. This gives the last step a clean
+            // dwell + visible cover-from-below.
+            const vh = window.innerHeight;
+            const transitionRangePx = maxTranslateVh * vh / 100; // (N-1) * 100vh in px
             const scrolled = Math.max(0, -r.top);
-            const progress = Math.min(0.9999, scrolled / totalRange);
-            // Track translates up by (progress * maxTranslateVh) so step N reaches top
-            setTrackY(-progress * maxTranslateVh);
-            // Active step = which step index is currently at the top of the viewport
-            const idx = Math.min(steps.length - 1, Math.floor(progress * steps.length));
+            const transitionProgress = Math.min(1, scrolled / Math.max(1, transitionRangePx));
+            const translateVh = -transitionProgress * maxTranslateVh;
+            setTrackY(translateVh);
+            // Active step = whichever step is currently at viewport top (round to nearest 100vh)
+            const idx = Math.min(steps.length - 1, Math.max(0, Math.round(-translateVh / 100)));
             if (idx !== lastIdxRef.current) {
                 lastIdxRef.current = idx;
                 setActiveIdx(idx);
@@ -188,13 +193,16 @@ export function ScrollytellSection({
                 </div>
             </section>
 
-            {/* Scroll tracker — invisible, provides scroll range for the
-                track translation. (N-1) × 100vh = distance the track must
-                translate to cycle through all N steps. */}
+            {/* Scroll tracker — invisible spacer that drives both the track
+                translation and the page-flip into the next section.
+                Total height = (N-1)*100vh transition + 100vh dwell on last step
+                + 100vh during which the next sticky section rises and covers.
+                The last 100vh is where section 7 flips up over the still-visible
+                last step of section 6. */}
             <div
                 ref={trackerRef}
                 aria-hidden="true"
-                style={{ height: `${(steps.length - 1) * 100}vh` }}
+                style={{ height: `${(steps.length + 1) * 100}vh` }}
             />
         </>
     );
