@@ -52,6 +52,7 @@ export default function Offerings() {
     return (
         <CRevealSection
             zIndex={14}
+            nonSticky
             eyebrow="Our 2025 slate proves the model works."
             headline={
                 <>

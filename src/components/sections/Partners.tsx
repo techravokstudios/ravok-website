@@ -56,6 +56,7 @@ export default function Partners() {
         <CRevealSection
             id="investors"
             zIndex={15}
+            nonSticky
             eyebrow="To scale this model, we need the right partners."
             headline={
                 <>

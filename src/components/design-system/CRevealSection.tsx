@@ -61,11 +61,15 @@ export function CRevealSection({
     noTopFade = false,
 }: CRevealSectionProps) {
     const positionClass = nonSticky ? "relative" : "sticky top-0";
+    // Sticky sections need exactly 100vh to play the cover-from-below role.
+    // Non-sticky sections size to content (no forced 100vh, so tall content
+    // displays in full instead of being clipped by the next sticky covering it).
+    const heightClass = nonSticky ? "" : "min-h-screen";
 
     return (
         <section
             id={id}
-            className={`${positionClass} min-h-screen ${paddingY} px-10 overflow-hidden section-card ${className}`.trim()}
+            className={`${positionClass} ${heightClass} ${paddingY} px-10 section-card ${className}`.trim()}
             style={{
                 zIndex,
                 // Layered background: gold top fade + per-section grid (vertical + horizontal) + solid bg
