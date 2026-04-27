@@ -110,7 +110,7 @@ export function ScrollytellSection({
     return (
         <section
             id={id}
-            className={`sticky top-0 section-card ${className}`.trim()}
+            className={`relative section-card ${className}`.trim()}
             style={{
                 zIndex,
                 backgroundColor: "var(--ds-bg)",
