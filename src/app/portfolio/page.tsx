@@ -111,11 +111,11 @@ export default function PortfolioPage() {
     : VENTURES.filter((v) => v.category === activeCategory);
 
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black">
+    <main className="min-h-screen bg-[var(--ds-bg)] text-white selection:bg-ravok-gold selection:text-black">
       <Navbar />
 
       {/* Hero */}
-      <header className="border-b border-white/10 px-6 pt-32 pb-12">
+      <header className="border-b border-[var(--ds-border)] px-6 pt-32 pb-12">
         <div className="container mx-auto max-w-6xl">
           <motion.p
             className="font-sans text-xs font-medium uppercase tracking-widest text-ravok-slate mb-2"
@@ -126,7 +126,7 @@ export default function PortfolioPage() {
             Our 2026 Slate
           </motion.p>
           <motion.h1
-            className="font-heading text-5xl lg:text-7xl font-bold tracking-tight text-white mb-4"
+            className="font-heading text-[clamp(3rem,6.5vw,5.5rem)] font-normal tracking-tight text-[var(--ds-ink)] mb-4"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -152,7 +152,7 @@ export default function PortfolioPage() {
       </header>
 
       {/* Filter tabs */}
-      <div className="border-b border-white/10 sticky top-0 bg-black/90 backdrop-blur-xl z-10">
+      <div className="border-b border-[var(--ds-border)] sticky top-0 bg-[var(--ds-bg)]/90 backdrop-blur-xl z-10">
         <div className="container mx-auto max-w-6xl px-6 py-4">
           <div className="flex gap-6 overflow-x-auto">
             {(["All", ...CATEGORIES] as const).map((cat) => (
@@ -162,7 +162,7 @@ export default function PortfolioPage() {
                 className={`font-sans text-sm pb-2 border-b-2 transition-colors whitespace-nowrap ${
                   activeCategory === cat
                     ? "text-ravok-gold border-ravok-gold font-medium"
-                    : "text-ravok-slate border-transparent hover:text-white hover:border-white/30"
+                    : "text-ravok-slate border-transparent hover:text-[var(--ds-ink)] hover:border-[var(--ds-border-strong)]"
                 }`}
               >
                 {cat}
@@ -179,7 +179,7 @@ export default function PortfolioPage() {
             {filteredVentures.map((venture, i) => (
               <motion.div
                 key={venture.title}
-                className="border border-ravok-gold/20 bg-black/90 backdrop-blur-md p-6 hover:bg-zinc-950 transition-all duration-300 cursor-pointer group"
+                className="border border-ravok-gold/20 bg-[var(--ds-bg)]/90 backdrop-blur-md p-6 hover:bg-zinc-950 transition-all duration-300 cursor-pointer group"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -210,26 +210,26 @@ export default function PortfolioPage() {
                 {/* Expanded details */}
                 {expandedVenture === venture.title && venture.details && (
                   <motion.div
-                    className="border-t border-white/10 pt-4 space-y-2"
+                    className="border-t border-[var(--ds-border)] pt-4 space-y-2"
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     transition={{ duration: 0.3 }}
                   >
                     {venture.details.genre && (
                       <div className="flex justify-between">
-                        <span className="font-sans text-[10px] text-white uppercase tracking-wider font-bold">Genre</span>
+                        <span className="font-sans text-[10px] text-[var(--ds-ink)] uppercase tracking-wider font-semibold">Genre</span>
                         <span className="font-sans text-xs text-ravok-slate">{venture.details.genre}</span>
                       </div>
                     )}
                     {venture.details.team && (
                       <div className="flex justify-between">
-                        <span className="font-sans text-[10px] text-white uppercase tracking-wider font-bold">Team</span>
+                        <span className="font-sans text-[10px] text-[var(--ds-ink)] uppercase tracking-wider font-semibold">Team</span>
                         <span className="font-sans text-xs text-ravok-slate">{venture.details.team}</span>
                       </div>
                     )}
                     {venture.details.distribution && (
                       <div className="flex justify-between">
-                        <span className="font-sans text-[10px] text-white uppercase tracking-wider font-bold">Distribution</span>
+                        <span className="font-sans text-[10px] text-[var(--ds-ink)] uppercase tracking-wider font-semibold">Distribution</span>
                         <span className="font-sans text-xs text-ravok-slate">{venture.details.distribution}</span>
                       </div>
                     )}
@@ -242,10 +242,10 @@ export default function PortfolioPage() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-white/10 px-6 py-16">
+      <section className="border-t border-[var(--ds-border)] px-6 py-16">
         <div className="container mx-auto max-w-4xl text-center">
           <motion.h2
-            className="font-heading text-3xl lg:text-4xl text-white mb-4"
+            className="font-heading text-3xl lg:text-4xl text-[var(--ds-ink)] mb-4"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -270,13 +270,13 @@ export default function PortfolioPage() {
           >
             <Link
               href="/contact-us"
-              className="bg-ravok-gold text-black px-8 py-3 rounded-full font-sans font-bold text-sm tracking-widest uppercase hover:bg-ravok-beige transition-colors inline-flex items-center gap-2"
+              className="bg-ravok-gold text-black px-8 py-3 rounded-full font-sans font-semibold text-[0.68rem] tracking-[0.2em] uppercase hover:bg-[#d4a54a] hover:-translate-y-px transition-all duration-[250ms] ease-[cubic-bezier(0.2,0.6,0.2,1)] inline-flex items-center gap-2"
             >
               Contact Us <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/pitch-us"
-              className="border border-ravok-gold/30 text-white px-8 py-3 rounded-full font-sans text-sm tracking-widest uppercase hover:bg-ravok-gold hover:text-black transition-all"
+              className="border border-[var(--ds-border-strong)] text-[var(--ds-ink)] px-6 py-[0.85rem] rounded-full font-sans text-[0.68rem] font-semibold tracking-[0.2em] uppercase hover:border-ravok-gold hover:text-ravok-gold hover:-translate-y-px transition-all duration-[250ms] ease-[cubic-bezier(0.2,0.6,0.2,1)]"
             >
               Pitch Us
             </Link>

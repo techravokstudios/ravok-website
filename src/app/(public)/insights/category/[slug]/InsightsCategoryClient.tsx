@@ -69,7 +69,7 @@ export default function InsightsCategoryClient({ slug }: { slug: string }) {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
+    <main className="min-h-screen bg-[var(--ds-bg)] text-[var(--ds-ink)] selection:bg-ravok-gold selection:text-black overflow-x-hidden">
       <Navbar />
 
       <div className="pt-32 pb-24 px-6">
@@ -92,7 +92,7 @@ export default function InsightsCategoryClient({ slug }: { slug: string }) {
             <p className="font-sans text-ravok-slate">Loading…</p>
           ) : category ? (
             <>
-              <h1 className="text-4xl lg:text-5xl font-heading font-bold text-ravok-gold uppercase tracking-wide mb-12">
+              <h1 className="text-[clamp(2.5rem,4.5vw,4rem)] font-heading font-normal text-ravok-gold uppercase tracking-wide mb-12">
                 {category.name}
               </h1>
 
@@ -105,10 +105,10 @@ export default function InsightsCategoryClient({ slug }: { slug: string }) {
                       <Link
                         key={post.id}
                         href={`/insights/${post.slug}`}
-                        className="block group p-4 rounded-lg bg-black/30 border border-white/5 hover:border-ravok-gold/30 transition-colors"
+                        className="block group p-4 rounded-2xl bg-[rgba(28,28,26,0.3)] border border-[var(--ds-border)] hover:border-ravok-gold/30 transition-colors"
                       >
                         {getPostImageUrl(post.featured_image) && (
-                          <div className="aspect-[4/3] rounded-lg overflow-hidden border border-white/10 mb-4">
+                          <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-[var(--ds-border)] mb-4">
                             <img
                               src={getPostImageUrl(post.featured_image)!}
                               alt=""
@@ -116,7 +116,7 @@ export default function InsightsCategoryClient({ slug }: { slug: string }) {
                             />
                           </div>
                         )}
-                        <h2 className="font-heading font-semibold text-white group-hover:text-ravok-gold transition-colors line-clamp-2">
+                        <h2 className="font-heading font-semibold text-[var(--ds-ink)] group-hover:text-ravok-gold transition-colors line-clamp-2">
                           {post.title}
                         </h2>
                         {post.published_at && (
@@ -129,7 +129,7 @@ export default function InsightsCategoryClient({ slug }: { slug: string }) {
                   </div>
 
                   {lastPage > 1 && (
-                    <div className="flex items-center justify-between border-t border-white/10 pt-6">
+                    <div className="flex items-center justify-between border-t border-[var(--ds-border)] pt-6">
                       <p className="font-sans text-sm text-ravok-slate">
                         Page {page} of {lastPage}
                       </p>
@@ -138,7 +138,7 @@ export default function InsightsCategoryClient({ slug }: { slug: string }) {
                           type="button"
                           onClick={() => loadPage(page - 1)}
                           disabled={page <= 1}
-                          className="inline-flex items-center gap-2 border border-white/20 text-white px-4 py-2 rounded font-sans text-sm hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="inline-flex items-center gap-2 border border-[var(--ds-border-strong)] text-[var(--ds-ink)] px-4 py-2 rounded-full font-sans text-sm hover:bg-[rgba(232,228,218,0.08)] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <ChevronLeft className="w-4 h-4" />
                           Previous
@@ -147,7 +147,7 @@ export default function InsightsCategoryClient({ slug }: { slug: string }) {
                           type="button"
                           onClick={() => loadPage(page + 1)}
                           disabled={page >= lastPage}
-                          className="inline-flex items-center gap-2 border border-white/20 text-white px-4 py-2 rounded font-sans text-sm hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="inline-flex items-center gap-2 border border-[var(--ds-border-strong)] text-[var(--ds-ink)] px-4 py-2 rounded-full font-sans text-sm hover:bg-[rgba(232,228,218,0.08)] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Next
                           <ChevronRight className="w-4 h-4" />

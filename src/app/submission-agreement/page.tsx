@@ -41,7 +41,7 @@ function Section({
 
 export default function SubmissionAgreementPage() {
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
+    <main className="min-h-screen bg-[var(--ds-bg)] text-[var(--ds-ink)] selection:bg-ravok-gold selection:text-black overflow-x-hidden">
       <Navbar />
 
       {/* Hero header */}
@@ -75,7 +75,7 @@ export default function SubmissionAgreementPage() {
           >
             <FileText className="w-10 h-10 text-ravok-gold shrink-0 mt-1" />
             <div>
-              <h1 className="text-4xl sm:text-5xl font-heading font-thin text-ravok-gold leading-tight">
+              <h1 className="text-4xl sm:text-5xl font-heading font-normal text-ravok-gold leading-tight">
                 Script Submission Terms &amp; Conditions
               </h1>
               <p className="font-sans text-sm text-ravok-slate mt-3">

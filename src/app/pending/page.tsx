@@ -44,13 +44,13 @@ export default function PendingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
+    <main className="min-h-screen bg-[var(--ds-bg)] text-[var(--ds-ink)] selection:bg-ravok-gold selection:text-black overflow-x-hidden">
       <Navbar />
 
       <section className="min-h-screen flex flex-col justify-center pt-32 pb-24 px-6">
         <div className="container mx-auto max-w-md">
           <motion.div
-            className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 lg:p-10 text-center"
+            className="rounded-2xl border border-[var(--ds-border)] bg-[rgba(232,228,218,0.04)] p-8 lg:p-10 text-center"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
@@ -58,13 +58,13 @@ export default function PendingPage() {
             <div className="mx-auto w-16 h-16 rounded-full border-2 border-ravok-gold/50 flex items-center justify-center mb-6">
               <Clock className="w-8 h-8 text-ravok-gold" />
             </div>
-            <h1 className="text-2xl lg:text-3xl font-heading font-bold text-white uppercase tracking-wide mb-3">
+            <h1 className="text-2xl lg:text-3xl font-heading font-normal text-[var(--ds-ink)] uppercase tracking-wide mb-3">
               Account pending approval
             </h1>
             <p className="text-ravok-slate font-sans text-sm leading-relaxed mb-8">
               Your investor account has been created and is awaiting approval by an administrator. You will be able to access the investor dashboard once your account is approved.
             </p>
-            <p className="text-white/70 font-sans text-xs mb-8">
+            <p className="text-[var(--ds-ink-dim)] font-sans text-xs mb-8">
               If you have questions, please contact us at{" "}
               <a href="mailto:contact@ravokstudios.com" className="text-ravok-gold hover:text-ravok-beige underline">
                 contact@ravokstudios.com
@@ -73,7 +73,7 @@ export default function PendingPage() {
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full border border-white/20 text-white py-3 font-sans text-sm uppercase tracking-widest hover:border-ravok-gold hover:text-ravok-gold transition-colors rounded-lg"
+              className="w-full border border-[var(--ds-border-strong)] text-[var(--ds-ink)] py-3 font-sans text-[0.68rem] font-semibold uppercase tracking-[0.2em] hover:border-ravok-gold hover:text-ravok-gold hover:-translate-y-px transition-all duration-[250ms] ease-[cubic-bezier(0.2,0.6,0.2,1)] rounded-full"
             >
               Sign out
             </button>

@@ -67,14 +67,14 @@ function Section({
         </span>
         <h2 className="text-xl font-heading text-ravok-gold">{title}</h2>
       </div>
-      <div className="font-sans text-white/85 leading-relaxed space-y-4">{children}</div>
+      <div className="font-sans text-[var(--ds-ink-dim)] leading-relaxed space-y-4">{children}</div>
     </motion.div>
   );
 }
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
+    <main className="min-h-screen bg-[var(--ds-bg)] text-[var(--ds-ink)] selection:bg-ravok-gold selection:text-black overflow-x-hidden">
       <Navbar />
 
       {/* Hero header */}
@@ -109,7 +109,7 @@ export default function TermsPage() {
               <FileText className="w-6 h-6 text-ravok-gold" />
             </span>
             <div>
-              <h1 className="text-4xl lg:text-5xl font-heading font-bold text-white uppercase tracking-wide mb-2">
+              <h1 className="text-4xl lg:text-5xl font-heading font-normal text-[var(--ds-ink)] uppercase tracking-wide mb-2">
                 Terms & Conditions
               </h1>
               <p className="text-ravok-slate font-sans text-sm">Last updated: January 2026</p>
@@ -237,14 +237,14 @@ export default function TermsPage() {
 
           <SectionRow num={13}>
             <Section id="section-13" num={13} title="Other Provisions" delay={0.34}>
-              <p>a. <strong className="text-white">Entire Agreement.</strong> These Terms (and any documents expressly incorporated by reference) constitute the entire agreement between you and RAVOK Studios concerning the Site and supersede all prior or contemporaneous communications and proposals, whether oral, written or electronic, between you and us.</p>
-              <p>b. <strong className="text-white">Severability.</strong> If any provision of these Terms is held to be invalid or unenforceable in whole or in part, the remaining provisions shall continue in full force and effect.</p>
-              <p>c. <strong className="text-white">Waiver.</strong> No waiver of any term or condition of these Terms shall be deemed a further or continuing waiver of such term or condition or any other term or condition.</p>
-              <p>d. <strong className="text-white">Assignment.</strong> You may not assign or transfer any of your rights or obligations under these Terms without our prior written consent. We may assign or transfer our rights and obligations at any time without restriction.</p>
-              <p>e. <strong className="text-white">Notices.</strong> Any notices required or permitted under these Terms shall be in writing and delivered by email to{" "}
+              <p>a. <strong className="text-[var(--ds-ink)]">Entire Agreement.</strong> These Terms (and any documents expressly incorporated by reference) constitute the entire agreement between you and RAVOK Studios concerning the Site and supersede all prior or contemporaneous communications and proposals, whether oral, written or electronic, between you and us.</p>
+              <p>b. <strong className="text-[var(--ds-ink)]">Severability.</strong> If any provision of these Terms is held to be invalid or unenforceable in whole or in part, the remaining provisions shall continue in full force and effect.</p>
+              <p>c. <strong className="text-[var(--ds-ink)]">Waiver.</strong> No waiver of any term or condition of these Terms shall be deemed a further or continuing waiver of such term or condition or any other term or condition.</p>
+              <p>d. <strong className="text-[var(--ds-ink)]">Assignment.</strong> You may not assign or transfer any of your rights or obligations under these Terms without our prior written consent. We may assign or transfer our rights and obligations at any time without restriction.</p>
+              <p>e. <strong className="text-[var(--ds-ink)]">Notices.</strong> Any notices required or permitted under these Terms shall be in writing and delivered by email to{" "}
                 <a href="mailto:contact@ravokstudios.com" className="text-ravok-gold hover:text-ravok-beige underline underline-offset-2 transition-colors">contact@ravokstudios.com</a>{" "}
                 (or such other email address as we may provide) or by posting on the Site.</p>
-              <p>f. <strong className="text-white">Changes to the Site / Services.</strong> We reserve the right to modify, suspend or discontinue the Site or Services (or any part thereof) at any time, with or without notice.</p>
+              <p>f. <strong className="text-[var(--ds-ink)]">Changes to the Site / Services.</strong> We reserve the right to modify, suspend or discontinue the Site or Services (or any part thereof) at any time, with or without notice.</p>
             </Section>
           </SectionRow>
 
@@ -264,7 +264,7 @@ export default function TermsPage() {
                 </span>
                 <h2 className="text-xl font-heading text-ravok-gold">Contact Information</h2>
               </div>
-              <p className="font-sans text-white/85 leading-relaxed mb-6">If you have any questions about these Terms, please contact us at:</p>
+              <p className="font-sans text-[var(--ds-ink-dim)] leading-relaxed mb-6">If you have any questions about these Terms, please contact us at:</p>
               <p className="text-white font-heading text-lg mb-2">RAVOK Studios</p>
               <p className="mb-2">
                 Email:{" "}

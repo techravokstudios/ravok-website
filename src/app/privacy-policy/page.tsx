@@ -66,14 +66,14 @@ function Section({
         </span>
         <h2 className="text-xl font-heading text-ravok-gold">{title}</h2>
       </div>
-      <div className="font-sans text-white/85 leading-relaxed space-y-4">{children}</div>
+      <div className="font-sans text-[var(--ds-ink-dim)] leading-relaxed space-y-4">{children}</div>
     </motion.div>
   );
 }
 
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black overflow-x-hidden">
+    <main className="min-h-screen bg-[var(--ds-bg)] text-[var(--ds-ink)] selection:bg-ravok-gold selection:text-black overflow-x-hidden">
       <Navbar />
 
       {/* Hero header */}
@@ -108,14 +108,14 @@ export default function PrivacyPage() {
               <Shield className="w-6 h-6 text-ravok-gold" />
             </span>
             <div>
-              <h1 className="text-4xl lg:text-5xl font-heading font-bold text-white uppercase tracking-wide mb-2">
+              <h1 className="text-4xl lg:text-5xl font-heading font-normal text-[var(--ds-ink)] uppercase tracking-wide mb-2">
                 Privacy Policy
               </h1>
               <p className="text-ravok-slate font-sans text-sm mb-6">Last Updated: June 24, 2026</p>
-              <p className="font-sans text-white/90 leading-relaxed max-w-3xl">
+              <p className="font-sans text-[var(--ds-ink-dim)] leading-relaxed max-w-3xl">
                 This Privacy Notice describes how RAVOK STUDIOS, INC. (&ldquo;Ravok Studios,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;) collects, uses, and protects personal information from users (&ldquo;you&rdquo;) who access our website at ravokstudios.com (the &ldquo;Site&rdquo;) and request password-protected access to our confidential materials.
               </p>
-              <p className="font-sans text-white/90 leading-relaxed max-w-3xl mt-3">
+              <p className="font-sans text-[var(--ds-ink-dim)] leading-relaxed max-w-3xl mt-3">
                 By accessing or using the Site, you agree to the terms of this Privacy Notice.
               </p>
             </div>
@@ -245,10 +245,10 @@ export default function PrivacyPage() {
                 </span>
                 <h2 className="text-xl font-heading text-ravok-gold">Contact Information</h2>
               </div>
-              <p className="font-sans text-white/85 leading-relaxed mb-6">If you have questions or requests, contact us at:</p>
+              <p className="font-sans text-[var(--ds-ink-dim)] leading-relaxed mb-6">If you have questions or requests, contact us at:</p>
               <p className="text-white font-heading text-lg mb-2">RAVOK STUDIOS, INC.</p>
-              <p className="font-sans text-white/85 mb-2">1401 21st ST STE R</p>
-              <p className="font-sans text-white/85 mb-4">Sacramento, CA 95811</p>
+              <p className="font-sans text-[var(--ds-ink-dim)] mb-2">1401 21st ST STE R</p>
+              <p className="font-sans text-[var(--ds-ink-dim)] mb-4">Sacramento, CA 95811</p>
               <p>
                 Email:{" "}
                 <a href="mailto:contact@ravokstudios.com" className="text-ravok-gold hover:text-ravok-beige underline underline-offset-2 transition-colors">contact@ravokstudios.com</a>

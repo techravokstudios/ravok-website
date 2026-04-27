@@ -16,13 +16,13 @@ const inquiryTypes = [
 
 export default function ContactUs() {
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-ravok-gold selection:text-black">
+    <main className="min-h-screen bg-[var(--ds-bg)] text-[var(--ds-ink)] selection:bg-ravok-gold selection:text-black">
       <Navbar />
 
       <section className="min-h-screen flex flex-col justify-center pt-32 pb-24 px-6 lg:px-12">
         <div className="container mx-auto w-full max-w-6xl">
           <motion.h1
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-heading font-thin text-white leading-[1.1] mb-24 text-center lg:text-left"
+            className="text-[clamp(3rem,6.5vw,5.5rem)] font-heading font-normal text-[var(--ds-ink)] leading-[1.1] mb-24 text-center lg:text-left"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -42,13 +42,13 @@ export default function ContactUs() {
             className="mb-12"
           >
             <div className="flex flex-wrap gap-3">
-              <Link href="/form/writer" className="px-4 py-2 rounded border border-white/20 bg-black/30 text-white hover:text-ravok-gold hover:bg-white/10 transition-colors font-sans tracking-widest text-xs uppercase">
+              <Link href="/form/writer" className="px-4 py-2 rounded-full border border-[var(--ds-border-strong)] bg-[rgba(28,28,26,0.3)] text-[var(--ds-ink)] hover:text-ravok-gold hover:bg-[rgba(232,228,218,0.08)] transition-colors font-sans tracking-widest text-xs uppercase">
                 Writer Form
               </Link>
-              <Link href="/form/director" className="px-4 py-2 rounded border border-white/20 bg-black/30 text-white hover:text-ravok-gold hover:bg-white/10 transition-colors font-sans tracking-widest text-xs uppercase">
+              <Link href="/form/director" className="px-4 py-2 rounded-full border border-[var(--ds-border-strong)] bg-[rgba(28,28,26,0.3)] text-[var(--ds-ink)] hover:text-ravok-gold hover:bg-[rgba(232,228,218,0.08)] transition-colors font-sans tracking-widest text-xs uppercase">
                 Director Form
               </Link>
-              <Link href="/form/producer" className="px-4 py-2 rounded border border-white/20 bg-black/30 text-white hover:text-ravok-gold hover:bg-white/10 transition-colors font-sans tracking-widest text-xs uppercase">
+              <Link href="/form/producer" className="px-4 py-2 rounded-full border border-[var(--ds-border-strong)] bg-[rgba(28,28,26,0.3)] text-[var(--ds-ink)] hover:text-ravok-gold hover:bg-[rgba(232,228,218,0.08)] transition-colors font-sans tracking-widest text-xs uppercase">
                 Producer Form
               </Link>
             </div>
@@ -59,7 +59,7 @@ export default function ContactUs() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h2 className="text-xl font-heading font-semibold text-white mb-8">
+            <h2 className="text-xl font-heading font-semibold text-[var(--ds-ink)] mb-8">
               Contact Information
             </h2>
             <div className="space-y-6">
@@ -70,7 +70,7 @@ export default function ContactUs() {
                   </span>
                   <a
                     href={`mailto:${item.email}`}
-                    className="text-white/70 hover:text-ravok-gold underline underline-offset-2 transition-colors"
+                    className="text-[var(--ds-ink-dim)] hover:text-ravok-gold underline underline-offset-2 transition-colors"
                   >
                     {item.email}
                   </a>
