@@ -173,17 +173,23 @@ h1, h2, h3, h4, h5, h6 {
   --ds-stone-gold:    #7a5e22;
 }
 
-/* ============ ATMOSPHERE — WIREFRAME GRID ============ */
+/* ============ ATMOSPHERE — WIREFRAME GRID ============
+   Single fixed overlay above sections (z=99, below navbar z=100). Painted
+   ONCE for the whole page instead of per-section — that eliminates the
+   per-section background-attachment:fixed paints that were causing
+   scroll lag. Grid is 1px lines on a 80px tile, alpha 0.025, so it's
+   invisible on light stone cards and faintly visible on dark sections. */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 99;
   background-image:
     linear-gradient(to right,  var(--ds-grid-line) 1px, transparent 1px),
     linear-gradient(to bottom, var(--ds-grid-line) 1px, transparent 1px);
   background-size: 80px 80px;
+  will-change: auto;
 }
 
 /* ============ ATMOSPHERE — GOLD RADIAL GLOW ============ */
@@ -217,14 +223,16 @@ body::after {
   height: 100%;
 }
 
-/* ============ FILM GRAIN ============ */
+/* ============ FILM GRAIN ============
+   Removed mix-blend-mode: overlay — that's expensive on a fixed full-screen
+   layer (forces compositing every frame). Plain low-opacity grain still
+   reads as texture without the blend cost. */
 .film-grain {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 2;
-  opacity: 0.04;
-  mix-blend-mode: overlay;
+  opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   background-size: 256px 256px;
   animation: grainShift 1.6s steps(6) infinite;
@@ -270,6 +278,8 @@ body::after {
    to translate -50% so it loops seamlessly. Pauses on hover. */
 .partners-marquee-track {
   animation: partners-marquee 40s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 .partners-marquee:hover .partners-marquee-track {
   animation-play-state: paused;

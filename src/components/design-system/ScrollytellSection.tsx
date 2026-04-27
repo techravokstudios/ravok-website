@@ -63,12 +63,20 @@ export function ScrollytellSection({
     const stepRefs = useRef<Array<HTMLDivElement | null>>([]);
 
     useEffect(() => {
+        // rAF-throttled scroll handler. Without this we ran getBoundingClientRect
+        // on every step on every scroll event (60+/sec), forcing layout each time.
+        // Now we batch into one update per frame, max.
+        let rafId: number | null = null;
+        let lastActive = -1;
+
         function update() {
+            rafId = null;
             const viewportCenter = window.innerHeight / 2;
             let active = 0;
             let bestDist = Infinity;
-            stepRefs.current.forEach((el, i) => {
-                if (!el) return;
+            for (let i = 0; i < stepRefs.current.length; i++) {
+                const el = stepRefs.current[i];
+                if (!el) continue;
                 const r = el.getBoundingClientRect();
                 const stepCenter = r.top + r.height / 2;
                 const dist = Math.abs(viewportCenter - stepCenter);
@@ -76,15 +84,26 @@ export function ScrollytellSection({
                     bestDist = dist;
                     active = i;
                 }
-            });
-            setActiveIdx(active);
+            }
+            // Only setState if value actually changed — avoids React re-render churn.
+            if (active !== lastActive) {
+                lastActive = active;
+                setActiveIdx(active);
+            }
         }
-        window.addEventListener("scroll", update, { passive: true });
-        window.addEventListener("resize", update, { passive: true });
+
+        function onScroll() {
+            if (rafId !== null) return;
+            rafId = requestAnimationFrame(update);
+        }
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", onScroll, { passive: true });
         update();
         return () => {
-            window.removeEventListener("scroll", update);
-            window.removeEventListener("resize", update);
+            if (rafId !== null) cancelAnimationFrame(rafId);
+            window.removeEventListener("scroll", onScroll);
+            window.removeEventListener("resize", onScroll);
         };
     }, []);
 
@@ -95,22 +114,11 @@ export function ScrollytellSection({
             style={{
                 zIndex,
                 backgroundColor: "var(--ds-bg)",
-                // Grid uses fixed attachment so it stays continuous across the corner
-                // transition with the previous/next sticky section. Gold fade stays
-                // scroll so it rises with this section.
-                backgroundImage: [
-                    !noTopFade && "linear-gradient(to bottom, rgba(196,149,58,0.06) 0, transparent 200px)",
-                    "linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px)",
-                    "linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px)",
-                ]
-                    .filter(Boolean)
-                    .join(", "),
-                backgroundSize: noTopFade
-                    ? "80px 80px, 80px 80px"
-                    : "100% 100%, 80px 80px, 80px 80px",
-                backgroundAttachment: noTopFade
-                    ? "fixed, fixed"
-                    : "scroll, fixed, fixed",
+                // Grid is now global (body::before z=99) — no per-section grid bg
+                // so we skip the costly background-attachment: fixed paints.
+                backgroundImage: noTopFade
+                    ? undefined
+                    : "linear-gradient(to bottom, rgba(196,149,58,0.06) 0, transparent 200px)",
             }}
         >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 px-6 lg:px-[6vw] pt-24 pb-0">

@@ -74,24 +74,14 @@ export function CRevealSection({
             className={`${positionClass} ${heightClass} ${paddingY} px-6 lg:px-10 section-card ${className}`.trim()}
             style={{
                 zIndex,
-                // Layered background: gold top fade + per-section grid (vertical + horizontal) + solid bg.
-                // Grid uses `fixed` attachment so it stays aligned to the viewport across stacked
-                // sticky sections — without this, each section's grid origin sits at its own
-                // top-left and the lines visibly "jump" at the corner transition between sections.
-                // Gold top-fade stays `scroll` so it rises with each section.
-                backgroundImage: [
-                    !noTopFade && "linear-gradient(to bottom, rgba(196,149,58,0.06) 0, transparent 200px)",
-                    "linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px)",
-                    "linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px)",
-                ]
-                    .filter(Boolean)
-                    .join(", "),
-                backgroundSize: noTopFade
-                    ? "80px 80px, 80px 80px"
-                    : "100% 100%, 80px 80px, 80px 80px",
-                backgroundAttachment: noTopFade
-                    ? "fixed, fixed"
-                    : "scroll, fixed, fixed",
+                // Per-section grid removed — was forcing repaints via
+                // background-attachment: fixed across every stacked section. The
+                // wireframe grid is now a single fixed overlay (body::before in
+                // globals.css, z-index 99) so it's painted once and stays aligned
+                // across all sections. We keep just the gold top-fade + solid bg here.
+                backgroundImage: noTopFade
+                    ? undefined
+                    : "linear-gradient(to bottom, rgba(196,149,58,0.06) 0, transparent 200px)",
                 backgroundColor: "var(--ds-bg)",
             }}
         >
