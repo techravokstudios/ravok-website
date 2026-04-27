@@ -30,17 +30,24 @@ function StepBody({
     body: React.ReactNode;
     meta: Array<React.ReactNode>;
 }) {
+    /* Important: ScrollytellSection wraps `description` in a <p>.
+       Block-level children (ul/div) auto-close the <p> in browsers and
+       break layout + cause hydration mismatches. Use spans w/ display:block
+       so the structure stays valid inline. */
     return (
         <>
             <span className="block mb-4">{body}</span>
-            <ul className="step-meta list-none p-0 m-0 flex flex-col gap-1.5">
+            <span className="block">
                 {meta.map((m, i) => (
-                    <li key={i} className="relative pl-4 font-sans text-[0.78rem] tracking-[0.02em] text-[var(--ds-ink-dim)]">
+                    <span
+                        key={i}
+                        className="block relative pl-4 mb-1.5 last:mb-0 font-sans text-[0.78rem] tracking-[0.02em] text-[var(--ds-ink-dim)]"
+                    >
                         <span className="absolute left-0 text-ravok-gold">—</span>
                         {m}
-                    </li>
+                    </span>
                 ))}
-            </ul>
+            </span>
         </>
     );
 }
