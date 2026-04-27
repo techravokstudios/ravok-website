@@ -1,31 +1,22 @@
 "use client";
 
 /**
- * ScrollytellSection — sticky-outer + scroll-tracker pattern.
+ * ScrollytellSection — sticky-outer + translated track pattern.
  *
- * Why this architecture:
- *   The C-ladder cover-from-below requires the section's outer element to
- *   be sticky at top:0 so the next section can flip OVER it. But if the
- *   outer is sticky AND tall enough to hold N stacked steps, the inner
- *   content gets frozen (sticky elements with overflow content render
- *   their content at fixed positions during the stuck range, so only the
- *   first step is ever in the viewport).
+ * Outer is sticky h-screen at top (locks at top:0 once engaged so the next
+ * section can flip over it). Inside the outer, the left column has a
+ * "track" containing stacked steps (each h-screen). The track gets a
+ * scroll-driven translateY so the steps slide UP through the viewport
+ * as the user scrolls — text content actually MOVES, not cross-fades,
+ * matching the sample's portfolio scrollytelling feel.
  *
- *   Solution: outer is sticky h-screen (just 100vh), so it stays locked
- *   at top. Inside, ONE active step is shown at a time with cross-fade
- *   between steps. A scroll tracker rendered AFTER the section provides
- *   the scroll range that drives the active-step index. As the user
- *   scrolls through the tracker, the active step changes — content
- *   "scrolls" while the section stays locked. After the tracker ends,
- *   the next sibling section rises up and flips over this one.
+ * A scroll-tracker div is rendered AFTER the section to provide the
+ * scroll range that drives the track translation. Tracker height =
+ * (N-1) × 100vh — that's the distance the track has to translate to
+ * cycle through all N steps.
  *
- * Layout inside the sticky outer:
- *   2-column grid. Left = active text step (cross-fade). Right = active
- *   visual (cross-fade). Counter pill at the top.
- *
- * z-index/cover behavior:
- *   Outer holds the section's z-index. Next sticky section with higher
- *   z covers it as it rises.
+ * Active step is computed from scroll progress (clamped to last step).
+ * The pinned visual on the right cross-fades to match.
  */
 
 import { ReactNode, useEffect, useRef, useState } from "react";
@@ -56,8 +47,6 @@ type ScrollytellSectionProps = {
     id?: string;
     className?: string;
     noTopFade?: boolean;
-    /** vh per step in the tracker. Default 100vh per step. Larger = slower scrub. */
-    vhPerStep?: number;
 };
 
 export function ScrollytellSection({
@@ -68,24 +57,28 @@ export function ScrollytellSection({
     id,
     className = "",
     noTopFade = false,
-    vhPerStep = 100,
 }: ScrollytellSectionProps) {
-    const [activeIdx, setActiveIdx] = useState(0);
     const trackerRef = useRef<HTMLDivElement | null>(null);
+    const [activeIdx, setActiveIdx] = useState(0);
+    const [trackY, setTrackY] = useState(0); // in vh
     const lastIdxRef = useRef(0);
 
     useEffect(() => {
         let rafId: number | null = null;
+        const maxTranslateVh = (steps.length - 1) * 100;
 
         function update() {
             rafId = null;
             const tracker = trackerRef.current;
             if (!tracker) return;
             const r = tracker.getBoundingClientRect();
-            // Scroll progress within the tracker. r.top is negative when scrolled past tracker start.
+            // Progress = how far we've scrolled past tracker top, normalized 0..1
             const totalRange = Math.max(1, r.height);
             const scrolled = Math.max(0, -r.top);
             const progress = Math.min(0.9999, scrolled / totalRange);
+            // Track translates up by (progress * maxTranslateVh) so step N reaches top
+            setTrackY(-progress * maxTranslateVh);
+            // Active step = which step index is currently at the top of the viewport
             const idx = Math.min(steps.length - 1, Math.floor(progress * steps.length));
             if (idx !== lastIdxRef.current) {
                 lastIdxRef.current = idx;
@@ -110,10 +103,10 @@ export function ScrollytellSection({
 
     return (
         <>
-            {/* Sticky scrollytell scene — exactly 100vh, locked at top */}
+            {/* Sticky scrollytell scene — exactly 100vh, locks at top */}
             <section
                 id={id}
-                className={`sticky top-0 h-screen w-full overflow-hidden section-card flex flex-col ${className}`.trim()}
+                className={`sticky top-0 h-screen w-full overflow-hidden section-card ${className}`.trim()}
                 style={{
                     zIndex,
                     backgroundColor: "var(--ds-bg)",
@@ -122,48 +115,55 @@ export function ScrollytellSection({
                         : "linear-gradient(to bottom, rgba(196,149,58,0.06) 0, transparent 200px)",
                 }}
             >
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-12 lg:gap-20 px-6 lg:px-[6vw] py-20 lg:py-24 flex-1 max-w-[1500px] mx-auto w-full">
-                    {/* Left — active text step (cross-fade) */}
-                    <div className="relative flex flex-col justify-center">
-                        {label && <SectionLabel className="mb-10 lg:mb-14">{label}</SectionLabel>}
-                        <div className="relative flex-1 flex items-center">
-                            {steps.map((step, i) => (
-                                <div
-                                    key={i}
-                                    className={`absolute inset-0 flex flex-col justify-center transition-opacity duration-500 ${
-                                        activeIdx === i ? "opacity-100" : "opacity-0 pointer-events-none"
-                                    }`}
-                                >
-                                    {step.tag && (
-                                        <span className="font-sans text-[0.56rem] font-semibold tracking-[0.3em] uppercase text-ravok-gold mb-4">
-                                            {step.tag}
-                                        </span>
-                                    )}
-                                    <h3 className="font-heading italic font-normal text-ravok-gold text-[clamp(2.5rem,4vw,3.5rem)] leading-[1] mb-5">
-                                        {step.name}
-                                    </h3>
-                                    {step.title && (
-                                        <h4 className="font-heading font-normal text-[1.5rem] lg:text-[1.7rem] leading-tight mb-4 text-[var(--ds-ink)]">
-                                            {step.title}
-                                        </h4>
-                                    )}
-                                    {step.description && (
-                                        <p className="font-heading text-[1rem] leading-[1.65] text-[var(--ds-ink-dim)] max-w-[480px] mb-5">
-                                            {step.description}
-                                        </p>
-                                    )}
-                                    {step.chip && (
-                                        <span className="self-start font-sans text-[0.58rem] font-semibold tracking-[0.22em] uppercase px-[0.9rem] py-2 border border-[rgba(196,149,58,0.3)] rounded-full text-ravok-gold">
-                                            {step.chip}
-                                        </span>
-                                    )}
-                                </div>
-                            ))}
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-16 px-6 lg:px-[6vw] h-full max-w-[1500px] mx-auto w-full">
+                    {/* Left — stacked text track that translates up with scroll */}
+                    <div className="relative h-full overflow-hidden flex flex-col py-20 lg:py-24">
+                        {label && <SectionLabel className="mb-10 lg:mb-14 flex-shrink-0">{label}</SectionLabel>}
+                        <div className="relative flex-1 overflow-hidden">
+                            <div
+                                className="absolute top-0 left-0 right-0"
+                                style={{
+                                    transform: `translateY(${trackY}vh)`,
+                                    willChange: "transform",
+                                }}
+                            >
+                                {steps.map((step, i) => (
+                                    <div
+                                        key={i}
+                                        className="h-[80vh] flex flex-col justify-center transition-opacity duration-500"
+                                        style={{ opacity: activeIdx === i ? 1 : 0.25 }}
+                                    >
+                                        {step.tag && (
+                                            <span className="font-sans text-[0.56rem] font-semibold tracking-[0.3em] uppercase text-ravok-gold mb-4">
+                                                {step.tag}
+                                            </span>
+                                        )}
+                                        <h3 className="font-heading italic font-normal text-ravok-gold text-[clamp(2.5rem,4vw,3.5rem)] leading-[1] mb-5">
+                                            {step.name}
+                                        </h3>
+                                        {step.title && (
+                                            <h4 className="font-heading font-normal text-[1.5rem] lg:text-[1.7rem] leading-tight mb-4 text-[var(--ds-ink)]">
+                                                {step.title}
+                                            </h4>
+                                        )}
+                                        {step.description && (
+                                            <p className="font-heading text-[1rem] leading-[1.65] text-[var(--ds-ink-dim)] max-w-[480px] mb-5">
+                                                {step.description}
+                                            </p>
+                                        )}
+                                        {step.chip && (
+                                            <span className="self-start font-sans text-[0.58rem] font-semibold tracking-[0.22em] uppercase px-[0.9rem] py-2 border border-[rgba(196,149,58,0.3)] rounded-full text-ravok-gold">
+                                                {step.chip}
+                                            </span>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Right — active visual (cross-fade) */}
-                    <div className="relative hidden lg:flex items-center justify-center">
+                    {/* Right — pinned visual that cross-fades to match active step */}
+                    <div className="relative hidden lg:flex items-center justify-center h-full">
                         {counterSuffix !== undefined && (
                             <div className="absolute top-[5vh] left-1/2 -translate-x-1/2 font-heading text-[13px] tracking-[0.3em] uppercase text-[var(--ds-ink-dim)] z-[3] whitespace-nowrap">
                                 <span className="text-ravok-gold italic">
@@ -172,7 +172,7 @@ export function ScrollytellSection({
                                 / {String(steps.length).padStart(2, "0")} — {counterSuffix}
                             </div>
                         )}
-                        <div className="relative w-full aspect-square max-h-[80vh] mx-auto">
+                        <div className="relative w-full aspect-square max-h-[75vh] mx-auto">
                             {steps.map((step, i) => (
                                 <div
                                     key={i}
@@ -188,12 +188,13 @@ export function ScrollytellSection({
                 </div>
             </section>
 
-            {/* Scroll tracker — invisible spacer that provides the scroll range
-                for active-step calculation. Total height = N × vhPerStep. */}
+            {/* Scroll tracker — invisible, provides scroll range for the
+                track translation. (N-1) × 100vh = distance the track must
+                translate to cycle through all N steps. */}
             <div
                 ref={trackerRef}
                 aria-hidden="true"
-                style={{ height: `${steps.length * vhPerStep}vh` }}
+                style={{ height: `${(steps.length - 1) * 100}vh` }}
             />
         </>
     );
