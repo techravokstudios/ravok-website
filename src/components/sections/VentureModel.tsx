@@ -1,12 +1,7 @@
 "use client";
 
 /**
- * VentureModel — Comparison + how-it-works.
- * Per rules §12: "Comparison (us vs them)" → C-Reveal w/ split layout.
- *
- * Refactored to use CRevealSection with a 2-column body:
- *  - left: framing copy + how-it-works checklist + CTA
- *  - right: hero image
+ * VentureModel — Comparison + how-it-works. Compact 100vh layout.
  */
 
 import { motion } from "framer-motion";
@@ -22,11 +17,11 @@ const howItWorks = [
 
 export default function VentureModel() {
     return (
-        <CRevealSection id="model" zIndex={13} centerHeader={false} contentMaxWidth="1400px">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <CRevealSection id="model" zIndex={13} centerHeader={false} contentMaxWidth="1300px">
+            <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
                 {/* Left — text */}
                 <div className="max-w-2xl">
-                    <h2 className="font-heading font-normal text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.05] tracking-[-0.015em] text-[var(--ds-ink)] mb-8">
+                    <h2 className="font-heading font-normal text-[clamp(2rem,4vw,3.4rem)] leading-[1.05] tracking-[-0.015em] text-[var(--ds-ink)] mb-5">
                         Not a Production Company.
                         <br />
                         Not an Accelerator.
@@ -34,29 +29,29 @@ export default function VentureModel() {
                         <em className="text-ravok-gold not-italic font-heading italic">A Venture Studio.</em>
                     </h2>
 
-                    <p className="font-sans text-[0.78rem] tracking-[0.2em] uppercase leading-[1.8] text-[var(--ds-ink-muted)] mb-12">
+                    <p className="font-sans text-[0.72rem] tracking-[0.2em] uppercase leading-[1.7] text-[var(--ds-ink-muted)] mb-8">
                         RAVOK applies proven venture capital principles to filmmaking. We provide seed capital,
                         structure each project as an independent venture, and give creators real equity and control.
                     </p>
 
-                    <h3 className="font-heading text-[1.3rem] mb-6 text-[var(--ds-ink)]">How It Works:</h3>
-                    <ul className="space-y-5 mb-12">
+                    <h3 className="font-heading text-[1.1rem] mb-4 text-[var(--ds-ink)]">How It Works:</h3>
+                    <ul className="space-y-3 mb-8">
                         {howItWorks.map((item, i) => (
                             <motion.li
                                 key={i}
                                 initial={{ opacity: 0, x: -20 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ duration: 0.6, delay: i * 0.1, ease: [0.2, 0.6, 0.2, 1] }}
-                                className="flex items-start gap-4 text-[var(--ds-ink-dim)] font-heading text-[1.05rem] leading-[1.6]"
+                                transition={{ duration: 0.5, delay: i * 0.1, ease: [0.2, 0.6, 0.2, 1] }}
+                                className="flex items-start gap-3 text-[var(--ds-ink-dim)] font-heading text-[0.95rem] lg:text-[1rem] leading-[1.5]"
                             >
-                                <Check className="w-5 h-5 text-ravok-gold mt-1 shrink-0" />
+                                <Check className="w-4 h-4 text-ravok-gold mt-1 shrink-0" />
                                 <span>{item}</span>
                             </motion.li>
                         ))}
                     </ul>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
                         <Button href="/our-model" variant="primary">
                             Learn more
                         </Button>
@@ -70,19 +65,19 @@ export default function VentureModel() {
                     </div>
                 </div>
 
-                {/* Right — hero image */}
+                {/* Right — hero image (height-capped to fit in viewport) */}
                 <motion.div
-                    className="hidden lg:block h-full min-h-[600px] relative"
+                    className="hidden lg:block relative max-h-[70vh] overflow-hidden"
                     initial={{ opacity: 0, x: 40 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 1, ease: [0.2, 0.6, 0.2, 1] }}
                 >
-                    <div className="absolute inset-0 bg-gradient-to-l from-[var(--ds-bg)] via-transparent to-transparent z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-l from-[var(--ds-bg)] via-transparent to-transparent z-10 pointer-events-none" />
                     <img
                         src="/images/bg_1.png"
                         alt=""
-                        className="w-full h-full object-cover grayscale opacity-60"
+                        className="w-full max-h-[70vh] object-cover grayscale opacity-60"
                     />
                 </motion.div>
             </div>

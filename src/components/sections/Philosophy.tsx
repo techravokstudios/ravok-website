@@ -1,10 +1,9 @@
 "use client";
 
 /**
- * Philosophy — Multi-step thesis (every other industry → Hollywood).
- * Per rules §12: ideal pattern is ScrollytellSection (multi-step thesis).
- * That primitive isn't built yet — using CRevealSection for now with a
- * staggered-reveal panel list as a v1. Upgrade to ScrollytellSection later.
+ * Philosophy — Multi-step thesis content. Compact 100vh layout.
+ * Sized so total height (text + image + padding) fits in viewport during
+ * sticky cover-from-below.
  */
 
 import { motion } from "framer-motion";
@@ -18,12 +17,12 @@ const items = [
 
 export default function Philosophy() {
     return (
-        <CRevealSection zIndex={11} centerHeader={false} contentMaxWidth="1400px">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <CRevealSection zIndex={11} centerHeader={false} contentMaxWidth="1300px">
+            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
                 {/* Left — text */}
                 <div className="order-2 lg:order-1">
                     <motion.p
-                        className="font-sans text-[0.62rem] font-semibold tracking-[0.3em] text-[var(--ds-ink-muted)] uppercase mb-6"
+                        className="font-sans text-[0.62rem] font-semibold tracking-[0.3em] text-[var(--ds-ink-muted)] uppercase mb-4"
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
@@ -33,18 +32,17 @@ export default function Philosophy() {
                     </motion.p>
 
                     <motion.h2
-                        className="font-heading font-normal text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.05] tracking-[-0.015em] mb-2"
+                        className="font-heading font-normal text-[clamp(2rem,4vw,3.4rem)] leading-[1.05] tracking-[-0.015em] mb-1"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, delay: 0.1, ease: [0.2, 0.6, 0.2, 1] }}
                     >
-                        In Every Other <br />
-                        Industry,
+                        In Every Other Industry,
                     </motion.h2>
 
                     <motion.h2
-                        className="font-heading font-normal italic text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.05] tracking-[-0.015em] text-ravok-gold mb-12"
+                        className="font-heading font-normal italic text-[clamp(2rem,4vw,3.4rem)] leading-[1.05] tracking-[-0.015em] text-ravok-gold mb-7"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -53,45 +51,45 @@ export default function Philosophy() {
                         This Is Just Called R&amp;D
                     </motion.h2>
 
-                    <div className="space-y-5 font-heading text-[1.15rem] leading-[1.6] text-[var(--ds-ink-dim)]">
+                    <div className="space-y-3 font-heading text-[1rem] lg:text-[1.05rem] leading-[1.55] text-[var(--ds-ink-dim)]">
                         {items.map((text, i) => (
                             <motion.p
                                 key={i}
-                                initial={{ opacity: 0, y: 30 }}
+                                initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ duration: 0.8, delay: i * 0.15, ease: [0.2, 0.6, 0.2, 1] }}
-                                className="relative pl-6 before:content-[''] before:absolute before:left-0 before:top-3 before:w-2 before:h-2 before:bg-ravok-gold before:rounded-full"
+                                transition={{ duration: 0.6, delay: i * 0.12, ease: [0.2, 0.6, 0.2, 1] }}
+                                className="relative pl-5 before:content-[''] before:absolute before:left-0 before:top-2.5 before:w-1.5 before:h-1.5 before:bg-ravok-gold before:rounded-full"
                             >
                                 {text}
                             </motion.p>
                         ))}
 
                         <motion.p
-                            className="pt-4 text-[var(--ds-ink)]"
+                            className="pt-2 text-[var(--ds-ink)]"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: 0.7 }}
+                            transition={{ duration: 0.6, delay: 0.6 }}
                         >
                             But in Hollywood? Early-stage development is called &ldquo;too risky.&rdquo;
                         </motion.p>
                     </div>
 
                     <motion.p
-                        className="mt-8 font-heading italic text-[1.4rem] lg:text-[1.6rem] text-ravok-gold leading-[1.5]"
+                        className="mt-6 font-heading italic text-[1.15rem] lg:text-[1.3rem] text-ravok-gold leading-[1.4]"
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.9 }}
+                        transition={{ duration: 0.8, delay: 0.75 }}
                     >
                         The real risk is letting gatekeepers decide what gets made.
                     </motion.p>
                 </div>
 
-                {/* Right — visual */}
+                {/* Right — visual (height capped to fit in 100vh alongside text) */}
                 <motion.div
-                    className="order-1 lg:order-2 relative flex items-center justify-center"
+                    className="order-1 lg:order-2 hidden lg:flex items-center justify-center"
                     initial={{ opacity: 0, x: 40 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
@@ -100,7 +98,7 @@ export default function Philosophy() {
                     <img
                         src="/images/slide1.png"
                         alt=""
-                        className="w-full max-w-lg object-contain opacity-90"
+                        className="max-h-[60vh] w-auto max-w-full object-contain opacity-90"
                     />
                 </motion.div>
             </div>

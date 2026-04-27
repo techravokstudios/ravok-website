@@ -56,20 +56,22 @@ export function CRevealSection({
     contentMaxWidth = "1200px",
     centerHeader = true,
     nonSticky = false,
-    paddingY = "py-32",
+    paddingY = "py-20 lg:py-24",
     className = "",
     noTopFade = false,
 }: CRevealSectionProps) {
     const positionClass = nonSticky ? "relative" : "sticky top-0";
-    // Sticky sections need exactly 100vh to play the cover-from-below role.
-    // Non-sticky sections size to content (no forced 100vh, so tall content
-    // displays in full instead of being clipped by the next sticky covering it).
-    const heightClass = nonSticky ? "" : "min-h-screen";
+    // Sticky sections need to fit content in 100vh (or 100dvh on mobile to handle
+    // browser chrome). Non-sticky sections size to content.
+    // We use min-h-[100dvh] for sticky so the cover effect locks at the visible
+    // viewport height. Content inside MUST fit; otherwise it gets clipped by
+    // the next sticky covering from below.
+    const heightClass = nonSticky ? "" : "min-h-[100dvh]";
 
     return (
         <section
             id={id}
-            className={`${positionClass} ${heightClass} ${paddingY} px-10 section-card ${className}`.trim()}
+            className={`${positionClass} ${heightClass} ${paddingY} px-6 lg:px-10 section-card ${className}`.trim()}
             style={{
                 zIndex,
                 // Layered background: gold top fade + per-section grid (vertical + horizontal) + solid bg
@@ -91,15 +93,15 @@ export function CRevealSection({
                 style={{ maxWidth: contentMaxWidth }}
             >
                 {(eyebrow || headline || lead) && (
-                    <header className={`mb-16 ${centerHeader ? "" : "max-w-[820px]"}`.trim()}>
+                    <header className={`mb-10 ${centerHeader ? "" : "max-w-[820px]"}`.trim()}>
                         {eyebrow && (typeof eyebrow === "string" ? <SectionLabel>{eyebrow}</SectionLabel> : eyebrow)}
                         {headline && (
-                            <h2 className="font-heading font-normal text-[clamp(2.5rem,4.5vw,4rem)] leading-[1.05] tracking-[-0.015em] text-[var(--ds-ink)] mb-6">
+                            <h2 className="font-heading font-normal text-[clamp(2rem,3.5vw,3.2rem)] leading-[1.1] tracking-[-0.015em] text-[var(--ds-ink)] mb-4">
                                 {headline}
                             </h2>
                         )}
                         {lead && (
-                            <p className="font-heading text-[1.15rem] leading-[1.65] text-[var(--ds-ink-dim)] max-w-[720px] mx-auto">
+                            <p className="font-heading text-[1rem] lg:text-[1.05rem] leading-[1.6] text-[var(--ds-ink-dim)] max-w-[680px] mx-auto">
                                 {lead}
                             </p>
                         )}
