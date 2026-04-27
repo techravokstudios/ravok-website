@@ -1,244 +1,179 @@
 "use client";
 
 /**
- * ScrollytellSection — 2b pattern from WEBSITE-TECHNICAL-RULES.md.
+ * ScrollytellSection — portfolio scrollytelling pattern.
+ * Per the sample's `.portfolio` section.
  *
- * Use when: multi-step thesis (problem → insight → answer),
- * process/how-it-works (3–6 steps), or any content where each step deserves
- * its own 100vh moment.
+ * Layout:
+ *   2-column grid. Left = stacked text steps (each min-h 90vh, opacity 0.22 default,
+ *   full opacity when "active"). Right = pinned visual (sticky top:0 h-screen) that
+ *   cross-fades between step visuals as the active step changes.
  *
- * Architecture:
- *   - Outer wrapper: position: relative, height = (N+1) * 100vh
- *     (Provides the scroll range. N steps × 100vh of scrubbing + 1 × 100vh entry)
- *   - Inner pin: position: sticky top:0, h-screen, owns the section's z-index.
- *     This is what stays visible during the section's scroll range.
- *   - Steps: absolute-positioned within the stage. Opacity + Y are driven by
- *     scrollYProgress on the outer wrapper. Cross-fade with slight rise.
+ * Active step detection:
+ *   On every scroll, the step whose vertical center is closest to the viewport
+ *   center wins. (Same algorithm as the sample.)
  *
- * Because the inner pin holds the z-index, ScrollytellSection participates in
- * the C-reveal cover chain — the next section's higher z-index will rise over
- * it as the user scrolls past.
- *
- * Author provides:
- *   - eyebrow / headline / lead (always visible header)
- *   - steps[]: array of { content: ReactNode, label?: string }
- *
- * The primitive handles: scroll progress, cross-fade timing, progress dots,
- * page-pass edges, gold top fade, per-section grid background.
+ * z-index/cover behavior:
+ *   The outer section is position:relative with the section's z-index. As the
+ *   user scrolls in, this section's z-index covers prior sticky sections via
+ *   stacking context. The next section (Partners or wherever) needs higher z
+ *   to cover this one when it enters.
  */
 
-import { ReactNode, useRef } from "react";
-import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { SectionLabel } from "./SectionLabel";
 
-type ScrollytellStep = {
-    content: ReactNode;
-    /** Optional label shown in the corner of the stage (e.g., "01 / 03") */
-    label?: string;
+export type ScrollytellStep = {
+    /** Small uppercase tag, e.g. "Entertainment · 01" */
+    tag?: string;
+    /** Big italic gold name, e.g. "Film SPVs" */
+    name: ReactNode;
+    /** Heading sentence (serif, with optional <em> for gold accents) */
+    title?: ReactNode;
+    /** Body paragraph */
+    description?: ReactNode;
+    /** Pill chip at the bottom, e.g., "10–50% Equity" */
+    chip?: string;
+    /** The pinned visual for this step (img, icon, anything) */
+    visual: ReactNode;
 };
 
 type ScrollytellSectionProps = {
     zIndex?: number;
-    eyebrow?: ReactNode;
-    headline?: ReactNode;
-    lead?: ReactNode;
+    /** Eyebrow label at the top of the text column */
+    label?: string;
+    /** Counter suffix, e.g., "THE PORTFOLIO". If undefined, counter hidden. */
+    counterSuffix?: string;
     steps: ScrollytellStep[];
     id?: string;
-    /** Vertical viewport heights per step. Default 100. Increase for slower scroll pace. */
-    vhPerStep?: number;
-    /** Optional className for the outer wrapper */
     className?: string;
-    /** Hide the gold top fade (e.g., outside the C-ladder) */
     noTopFade?: boolean;
 };
 
 export function ScrollytellSection({
     zIndex = 11,
-    eyebrow,
-    headline,
-    lead,
+    label,
+    counterSuffix,
     steps,
     id,
-    vhPerStep = 100,
     className = "",
     noTopFade = false,
 }: ScrollytellSectionProps) {
-    const ref = useRef<HTMLDivElement>(null);
-    // Outer height: 1 viewport of entry + (N steps × vhPerStep)
-    // This gives sticky duration = N × vhPerStep of scroll, exactly enough
-    // to scrub through every step.
-    const totalVh = (steps.length + 1) * vhPerStep;
+    const [activeIdx, setActiveIdx] = useState(0);
+    const stepRefs = useRef<Array<HTMLDivElement | null>>([]);
 
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start start", "end end"],
-    });
+    useEffect(() => {
+        function update() {
+            const viewportCenter = window.innerHeight / 2;
+            let active = 0;
+            let bestDist = Infinity;
+            stepRefs.current.forEach((el, i) => {
+                if (!el) return;
+                const r = el.getBoundingClientRect();
+                const stepCenter = r.top + r.height / 2;
+                const dist = Math.abs(viewportCenter - stepCenter);
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    active = i;
+                }
+            });
+            setActiveIdx(active);
+        }
+        window.addEventListener("scroll", update, { passive: true });
+        window.addEventListener("resize", update, { passive: true });
+        update();
+        return () => {
+            window.removeEventListener("scroll", update);
+            window.removeEventListener("resize", update);
+        };
+    }, []);
 
     return (
-        <div
-            ref={ref}
+        <section
             id={id}
-            className={`relative ${className}`.trim()}
-            style={{ minHeight: `${totalVh}vh` }}
+            className={`relative section-card ${className}`.trim()}
+            style={{
+                zIndex,
+                backgroundColor: "var(--ds-bg)",
+                backgroundImage: [
+                    !noTopFade && "linear-gradient(to bottom, rgba(196,149,58,0.06) 0, transparent 200px)",
+                    "linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px)",
+                    "linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px)",
+                ]
+                    .filter(Boolean)
+                    .join(", "),
+                backgroundSize: noTopFade
+                    ? "80px 80px, 80px 80px"
+                    : "100% 100%, 80px 80px, 80px 80px",
+            }}
         >
-            {/* Pinned scene — stays visible during the section's scroll range */}
-            <section
-                className="sticky top-0 h-screen w-full px-10 py-20 section-card flex flex-col"
-                style={{
-                    zIndex,
-                    backgroundColor: "var(--ds-bg)",
-                    backgroundImage: [
-                        !noTopFade && "linear-gradient(to bottom, rgba(196,149,58,0.06) 0, transparent 200px)",
-                        "linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px)",
-                        "linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px)",
-                    ]
-                        .filter(Boolean)
-                        .join(", "),
-                    backgroundSize: noTopFade
-                        ? "80px 80px, 80px 80px"
-                        : "100% 100%, 80px 80px, 80px 80px",
-                }}
-            >
-                {/* Header — always visible */}
-                {(eyebrow || headline || lead) && (
-                    <header className="text-center max-w-[1100px] mx-auto mb-10 lg:mb-14">
-                        {eyebrow && (typeof eyebrow === "string" ? <SectionLabel>{eyebrow}</SectionLabel> : eyebrow)}
-                        {headline && (
-                            <h2 className="font-heading font-normal text-[clamp(2rem,3.6vw,3.2rem)] leading-[1.1] tracking-[-0.015em] text-[var(--ds-ink)] mb-4">
-                                {headline}
-                            </h2>
-                        )}
-                        {lead && (
-                            <p className="font-heading text-[1rem] lg:text-[1.1rem] leading-[1.6] text-[var(--ds-ink-dim)] max-w-[640px] mx-auto">
-                                {lead}
-                            </p>
-                        )}
-                    </header>
-                )}
-
-                {/* Stage — steps cross-fade here */}
-                <div className="relative flex-1 max-w-[1400px] w-full mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 px-6 lg:px-[6vw] pt-24 pb-0">
+                {/* Left — scrolling text steps */}
+                <div className="relative z-[2]">
+                    {label && <SectionLabel className="mb-16 lg:mb-20">{label}</SectionLabel>}
                     {steps.map((step, i) => (
-                        <Step
+                        <div
                             key={i}
-                            index={i}
-                            total={steps.length}
-                            scrollYProgress={scrollYProgress}
-                            content={step.content}
-                            label={step.label}
-                        />
+                            ref={(el) => {
+                                stepRefs.current[i] = el;
+                            }}
+                            className={`min-h-[90vh] lg:min-h-[90vh] flex flex-col justify-center transition-opacity duration-500 py-4 ${
+                                activeIdx === i ? "opacity-100" : "opacity-25"
+                            }`}
+                        >
+                            {step.tag && (
+                                <span className="font-sans text-[0.56rem] font-semibold tracking-[0.3em] uppercase text-ravok-gold mb-4">
+                                    {step.tag}
+                                </span>
+                            )}
+                            <h3 className="font-heading italic font-normal text-ravok-gold text-[clamp(2.5rem,4vw,3.5rem)] leading-[1] mb-6">
+                                {step.name}
+                            </h3>
+                            {step.title && (
+                                <h4 className="font-heading font-normal text-[1.6rem] lg:text-[1.8rem] leading-tight mb-5 text-[var(--ds-ink)]">
+                                    {step.title}
+                                </h4>
+                            )}
+                            {step.description && (
+                                <p className="font-heading text-[1rem] lg:text-[1.05rem] leading-[1.65] text-[var(--ds-ink-dim)] max-w-[480px] mb-6">
+                                    {step.description}
+                                </p>
+                            )}
+                            {step.chip && (
+                                <span className="self-start font-sans text-[0.58rem] font-semibold tracking-[0.22em] uppercase px-[0.9rem] py-2 border border-[rgba(196,149,58,0.3)] rounded-full text-ravok-gold">
+                                    {step.chip}
+                                </span>
+                            )}
+                        </div>
                     ))}
                 </div>
 
-                {/* Progress dots */}
-                <div className="flex justify-center gap-3 mt-6 lg:mt-10">
-                    {steps.map((_, i) => (
-                        <ProgressDot
-                            key={i}
-                            index={i}
-                            total={steps.length}
-                            scrollYProgress={scrollYProgress}
-                        />
-                    ))}
-                </div>
-            </section>
-        </div>
-    );
-}
-
-/** Single step in the stage. Cross-fades + rises slightly based on scroll. */
-function Step({
-    index,
-    total,
-    scrollYProgress,
-    content,
-    label,
-}: {
-    index: number;
-    total: number;
-    scrollYProgress: MotionValue<number>;
-    content: ReactNode;
-    label?: string;
-}) {
-    // Scroll progress maps:
-    //   - First viewport of scroll = entry buffer (progress 0 to 1/(total+1))
-    //   - Each step gets equal slice afterward
-    // So step i is "active" from (i+1)/(total+1) ... wait simpler:
-    // We let step i be active when progress is in [i/total, (i+1)/total]
-    // (ignoring entry buffer; the +1 in totalVh just slows the scrub).
-    const slice = 1 / total;
-    const start = index * slice;
-    const end = (index + 1) * slice;
-    const fade = slice * 0.25;
-
-    const opacity = useTransform(
-        scrollYProgress,
-        [Math.max(0, start - fade), start, end, Math.min(1, end + fade)],
-        // First step is visible at progress 0; last step persists at progress 1
-        [index === 0 ? 1 : 0, 1, 1, index === total - 1 ? 1 : 0]
-    );
-    const y = useTransform(
-        scrollYProgress,
-        [Math.max(0, start - fade), start, end, Math.min(1, end + fade)],
-        [index === 0 ? 0 : 50, 0, 0, index === total - 1 ? 0 : -30]
-    );
-
-    return (
-        <motion.div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{ opacity, y }}
-        >
-            <div className="w-full">
-                {label && (
-                    <div className="absolute top-0 right-0 font-sans text-[0.62rem] font-semibold tracking-[0.3em] uppercase text-[var(--ds-ink-muted)]">
-                        {label}
+                {/* Right — pinned visual */}
+                <div className="relative hidden lg:block">
+                    <div className="sticky top-0 h-screen flex items-center justify-center">
+                        {counterSuffix !== undefined && (
+                            <div className="absolute top-[5vh] left-1/2 -translate-x-1/2 font-heading text-[13px] tracking-[0.3em] uppercase text-[var(--ds-ink-dim)] z-[3] whitespace-nowrap">
+                                <span className="text-ravok-gold italic">
+                                    {String(activeIdx + 1).padStart(2, "0")}
+                                </span>{" "}
+                                / {String(steps.length).padStart(2, "0")} — {counterSuffix}
+                            </div>
+                        )}
+                        <div className="relative w-full aspect-square max-h-[80vh] mx-auto">
+                            {steps.map((step, i) => (
+                                <div
+                                    key={i}
+                                    className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${
+                                        activeIdx === i ? "opacity-100" : "opacity-0"
+                                    }`}
+                                >
+                                    {step.visual}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                )}
-                {content}
+                </div>
             </div>
-        </motion.div>
-    );
-}
-
-/** Progress indicator — gold when in this step's range, faint otherwise. */
-function ProgressDot({
-    index,
-    total,
-    scrollYProgress,
-}: {
-    index: number;
-    total: number;
-    scrollYProgress: MotionValue<number>;
-}) {
-    const slice = 1 / total;
-    const start = index * slice;
-    const end = (index + 1) * slice;
-
-    const backgroundColor = useTransform(
-        scrollYProgress,
-        [Math.max(0, start - 0.02), start, end, Math.min(1, end + 0.02)],
-        [
-            "rgba(232,228,218,0.15)",
-            "rgb(196,149,58)",
-            "rgb(196,149,58)",
-            "rgba(232,228,218,0.15)",
-        ]
-    );
-    const boxShadow = useTransform(
-        scrollYProgress,
-        [Math.max(0, start - 0.02), start, end, Math.min(1, end + 0.02)],
-        [
-            "0 0 0 rgba(196,149,58,0)",
-            "0 0 10px rgba(196,149,58,0.6)",
-            "0 0 10px rgba(196,149,58,0.6)",
-            "0 0 0 rgba(196,149,58,0)",
-        ]
-    );
-
-    return (
-        <motion.div
-            className="w-10 h-[3px] rounded-full"
-            style={{ backgroundColor, boxShadow }}
-        />
+        </section>
     );
 }

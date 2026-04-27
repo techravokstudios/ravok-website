@@ -1,15 +1,17 @@
 "use client";
 
 /**
- * Partners — partner-types scrollytell (4 steps).
- * Per rules §12: "Process / how-it-works (3–6)" → ScrollytellSection.
- * Each partner type gets a full 100vh moment.
+ * Partners — partner-types scrollytelling (4 steps).
+ * 2-column grid: text steps on left, big icon visual pinned on right.
+ *
+ * Copy preserved from prior version. Bring/get details rendered inside
+ * the description block of each step.
  */
 
 import { Video, DollarSign, Monitor, User, Mail, LucideIcon } from "lucide-react";
-import { ScrollytellSection, StoneCard } from "@/components/design-system";
+import { ScrollytellSection, type ScrollytellStep } from "@/components/design-system";
 
-type Partner = {
+type PartnerData = {
     type: string;
     icon: LucideIcon;
     desc: string;
@@ -17,7 +19,7 @@ type Partner = {
     get: string;
 };
 
-const partners: Partner[] = [
+const partners: PartnerData[] = [
     {
         type: "Co-Producers",
         icon: Video,
@@ -48,37 +50,59 @@ const partners: Partner[] = [
     },
 ];
 
+const partnerSteps: ScrollytellStep[] = partners.map((p, i) => {
+    const Icon = p.icon;
+    return {
+        tag: `Partners · 0${i + 1}`,
+        name: p.type,
+        description: (
+            <>
+                {p.desc}
+                <br />
+                <br />
+                <strong className="font-sans text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-ravok-gold">
+                    What you bring:
+                </strong>{" "}
+                {p.bring}
+                <br />
+                <br />
+                <strong className="font-sans text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-ravok-gold">
+                    What you get:
+                </strong>{" "}
+                {p.get}
+            </>
+        ),
+        visual: (
+            <div className="flex items-center justify-center w-full h-full">
+                <Icon className="w-[60%] h-[60%] text-ravok-gold opacity-90" strokeWidth={0.8} />
+            </div>
+        ),
+    };
+});
+
 export default function Partners() {
     return (
         <>
             <ScrollytellSection
                 id="investors"
                 zIndex={15}
-                eyebrow="To scale this model, we need the right partners."
-                headline={
-                    <>
-                        The Future of Media
-                        <br />
-                        <span className="text-[var(--ds-ink)]">Won&apos;t Be Built by Gatekeepers.</span>
-                    </>
-                }
-                lead="It will be built by creators, partners, and investors who believe ownership matters."
-                steps={partners.map((p, i) => ({
-                    label: `${String(i + 1).padStart(2, "0")} / ${String(partners.length).padStart(2, "0")}`,
-                    content: <PartnerStage partner={p} />,
-                }))}
+                label="Who We Build With"
+                counterSuffix="THE PARTNERS"
+                steps={partnerSteps}
             />
 
-            {/* Email contact strip — separate sticky cap on top of the scrollytell chain */}
-            <div className="sticky top-0 z-[16] section-card bg-[var(--ds-bg)] py-24 px-10"
-                 style={{
+            {/* Email contact strip — final cap below the scrollytell */}
+            <div
+                className="relative section-card px-6 lg:px-10 py-24 z-[16]"
+                style={{
+                    backgroundColor: "var(--ds-bg)",
                     backgroundImage: [
                         "linear-gradient(to bottom, rgba(196,149,58,0.06) 0, transparent 200px)",
                         "linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px)",
                         "linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px)",
                     ].join(", "),
                     backgroundSize: "100% 100%, 80px 80px, 80px 80px",
-                 }}
+                }}
             >
                 <div className="max-w-[900px] mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 bg-[rgba(15,15,13,0.5)] backdrop-blur-sm border-y border-[var(--ds-border)] px-8 py-8">
                     <Mail className="w-7 h-7 text-ravok-gold flex-shrink-0" />
@@ -96,34 +120,5 @@ export default function Partners() {
                 </div>
             </div>
         </>
-    );
-}
-
-function PartnerStage({ partner }: { partner: Partner }) {
-    const Icon = partner.icon;
-    return (
-        <div className="max-w-[820px] mx-auto">
-            <StoneCard className="!p-10 lg:!p-14">
-                <Icon className="w-10 h-10 text-[var(--ds-stone-gold)] mb-5" />
-                <h3 className="font-heading text-[1.85rem] lg:text-[2.2rem] leading-tight text-[var(--ds-stone-ink)] mb-4">
-                    {partner.type}
-                </h3>
-                <p className="text-[1.05rem] leading-[1.6] mb-8">{partner.desc}</p>
-                <div className="grid sm:grid-cols-2 gap-6 pt-6 border-t border-[rgba(26,23,19,0.12)]">
-                    <div>
-                        <h4 className="font-sans text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-[var(--ds-stone-gold)] mb-2">
-                            What you bring
-                        </h4>
-                        <p className="text-[0.92rem] leading-[1.55] text-[rgba(26,23,19,0.7)]">{partner.bring}</p>
-                    </div>
-                    <div>
-                        <h4 className="font-sans text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-[var(--ds-stone-gold)] mb-2">
-                            What you get
-                        </h4>
-                        <p className="text-[0.92rem] leading-[1.55] text-[rgba(26,23,19,0.7)]">{partner.get}</p>
-                    </div>
-                </div>
-            </StoneCard>
-        </div>
     );
 }

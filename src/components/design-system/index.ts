@@ -21,3 +21,4 @@ export { SectionLabel } from "./SectionLabel";
 export { StoneCard } from "./StoneCard";
 export { CRevealSection } from "./CRevealSection";
 export { ScrollytellSection } from "./ScrollytellSection";
+export type { ScrollytellStep } from "./ScrollytellSection";
