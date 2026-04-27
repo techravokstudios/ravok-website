@@ -29,21 +29,6 @@ export default function Home() {
       <QuoteSection />
       <VentureModel />
       <Offerings />
-      {/* Sticky cap (z=14) — Offerings' relative outer scrolls past, leaving
-          nothing for Partners to flip over. This cap is sticky directly in
-          <main>, so it stays at top:0 once engaged, giving Partners (z=15)
-          a static page to cover-from-below. Empty by design — just a clean
-          dark page with the section-card edges. */}
-      <div
-        className="sticky top-0 h-screen section-card"
-        style={{
-          zIndex: 14,
-          backgroundColor: "var(--ds-bg)",
-          backgroundImage:
-            "linear-gradient(to bottom, rgba(196,149,58,0.06) 0, transparent 200px)",
-        }}
-        aria-hidden="true"
-      />
       <Partners />
       <div className="relative z-[60]">
         <Footer />
