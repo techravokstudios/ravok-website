@@ -44,7 +44,7 @@ export function StoneCard({
                 </h3>
             )}
             {children && (
-                <div className="font-heading text-base leading-relaxed text-[rgba(26,23,19,0.72)] flex-grow">
+                <div className="font-sans text-base leading-relaxed text-[rgba(26,23,19,0.72)] flex-grow">
                     {children}
                 </div>
             )}

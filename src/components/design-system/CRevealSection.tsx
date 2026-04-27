@@ -98,7 +98,7 @@ export function CRevealSection({
                             </h2>
                         )}
                         {lead && (
-                            <p className="font-heading text-[1rem] lg:text-[1.05rem] leading-[1.6] text-[var(--ds-ink-dim)] max-w-[680px] mx-auto">
+                            <p className="font-sans text-[1rem] lg:text-[1.05rem] leading-[1.6] text-[var(--ds-ink-dim)] max-w-[680px] mx-auto">
                                 {lead}
                             </p>
                         )}

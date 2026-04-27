@@ -43,7 +43,7 @@ export default function VentureModel() {
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5, delay: i * 0.1, ease: [0.2, 0.6, 0.2, 1] }}
-                                className="flex items-start gap-3 text-[var(--ds-ink-dim)] font-heading text-[0.95rem] lg:text-[1rem] leading-[1.5]"
+                                className="flex items-start gap-3 text-[var(--ds-ink-dim)] font-sans text-[0.95rem] lg:text-[1rem] leading-[1.5]"
                             >
                                 <Check className="w-4 h-4 text-ravok-gold mt-1 shrink-0" />
                                 <span>{item}</span>

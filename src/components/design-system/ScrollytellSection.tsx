@@ -152,7 +152,7 @@ export function ScrollytellSection({
                                             </h4>
                                         )}
                                         {step.description && (
-                                            <p className="font-heading text-[1rem] leading-[1.65] text-[var(--ds-ink-dim)] max-w-[480px] mb-5">
+                                            <p className="font-sans text-[1rem] leading-[1.65] text-[var(--ds-ink-dim)] max-w-[480px] mb-5">
                                                 {step.description}
                                             </p>
                                         )}
@@ -170,7 +170,7 @@ export function ScrollytellSection({
                     {/* Right — pinned visual that cross-fades to match active step */}
                     <div className="relative hidden lg:flex items-center justify-center h-full">
                         {counterSuffix !== undefined && (
-                            <div className="absolute top-[5vh] left-1/2 -translate-x-1/2 font-heading text-[13px] tracking-[0.3em] uppercase text-[var(--ds-ink-dim)] z-[3] whitespace-nowrap">
+                            <div className="absolute top-[5vh] left-1/2 -translate-x-1/2 font-sans text-[13px] tracking-[0.3em] uppercase text-[var(--ds-ink-dim)] z-[3] whitespace-nowrap">
                                 <span className="text-ravok-gold italic">
                                     {String(activeIdx + 1).padStart(2, "0")}
                                 </span>{" "}

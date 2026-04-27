@@ -51,7 +51,7 @@ export default function Philosophy() {
                         This Is Just Called R&amp;D
                     </motion.h2>
 
-                    <div className="space-y-3 font-heading text-[1rem] lg:text-[1.05rem] leading-[1.55] text-[var(--ds-ink-dim)]">
+                    <div className="space-y-3 font-sans text-[1rem] lg:text-[1.05rem] leading-[1.55] text-[var(--ds-ink-dim)]">
                         {items.map((text, i) => (
                             <motion.p
                                 key={i}

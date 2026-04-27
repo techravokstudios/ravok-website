@@ -29,7 +29,7 @@ export default function IntroSection() {
                         <em className="text-ravok-gold not-italic font-heading italic">We Built a New One.</em>
                     </h2>
 
-                    <p className="font-heading text-[1.15rem] leading-[1.65] text-[var(--ds-ink-dim)] mb-8 max-w-[520px]">
+                    <p className="font-sans text-[1.15rem] leading-[1.65] text-[var(--ds-ink-dim)] mb-8 max-w-[520px]">
                         RAVOK STUDIOS is the first venture studio turning filmmakers into founders—and films into sustainable businesses.
                     </p>
 
