@@ -239,12 +239,30 @@ body::after {
   100% { transform: translate(0,   0);   }
 }
 
-/* ============ SECTION PAGE-PASS EDGES ============ */
+/* ============ SECTION PAGE-PASS EDGES ============
+   The "covering" sticky section needs a clear visible edge so the user
+   reads it as a NEW page rising over the previous. Subtle 1px gold
+   wasn't enough — strengthening the top edge with a thicker hairline,
+   a gold glow above (so it reads as "lifting"), and a clean shadow.
+   Smaller radius (36px) keeps the corner cleaner — at 48px the
+   atmosphere bleed-through at the curve corners was very visible. */
 .section-card {
-  border-top-left-radius: 48px;
-  border-top-right-radius: 48px;
-  border-top: 1px solid rgba(196,149,58,0.4);
-  box-shadow: 0 -10px 40px -20px rgba(0,0,0,0.55);
+  border-top-left-radius: 36px;
+  border-top-right-radius: 36px;
+  border-top: 1px solid rgba(196,149,58,0.6);
+  box-shadow:
+    /* gold inner highlight at the top edge (subtle "page top" sheen) */
+    inset 0 1px 0 rgba(196,149,58,0.18),
+    /* gold glow projecting upward — makes the section feel like it's lifting over */
+    0 -8px 32px -10px rgba(196,149,58,0.18),
+    /* dark drop shadow above (depth cue) */
+    0 -10px 40px -20px rgba(0,0,0,0.55);
+}
+@media (max-width: 640px) {
+  .section-card {
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+  }
 }
 
 /* ============ STONE CARD — light card on dark page ============ */
