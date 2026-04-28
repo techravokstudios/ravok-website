@@ -29,6 +29,59 @@ import {
 import { useEditMode } from "./EditModeProvider";
 import { ALL_SECTION_KEYS, type HomeContent, type SectionKey } from "@/lib/site-content";
 import { uploadAsset } from "@/lib/site-content/api";
+import type { FloatingAnchor } from "@/lib/site-content/types";
+
+/**
+ * Find the .floating-anchor element whose bounding rect best contains the
+ * viewport center. That section becomes the anchor for new floating elements.
+ * Falls back to "document" if nothing matches (which can't actually happen
+ * since hero is always rendered, but defensive).
+ */
+function detectAnchorInViewport(): FloatingAnchor {
+    if (typeof document === "undefined") return "document";
+    const cy = window.innerHeight / 2;
+    const candidates = Array.from(
+        document.querySelectorAll<HTMLElement>(".floating-anchor[data-anchor]")
+    );
+    let best: { anchor: FloatingAnchor; distance: number } | null = null;
+    for (const el of candidates) {
+        const rect = el.getBoundingClientRect();
+        // Skip elements completely off-screen
+        if (rect.bottom < 0 || rect.top > window.innerHeight) continue;
+        // Distance from viewport center to the anchor's vertical center
+        const center = (rect.top + rect.bottom) / 2;
+        const distance = Math.abs(center - cy);
+        const a = (el.dataset.anchor ?? "document") as FloatingAnchor;
+        if (!best || distance < best.distance) {
+            best = { anchor: a, distance };
+        }
+    }
+    return best?.anchor ?? "document";
+}
+
+/**
+ * Given an anchor key, compute the position (top px, left %) such that a
+ * new floating element appears centered in the current viewport relative
+ * to the anchor's bounding box.
+ */
+function computeCenterRelativeToAnchor(anchor: FloatingAnchor): { top: number; left: number } {
+    if (typeof document === "undefined") return { top: 100, left: 40 };
+    const el = document.querySelector<HTMLElement>(
+        `.floating-anchor[data-anchor="${anchor}"]`
+    );
+    if (!el) return { top: 100, left: 40 };
+    const rect = el.getBoundingClientRect();
+    // Viewport center in screen coords:
+    const cyScreen = window.innerHeight / 2;
+    const cxScreen = window.innerWidth / 2;
+    // Convert to anchor-relative px:
+    const topPx = cyScreen - rect.top - 100; // -100 so element appears slightly above center
+    const leftPct = ((cxScreen - rect.left) / Math.max(1, rect.width)) * 100;
+    return {
+        top: Math.max(20, topPx),
+        left: Math.min(85, Math.max(5, leftPct - 10)), // -10% so element width starts left of center
+    };
+}
 
 type Tab = "layers" | "add";
 
@@ -225,16 +278,20 @@ function AddPanel() {
         setAt("sectionOrder", [...stored, key]);
     }
 
-    /** Drop a new floating image at the center of the current viewport. */
+    /**
+     * Drop a new floating image, anchored to whichever section is currently
+     * most visible in the viewport. Position the element at the visual center
+     * of the viewport, expressed in coordinates relative to that section.
+     */
     function addFloatingImage(src: string) {
         const id = `f-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
-        // Position at viewport center (top in px from <main>'s top, left in %)
-        const top = window.scrollY + window.innerHeight / 2 - 100;
-        const left = 40; // % — center-ish
+        const anchor = detectAnchorInViewport();
+        const { top, left } = computeCenterRelativeToAnchor(anchor);
         pushAt("floatingElements", {
             id,
             type: "image",
             src,
+            anchor,
             top,
             left,
             width: 200,

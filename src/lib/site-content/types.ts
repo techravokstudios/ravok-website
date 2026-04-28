@@ -84,20 +84,26 @@ export type SectionKey = "intro" | "bridge" | "portfolio" | "team";
 export const ALL_SECTION_KEYS: SectionKey[] = ["intro", "bridge", "portfolio", "team"];
 
 /**
- * A free-floating image dropped anywhere on the page (Canva-style). Not tied
- * to a specific section's slot. Stored in HomeContent.floatingElements as an
- * array; rendered as absolute-positioned elements over the main scroll container.
+ * A free-floating image dropped on the page (Canva-style). Anchored to a
+ * specific section so it moves/scrolls with that section (sticky reveals,
+ * reorders, content height changes don't break alignment).
  *
  * Coordinate system:
- *   - `top`: px from the top of <main>
- *   - `left`: % of viewport width (0–100), so positions stay roughly placed
- *     across viewports
- *   - `width`: px (height auto)
+ *   - `anchor`: which container the element is positioned within
+ *   - `top`: px from the top of the anchor's bounding box
+ *   - `left`: % of the anchor's WIDTH (0–100)
+ *   - `width`: px (height auto, preserves source aspect)
+ *
+ * Anchor "document" = legacy mode, positioned relative to the whole <main>.
+ * Older saved data without an anchor field is treated as document-anchored.
  */
+export type FloatingAnchor = "hero" | SectionKey | "footer" | "document";
+
 export type FloatingImage = {
     id: string;
     type: "image";
     src: string;
+    anchor?: FloatingAnchor;
     top: number;
     left: number;
     width: number;

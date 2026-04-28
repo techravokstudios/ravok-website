@@ -54,14 +54,23 @@ function Sections() {
             className="min-h-screen text-white selection:bg-ravok-gold selection:text-black"
             style={{ overflowX: "clip", position: "relative" }}
         >
-            <Hero content={content.hero} />
+            <div className="floating-anchor" data-anchor="hero" style={{ position: "relative" }}>
+                <Hero content={content.hero} />
+                <FloatingElementsLayer anchor="hero" />
+            </div>
             {order.map((key, position) => (
                 <SectionSlot key={key} sectionKey={key} position={position} />
             ))}
-            <div className="relative z-[60]">
+            <div
+                className="relative z-[60] floating-anchor"
+                data-anchor="footer"
+                style={{ position: "relative" }}
+            >
                 <Footer />
+                <FloatingElementsLayer anchor="footer" />
             </div>
-            <FloatingElementsLayer />
+            {/* Legacy / document-anchored elements still float over the whole page */}
+            <FloatingElementsLayer anchor="document" />
         </main>
     );
 }
@@ -105,13 +114,28 @@ function SectionSlot({
         }
     })();
 
-    if (!enabled) return <>{sectionEl}</>;
+    if (!enabled) {
+        // Out of edit mode: still wrap in floating-anchor container so floating
+        // elements anchored to this section render relative to it.
+        return (
+            <div
+                className="floating-anchor"
+                data-anchor={sectionKey}
+                style={{ position: "relative" }}
+            >
+                {sectionEl}
+                <FloatingElementsLayer anchor={sectionKey} />
+            </div>
+        );
+    }
 
     return (
         <div
-            className="edit-mode-section-slot"
+            className="edit-mode-section-slot floating-anchor"
             data-section={sectionKey}
+            data-anchor={sectionKey}
             data-position={position}
+            style={{ position: "relative" }}
             onDragOver={(e) => {
                 if (dragFrom !== null && dragFrom !== position) e.preventDefault();
             }}
@@ -143,6 +167,7 @@ function SectionSlot({
                 </button>
             </div>
             {sectionEl}
+            <FloatingElementsLayer anchor={sectionKey} />
         </div>
     );
 }

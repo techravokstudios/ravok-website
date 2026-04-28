@@ -1,36 +1,48 @@
 "use client";
 
 /**
- * FloatingElementsLayer — Canva-style free-floating image overlay.
+ * FloatingElementsLayer — Canva-style free-floating image overlay,
+ * ANCHORED to a specific section so elements move/scroll with their host.
  *
- * Renders an absolutely-positioned layer over <main>. Each element in
- * content.floatingElements is positioned by px-from-top + %-from-left so
- * placements stay roughly stable across viewports.
+ * Mounting:
+ *   <FloatingElementsLayer anchor="intro" />   inside the intro section
+ *   <FloatingElementsLayer anchor="hero" />    inside the hero
+ *   <FloatingElementsLayer anchor="document" />in <main> for legacy elements
  *
- * In edit mode every floating element gets:
- *   - Drag center → move (updates top/left)
- *   - Bottom-right corner handle → resize (updates width)
- *   - Bottom-left handle → rotate (updates rotate)
- *   - Top-right toolbar → Change image / Remove
+ * The layer reads content.floatingElements, filters by its `anchor` prop,
+ * and absolute-positions each match relative to the anchor (its parent
+ * positioned ancestor). The layer itself is `position: absolute; inset: 0;
+ * pointer-events: none` so the section's normal content stays clickable.
  *
- * Out of edit mode the layer renders the elements as plain images (no
- * controls, pointer-events disabled on the layer so it doesn't block
- * clicks on the underlying page).
+ * Coordinate system per element:
+ *   - `top`: px from anchor's top
+ *   - `left`: % of anchor's width
+ *   - `width`: px
+ *   - `rotate`: deg
  */
 
 import { useEffect, useRef, useState } from "react";
 import { GripVertical, Maximize2, RotateCcw, Trash2, ImagePlus } from "lucide-react";
 import { useEditMode } from "./EditModeProvider";
-import type { FloatingElement, FloatingImage } from "@/lib/site-content/types";
+import type {
+    FloatingAnchor,
+    FloatingElement,
+    FloatingImage,
+} from "@/lib/site-content/types";
 
-export function FloatingElementsLayer() {
+export function FloatingElementsLayer({ anchor }: { anchor: FloatingAnchor }) {
     const { content, enabled, setAt, removeAt } = useEditMode();
-    const elements = content.floatingElements ?? [];
+    const layerRef = useRef<HTMLDivElement>(null);
+    const all = content.floatingElements ?? [];
+    const elements = all
+        .map((el, i) => ({ el, idx: i }))
+        .filter(({ el }) => normalizeAnchor(el.anchor) === anchor);
 
     if (elements.length === 0 && !enabled) return null;
 
     return (
         <div
+            ref={layerRef}
             className="floating-elements-layer"
             style={{
                 position: "absolute",
@@ -43,12 +55,12 @@ export function FloatingElementsLayer() {
             }}
             aria-hidden={!enabled}
         >
-            {elements.map((el, idx) => (
+            {elements.map(({ el, idx }) => (
                 <FloatingElementRenderer
                     key={el.id}
                     element={el}
-                    index={idx}
                     enabled={enabled}
+                    layerRef={layerRef}
                     onPatch={(patch) => setAt(`floatingElements.${idx}`, { ...el, ...patch })}
                     onRemove={() => {
                         if (confirm("Remove this floating element?")) {
@@ -61,15 +73,21 @@ export function FloatingElementsLayer() {
     );
 }
 
+/** Treat undefined/legacy as document-anchored. */
+function normalizeAnchor(a: FloatingAnchor | undefined): FloatingAnchor {
+    return a ?? "document";
+}
+
 function FloatingElementRenderer({
     element,
     enabled,
+    layerRef,
     onPatch,
     onRemove,
 }: {
     element: FloatingElement;
-    index: number;
     enabled: boolean;
+    layerRef: React.RefObject<HTMLDivElement | null>;
     onPatch: (patch: Partial<FloatingImage>) => void;
     onRemove: () => void;
 }) {
@@ -78,6 +96,7 @@ function FloatingElementRenderer({
         <FloatingImageEl
             element={element}
             enabled={enabled}
+            layerRef={layerRef}
             onPatch={onPatch}
             onRemove={onRemove}
         />
@@ -87,11 +106,13 @@ function FloatingElementRenderer({
 function FloatingImageEl({
     element,
     enabled,
+    layerRef,
     onPatch,
     onRemove,
 }: {
     element: FloatingImage;
     enabled: boolean;
+    layerRef: React.RefObject<HTMLDivElement | null>;
     onPatch: (patch: Partial<FloatingImage>) => void;
     onRemove: () => void;
 }) {
@@ -101,7 +122,7 @@ function FloatingImageEl({
         x: number; y: number;
         top: number; left: number;
         width: number; rotate: number;
-        viewportW: number;
+        layerW: number;
     } | null>(null);
 
     useEffect(() => {
@@ -112,8 +133,7 @@ function FloatingImageEl({
             const dx = e.clientX - s.x;
             const dy = e.clientY - s.y;
             if (drag === "move") {
-                // top is px, left is %
-                const newLeftPct = s.left + (dx / s.viewportW) * 100;
+                const newLeftPct = s.left + (dx / Math.max(1, s.layerW)) * 100;
                 onPatch({ top: s.top + dy, left: newLeftPct });
             } else if (drag === "resize") {
                 const newWidth = Math.max(40, s.width + dx + dy);
@@ -138,6 +158,7 @@ function FloatingImageEl({
         e.preventDefault();
         e.stopPropagation();
         setDrag(mode);
+        const layerW = layerRef.current?.offsetWidth ?? window.innerWidth;
         startRef.current = {
             x: e.clientX,
             y: e.clientY,
@@ -145,7 +166,7 @@ function FloatingImageEl({
             left: element.left,
             width: element.width,
             rotate: element.rotate ?? 0,
-            viewportW: window.innerWidth,
+            layerW,
         };
     }
 
@@ -175,7 +196,6 @@ function FloatingImageEl({
         >
             <img src={element.src} alt="" style={{ width: "100%", display: "block" }} />
 
-            {/* Move (drag anywhere on the image) */}
             <div
                 className="floating-element-move"
                 onMouseDown={(e) => start("move", e)}
@@ -184,7 +204,6 @@ function FloatingImageEl({
                 <GripVertical className="w-4 h-4" />
             </div>
 
-            {/* Top-right toolbar */}
             <div className="floating-element-toolbar">
                 <button
                     type="button"
@@ -211,7 +230,6 @@ function FloatingImageEl({
                 </button>
             </div>
 
-            {/* Resize (bottom-right) */}
             <button
                 type="button"
                 className="edit-mode-transform-handle edit-mode-transform-handle--corner"
@@ -222,7 +240,6 @@ function FloatingImageEl({
                 <Maximize2 className="w-3 h-3" />
             </button>
 
-            {/* Rotate (bottom-left) */}
             <button
                 type="button"
                 className="edit-mode-transform-handle edit-mode-transform-handle--rotate"
