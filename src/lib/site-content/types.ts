@@ -55,6 +55,14 @@ export type PortfolioStepContent = {
     badgeNum: string;
     badgeLabel: string;
     comingSoon: boolean;
+    /**
+     * Optional image (URL) that REPLACES the gold-circle badge for this step.
+     * When set, the visual column renders an EditableImage instead of StepBadge.
+     * Empty string or undefined → render the badge (default).
+     */
+    visualImage?: string;
+    /** Free-form transform on the visual image (when visualImage is set). */
+    visualImageTransform?: ImageTransform;
 };
 
 export type TeamMemberContent = {

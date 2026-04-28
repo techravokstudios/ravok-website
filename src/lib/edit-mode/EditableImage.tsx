@@ -19,7 +19,7 @@ import {
     type CSSProperties,
     type ReactNode,
 } from "react";
-import { ImagePlus, Upload, X, Loader2, Move, Maximize2, RotateCcw } from "lucide-react";
+import { ImagePlus, Upload, X, Loader2, Move, Maximize2, RotateCcw, Trash2, Plus } from "lucide-react";
 import { IMAGE_MANIFEST } from "@/lib/site-content/image-manifest";
 import { uploadAsset, listAssets, type AssetRecord } from "@/lib/site-content/api";
 import type { ImageTransform } from "@/lib/site-content/types";
@@ -81,6 +81,7 @@ export function EditableImage({
 
     const canTransform = !!transformPath;
     const transformStyle = transformToStyle(transform);
+    const isEmpty = !value;
 
     const rendered =
         children !== undefined ? (
@@ -95,7 +96,36 @@ export function EditableImage({
             />
         );
 
-    if (!enabled) return <>{rendered}</>;
+    // Out of edit mode: empty src renders nothing (no placeholder on public site)
+    if (!enabled) {
+        if (isEmpty) return null;
+        return <>{rendered}</>;
+    }
+
+    // Edit mode + empty src: show a placeholder that opens the picker on click
+    if (isEmpty) {
+        return (
+            <span
+                className="edit-mode-image-empty"
+                onClick={() => setPickerOpen(true)}
+                role="button"
+                tabIndex={0}
+            >
+                <Plus className="w-4 h-4" />
+                <span>Add image</span>
+                {pickerOpen && (
+                    <ImagePickerModal
+                        current=""
+                        onClose={() => setPickerOpen(false)}
+                        onPick={(picked) => {
+                            setAt(path, picked);
+                            setPickerOpen(false);
+                        }}
+                    />
+                )}
+            </span>
+        );
+    }
 
     return (
         <span className={`edit-mode-image-wrap ${transformMode ? "is-transforming" : ""}`}>
@@ -147,6 +177,23 @@ export function EditableImage({
                         <RotateCcw className="w-3.5 h-3.5" />
                     </button>
                 )}
+                <button
+                    type="button"
+                    className="edit-mode-image-edit-btn edit-mode-image-edit-btn--danger"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (confirm("Remove this image? It will be gone from the live site.")) {
+                            setAt(path, "");
+                            // Also reset transform when removing
+                            if (transformPath) setAt(transformPath, undefined);
+                        }
+                    }}
+                    aria-label="Remove image"
+                    title="Remove image"
+                >
+                    <Trash2 className="w-3.5 h-3.5" />
+                </button>
             </div>
 
             {transformMode && transformPath && (

@@ -21,7 +21,7 @@ import {
     type HomeContent,
     type PortfolioStepContent,
 } from "@/lib/site-content";
-import { EditableText, EditableList, useEditMode } from "@/lib/edit-mode";
+import { EditableText, EditableImage, EditableList, useEditMode } from "@/lib/edit-mode";
 
 const NEW_STEP_DEFAULT: PortfolioStepContent = {
     tag: "Tag · 0X",
@@ -133,6 +133,32 @@ function StepBody({
     );
 }
 
+function StepVisual({ step }: { step: PortfolioStepContent }) {
+    // If admin has set a visualImage, render that instead of the badge.
+    if (step.visualImage) {
+        const transform = step.visualImageTransform;
+        const style: React.CSSProperties = {};
+        if (transform) {
+            const parts: string[] = [];
+            if (transform.offsetX || transform.offsetY) parts.push(`translate(${transform.offsetX ?? 0}px, ${transform.offsetY ?? 0}px)`);
+            if (transform.scale && transform.scale !== 1) parts.push(`scale(${transform.scale})`);
+            if (transform.rotate) parts.push(`rotate(${transform.rotate}deg)`);
+            if (parts.length) style.transform = parts.join(" ");
+            if (transform.width) style.width = transform.width;
+        }
+        return (
+            <img
+                src={step.visualImage}
+                alt=""
+                className="max-w-full max-h-[70vh] object-contain"
+                style={style}
+                aria-hidden="true"
+            />
+        );
+    }
+    return <StepBadge num={step.badgeNum} label={step.badgeLabel} comingSoon={step.comingSoon} />;
+}
+
 function toScrollytellStep(s: PortfolioStepContent, i: number): ScrollytellStep {
     const pathPrefix = `portfolio.steps.${i}`;
     if (s.comingSoon) {
@@ -143,7 +169,7 @@ function toScrollytellStep(s: PortfolioStepContent, i: number): ScrollytellStep 
                 <span className="text-[var(--ds-ink-muted,rgba(232,228,218,0.4))]">{s.title}</span>
             ),
             chip: s.chip,
-            visual: <StepBadge num={s.badgeNum} label={s.badgeLabel} comingSoon />,
+            visual: <StepVisual step={s} />,
         };
     }
 
@@ -153,7 +179,7 @@ function toScrollytellStep(s: PortfolioStepContent, i: number): ScrollytellStep 
         title: renderInline(s.title),
         description: <StepBody body={s.body} meta={s.meta} pathPrefix={pathPrefix} editable={false} />,
         chip: s.chip,
-        visual: <StepBadge num={s.badgeNum} label={s.badgeLabel} />,
+        visual: <StepVisual step={s} />,
     };
 }
 
@@ -229,9 +255,71 @@ function StackedStep({
                     </label>
                 </div>
             </div>
-            <div className="flex items-center justify-center min-h-[260px]">
-                <StepBadge num={step.badgeNum} label={step.badgeLabel} comingSoon={step.comingSoon} />
+            <div className="flex items-center justify-center min-h-[260px] relative">
+                <PortfolioVisualEditable step={step} index={index} />
             </div>
+        </div>
+    );
+}
+
+/**
+ * Edit-mode visual slot for a portfolio step. Renders either the gold-circle
+ * StepBadge OR an EditableImage if visualImage is set. Includes a switcher
+ * button so admins can flip between the two.
+ */
+function PortfolioVisualEditable({ step, index }: { step: PortfolioStepContent; index: number }) {
+    const { setAt } = useEditMode();
+    const pathPrefix = `portfolio.steps.${index}`;
+
+    if (step.visualImage) {
+        return (
+            <div className="flex flex-col items-center gap-2 w-full">
+                <EditableImage
+                    path={`${pathPrefix}.visualImage`}
+                    value={step.visualImage}
+                    transformPath={`${pathPrefix}.visualImageTransform`}
+                    transform={step.visualImageTransform}
+                >
+                    {(src, transformStyle) => (
+                        <img
+                            src={src}
+                            alt=""
+                            className="max-w-full max-h-[60vh] object-contain"
+                            style={transformStyle}
+                            aria-hidden="true"
+                        />
+                    )}
+                </EditableImage>
+                <button
+                    type="button"
+                    className="text-[0.6rem] tracking-[0.18em] uppercase text-white/40 hover:text-ravok-gold underline"
+                    onClick={() => {
+                        if (confirm("Replace this image with the default gold badge?")) {
+                            setAt(`${pathPrefix}.visualImage`, "");
+                            setAt(`${pathPrefix}.visualImageTransform`, undefined);
+                        }
+                    }}
+                >
+                    Use default badge instead
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col items-center gap-3">
+            <StepBadge num={step.badgeNum} label={step.badgeLabel} comingSoon={step.comingSoon} />
+            <button
+                type="button"
+                className="text-[0.6rem] tracking-[0.18em] uppercase text-ravok-gold/80 hover:text-ravok-gold border border-ravok-gold/30 hover:border-ravok-gold/60 rounded-full px-3 py-1.5 font-semibold"
+                onClick={() => {
+                    // Set to a non-empty placeholder so the EditableImage in the
+                    // next render shows toolbar instead of empty placeholder
+                    setAt(`${pathPrefix}.visualImage`, "/images/statues/intro-statue.svg");
+                }}
+            >
+                + Use image instead
+            </button>
         </div>
     );
 }

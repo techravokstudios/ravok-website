@@ -9,11 +9,14 @@
  * Renders nothing when the current user isn't an admin.
  */
 
-import { Pencil, Save, RotateCcw, X, Loader2, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { Pencil, Save, RotateCcw, X, Loader2, ExternalLink, PanelLeft } from "lucide-react";
 import { useEditMode } from "./EditModeProvider";
+import { EditModeSidebar } from "./EditModeSidebar";
 
 export function EditModeOverlay() {
     const { isAdmin, enabled, setEnabled, dirty, saving, save, discard } = useEditMode();
+    const [sidebarOpen, setSidebarOpen] = useState(true);
 
     if (!isAdmin) return null;
 
@@ -46,9 +49,19 @@ export function EditModeOverlay() {
     }
 
     return (
+        <>
         <div className="edit-mode-toolbar">
             <div className="edit-mode-toolbar-inner">
                 <div className="edit-mode-toolbar-left">
+                    <button
+                        type="button"
+                        onClick={() => setSidebarOpen((o) => !o)}
+                        className={`edit-mode-btn edit-mode-btn--ghost ${sidebarOpen ? "is-active" : ""}`}
+                        aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+                        title="Toggle layers + add panel"
+                    >
+                        <PanelLeft className="w-3.5 h-3.5" />
+                    </button>
                     <span className="edit-mode-badge">EDITING</span>
                     {dirty ? (
                         <span className="edit-mode-dirty">● Unsaved changes</span>
@@ -99,5 +112,7 @@ export function EditModeOverlay() {
                 </div>
             </div>
         </div>
+        <EditModeSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        </>
     );
 }
