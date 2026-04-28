@@ -107,6 +107,17 @@ export function EditableImage({
     // Out of edit mode: empty src renders nothing (no placeholder on public site)
     if (!enabled) {
         if (isEmpty) return null;
+        // CRITICAL: if a wrapperClassName/wrapperStyle was specified (e.g.
+        // "coin-portrait"), it must apply on the public site too — otherwise
+        // sections relying on the wrapper for layout/clipping break (e.g. team
+        // photos rendering as bare rectangles instead of circles).
+        if (wrapperClassName || wrapperStyle) {
+            return (
+                <span className={wrapperClassName} style={wrapperStyle}>
+                    {rendered}
+                </span>
+            );
+        }
         return <>{rendered}</>;
     }
 
