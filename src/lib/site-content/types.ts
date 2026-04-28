@@ -83,6 +83,30 @@ export type TeamMemberContent = {
 export type SectionKey = "intro" | "bridge" | "portfolio" | "team";
 export const ALL_SECTION_KEYS: SectionKey[] = ["intro", "bridge", "portfolio", "team"];
 
+/**
+ * A free-floating image dropped anywhere on the page (Canva-style). Not tied
+ * to a specific section's slot. Stored in HomeContent.floatingElements as an
+ * array; rendered as absolute-positioned elements over the main scroll container.
+ *
+ * Coordinate system:
+ *   - `top`: px from the top of <main>
+ *   - `left`: % of viewport width (0–100), so positions stay roughly placed
+ *     across viewports
+ *   - `width`: px (height auto)
+ */
+export type FloatingImage = {
+    id: string;
+    type: "image";
+    src: string;
+    top: number;
+    left: number;
+    width: number;
+    rotate?: number;
+    zIndex?: number;
+};
+
+export type FloatingElement = FloatingImage; // future: text | shape | …
+
 export type HomeContent = {
     sectionOrder?: SectionKey[];
     hero: {
@@ -132,6 +156,8 @@ export type HomeContent = {
         links: FooterLink[];
         copyright: string;
     };
+    /** Free-floating images dropped anywhere on the page (Canva-style). */
+    floatingElements?: FloatingElement[];
 };
 
 export type SiteContentEnvelope<T = HomeContent> = {

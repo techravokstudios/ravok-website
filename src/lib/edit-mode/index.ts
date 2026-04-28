@@ -4,3 +4,4 @@ export { EditableImage } from "./EditableImage";
 export { EditableList } from "./EditableList";
 export { EditModeOverlay } from "./EditModeOverlay";
 export { EditModeSidebar } from "./EditModeSidebar";
+export { FloatingElementsLayer } from "./FloatingElementsLayer";

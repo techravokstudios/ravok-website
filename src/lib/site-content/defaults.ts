@@ -195,4 +195,5 @@ export const DEFAULT_HOME_CONTENT: HomeContent = {
         ],
         copyright: "© RAVOK Studios",
     },
+    floatingElements: [],
 };

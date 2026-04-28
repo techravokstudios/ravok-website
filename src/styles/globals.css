@@ -455,6 +455,68 @@ body.edit-mode-active .coin-portrait > .edit-mode-image-toolbar {
   right: 0;
 }
 
+/* ============ FLOATING ELEMENTS LAYER ============ */
+.floating-elements-layer {
+  /* Layer itself doesn't intercept clicks; children opt back in via pointer-events:auto */
+  pointer-events: none;
+}
+.floating-element-wrap {
+  cursor: default;
+  user-select: none;
+}
+.floating-element-wrap > img {
+  display: block;
+  pointer-events: none;
+  width: 100%;
+}
+.floating-element-move {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: move;
+  background: rgba(196,149,58,0);
+  color: rgba(196,149,58,0);
+  transition: background 0.15s ease, color 0.15s ease;
+  pointer-events: auto;
+}
+.floating-element-wrap:hover .floating-element-move {
+  background: rgba(196,149,58,0.06);
+  color: rgba(196,149,58,0.8);
+}
+.floating-element-wrap[data-mode="move"] .floating-element-move {
+  cursor: grabbing;
+  background: rgba(196,149,58,0.15);
+}
+.floating-element-toolbar {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  display: flex;
+  gap: 0.3rem;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: auto;
+}
+.floating-element-wrap:hover .floating-element-toolbar,
+.floating-element-wrap[data-mode] .floating-element-toolbar {
+  opacity: 1;
+}
+.floating-element-wrap > .edit-mode-transform-handle {
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.floating-element-wrap:hover > .edit-mode-transform-handle,
+.floating-element-wrap[data-mode] > .edit-mode-transform-handle {
+  opacity: 1;
+}
+.floating-element-wrap:hover {
+  outline: 2px dashed rgba(196,149,58,0.5);
+  outline-offset: 4px;
+}
+
 /* ============ EDIT MODE — In-page Canva-style editor ============
    Active styles only when EditModeProvider.enabled === true. The provider
    renders contentEditable elements with .edit-mode-editable; image wrappers

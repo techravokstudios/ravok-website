@@ -23,6 +23,7 @@ import Footer from "@/components/layout/Footer";
 import {
     EditModeProvider,
     EditModeOverlay,
+    FloatingElementsLayer,
     useEditMode,
 } from "@/lib/edit-mode";
 import { ALL_SECTION_KEYS, type HomeContent, type SectionKey } from "@/lib/site-content";
@@ -51,7 +52,7 @@ function Sections() {
     return (
         <main
             className="min-h-screen text-white selection:bg-ravok-gold selection:text-black"
-            style={{ overflowX: "clip" }}
+            style={{ overflowX: "clip", position: "relative" }}
         >
             <Hero content={content.hero} />
             {order.map((key, position) => (
@@ -60,6 +61,7 @@ function Sections() {
             <div className="relative z-[60]">
                 <Footer />
             </div>
+            <FloatingElementsLayer />
         </main>
     );
 }

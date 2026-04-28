@@ -12,7 +12,7 @@
  * the user has explicitly opened it via the toolbar button.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     Layers,
     Plus,
@@ -23,9 +23,12 @@ import {
     ChevronDown,
     ChevronRight,
     X,
+    Upload,
+    Loader2,
 } from "lucide-react";
 import { useEditMode } from "./EditModeProvider";
 import { ALL_SECTION_KEYS, type HomeContent, type SectionKey } from "@/lib/site-content";
+import { uploadAsset } from "@/lib/site-content/api";
 
 type Tab = "layers" | "add";
 
@@ -206,7 +209,10 @@ function sectionSummary(k: SectionKey, c: HomeContent): string {
 /* ───────────── ADD ───────────── */
 
 function AddPanel() {
-    const { content, setAt } = useEditMode();
+    const { content, setAt, pushAt } = useEditMode();
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     function addHiddenSection(key: SectionKey) {
         const stored = (content.sectionOrder ?? []).filter((k): k is SectionKey =>
@@ -219,13 +225,95 @@ function AddPanel() {
         setAt("sectionOrder", [...stored, key]);
     }
 
+    /** Drop a new floating image at the center of the current viewport. */
+    function addFloatingImage(src: string) {
+        const id = `f-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+        // Position at viewport center (top in px from <main>'s top, left in %)
+        const top = window.scrollY + window.innerHeight / 2 - 100;
+        const left = 40; // % — center-ish
+        pushAt("floatingElements", {
+            id,
+            type: "image",
+            src,
+            top,
+            left,
+            width: 200,
+        });
+    }
+
+    async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setUploading(true);
+        setUploadError(null);
+        try {
+            const rec = await uploadAsset(file);
+            addFloatingImage(rec.url);
+        } catch (err) {
+            setUploadError(err instanceof Error ? err.message : "Upload failed");
+        } finally {
+            setUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+        }
+    }
+
     const stored = (content.sectionOrder ?? []).filter((k): k is SectionKey =>
         ALL_SECTION_KEYS.includes(k)
     );
     const hiddenSections = ALL_SECTION_KEYS.filter((k) => !stored.includes(k));
+    const floatingCount = (content.floatingElements ?? []).length;
 
     return (
         <div className="edit-mode-add">
+            <div className="edit-mode-add-group">
+                <div className="edit-mode-add-group-label">Free-form image (Canva-style)</div>
+                <p className="edit-mode-add-empty">
+                    Drop an image anywhere on the page. After it lands, drag to move, corner to
+                    resize, bottom-left to rotate. Currently on this page: <strong>{floatingCount}</strong>.
+                </p>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFile}
+                    style={{ display: "none" }}
+                />
+                <button
+                    type="button"
+                    className="edit-mode-image-upload-btn"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    style={{ width: "100%", justifyContent: "center" }}
+                >
+                    {uploading ? (
+                        <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Uploading…
+                        </>
+                    ) : (
+                        <>
+                            <Upload className="w-4 h-4" />
+                            Add image (upload)
+                        </>
+                    )}
+                </button>
+                {uploadError && (
+                    <p className="edit-mode-image-upload-error">{uploadError}</p>
+                )}
+                <button
+                    type="button"
+                    className="edit-mode-add-tile"
+                    style={{ width: "100%", marginTop: "0.5rem", flexDirection: "row", gap: "0.4rem" }}
+                    onClick={() => {
+                        const url = prompt("Paste image URL");
+                        if (url && url.trim()) addFloatingImage(url.trim());
+                    }}
+                >
+                    <ImageIcon className="w-3.5 h-3.5" />
+                    <span>Add image (paste URL)</span>
+                </button>
+            </div>
+
             <div className="edit-mode-add-group">
                 <div className="edit-mode-add-group-label">Sections currently hidden</div>
                 {hiddenSections.length === 0 ? (
