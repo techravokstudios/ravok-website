@@ -13,9 +13,24 @@ import { getApiBase, getAuthHeaders } from "@/lib/api/base";
 import { DEFAULT_HOME_CONTENT } from "./defaults";
 import type { HomeContent, SiteContentEnvelope } from "./types";
 
-/** Server-side fetch — used by RSC at request time. No-store cache so edits show immediately. */
+/**
+ * Server-side fetch — used by RSC at request time. No-store cache so edits show immediately.
+ *
+ * Resolves the backend URL with explicit fallback to the production Railway host.
+ * `getApiBase()` falls back to `localhost:8000` when neither NEXT_PUBLIC_API_URL nor
+ * `window` is available — which is exactly the SSR-on-Vercel scenario, and would
+ * silently fail to localhost. Same fallback used by next.config.ts rewrites.
+ */
+function getServerApiBase(): string {
+    const env = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/+$/, "");
+    if (env && !env.startsWith("http://localhost") && !env.startsWith("http://127.")) {
+        return env;
+    }
+    return "https://ravokbackend-production.up.railway.app";
+}
+
 export async function fetchHomeContent(): Promise<HomeContent> {
-    const url = `${getApiBase()}/api/site/content/home`;
+    const url = `${getServerApiBase()}/api/site/content/home`;
 
     try {
         const res = await fetch(url, {
