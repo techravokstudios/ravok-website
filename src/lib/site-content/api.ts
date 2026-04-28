@@ -15,7 +15,7 @@ import type { HomeContent, SiteContentEnvelope } from "./types";
 
 /** Server-side fetch — used by RSC at request time. No-store cache so edits show immediately. */
 export async function fetchHomeContent(): Promise<HomeContent> {
-    const url = `${getApiBase()}/api/v1/site/content/home`;
+    const url = `${getApiBase()}/api/site/content/home`;
 
     try {
         const res = await fetch(url, {
@@ -53,7 +53,7 @@ export async function fetchHomeContent(): Promise<HomeContent> {
 
 /** Client-side fetch — used by /admin/site to load + edit. Includes cookie credentials. */
 export async function fetchHomeContentForAdmin(): Promise<HomeContent> {
-    const url = `${getApiBase()}/api/v1/site/content/home`;
+    const url = `${getApiBase()}/api/site/content/home`;
     const res = await fetch(url, {
         credentials: "include",
         headers: { Accept: "application/json" },
@@ -70,7 +70,7 @@ export async function fetchHomeContentForAdmin(): Promise<HomeContent> {
 
 /** Client-side write — admin save. Sanctum cookie auth required. */
 export async function saveHomeContent(content: HomeContent): Promise<HomeContent> {
-    const url = `${getApiBase()}/api/v1/admin/site/content/home`;
+    const url = `${getApiBase()}/api/admin/site/content/home`;
 
     // Pull XSRF cookie for Sanctum (matches the pattern in src/lib/api/client.ts).
     const xsrf = getCookie("XSRF-TOKEN");

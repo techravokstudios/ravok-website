@@ -1,0 +1,21 @@
+# Top-level only (leading /) so we don't accidentally exclude backend/public/,
+# backend/src/, etc. Patterns without a leading slash match at any depth, which
+# previously stripped the Laravel public/ entry point and broke the deploy.
+
+/node_modules
+/.next
+/.vercel
+/.next.dev
+/src
+/public
+/.claude
+
+# Editor / OS — safe to exclude at any depth
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+
+# Sensitive
+.git-token
+.railway-token
