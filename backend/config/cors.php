@@ -31,9 +31,12 @@ return [
         ]
     )),
 
-    // Allow any localhost port (e.g. 3001) and optional production pattern
+    // Allow any localhost port (e.g. 3001), production domain, and Vercel previews
+    // for techravokstudios's `ravok-website` repo (branch + commit-hash forms).
     'allowed_origins_patterns' => [
         '#^https?://(localhost|127\.0\.0\.1)(:\d+)?$#',
+        '#^https://(www\.)?ravokstudios\.com$#',
+        '#^https://ravok-website(-git)?-[a-z0-9-]+-techravokstudios\.vercel\.app$#',
     ],
 
     'allowed_headers' => ['*'],
