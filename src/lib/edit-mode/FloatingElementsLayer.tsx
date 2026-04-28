@@ -1,44 +1,45 @@
 "use client";
 
 /**
- * FloatingElementsLayer — Canva-style free-floating image overlay,
- * ANCHORED to a specific section so elements move/scroll with their host.
+ * FloatingElementsLayer — renders a section's decorations as absolute-
+ * positioned overlays inside the section's content area.
  *
- * Mounting:
- *   <FloatingElementsLayer anchor="intro" />   inside the intro section
- *   <FloatingElementsLayer anchor="hero" />    inside the hero
- *   <FloatingElementsLayer anchor="document" />in <main> for legacy elements
+ * Each section component mounts its own layer:
+ *   <FloatingElementsLayer
+ *     decorations={c.decorations ?? []}
+ *     path="intro.decorations"
+ *   />
  *
- * The layer reads content.floatingElements, filters by its `anchor` prop,
- * and absolute-positions each match relative to the anchor (its parent
- * positioned ancestor). The layer itself is `position: absolute; inset: 0;
- * pointer-events: none` so the section's normal content stays clickable.
+ * The layer expects to live inside a `position: relative` parent (the
+ * section's body). Absolute positioning is relative to that parent so the
+ * decorations move/animate WITH the section (sticky reveals, marquee scroll,
+ * scrollytell — all participate naturally because the layer is a DOM child
+ * of the section's animated container).
  *
- * Coordinate system per element:
- *   - `top`: px from anchor's top
- *   - `left`: % of anchor's width
- *   - `width`: px
- *   - `rotate`: deg
+ * Coordinates per element:
+ *   - top: px from layer's top
+ *   - left: % of layer's width
+ *   - width: px (height auto)
+ *   - rotate: deg
  */
 
 import { useEffect, useRef, useState } from "react";
 import { GripVertical, Maximize2, RotateCcw, Trash2, ImagePlus } from "lucide-react";
 import { useEditMode } from "./EditModeProvider";
-import type {
-    FloatingAnchor,
-    FloatingElement,
-    FloatingImage,
-} from "@/lib/site-content/types";
+import type { FloatingElement, FloatingImage } from "@/lib/site-content/types";
 
-export function FloatingElementsLayer({ anchor }: { anchor: FloatingAnchor }) {
-    const { content, enabled, setAt, removeAt } = useEditMode();
+type Props = {
+    /** The decoration array stored on this section. */
+    decorations: FloatingElement[];
+    /** Dot-path of the array (e.g. "intro.decorations"). Used to setAt/removeAt. */
+    path: string;
+};
+
+export function FloatingElementsLayer({ decorations, path }: Props) {
+    const { enabled, setAt, removeAt } = useEditMode();
     const layerRef = useRef<HTMLDivElement>(null);
-    const all = content.floatingElements ?? [];
-    const elements = all
-        .map((el, i) => ({ el, idx: i }))
-        .filter(({ el }) => normalizeAnchor(el.anchor) === anchor);
 
-    if (elements.length === 0 && !enabled) return null;
+    if (decorations.length === 0 && !enabled) return null;
 
     return (
         <div
@@ -55,27 +56,22 @@ export function FloatingElementsLayer({ anchor }: { anchor: FloatingAnchor }) {
             }}
             aria-hidden={!enabled}
         >
-            {elements.map(({ el, idx }) => (
+            {decorations.map((el, idx) => (
                 <FloatingElementRenderer
                     key={el.id}
                     element={el}
                     enabled={enabled}
                     layerRef={layerRef}
-                    onPatch={(patch) => setAt(`floatingElements.${idx}`, { ...el, ...patch })}
+                    onPatch={(patch) => setAt(`${path}.${idx}`, { ...el, ...patch })}
                     onRemove={() => {
-                        if (confirm("Remove this floating element?")) {
-                            removeAt("floatingElements", idx);
+                        if (confirm("Remove this decoration?")) {
+                            removeAt(path, idx);
                         }
                     }}
                 />
             ))}
         </div>
     );
-}
-
-/** Treat undefined/legacy as document-anchored. */
-function normalizeAnchor(a: FloatingAnchor | undefined): FloatingAnchor {
-    return a ?? "document";
 }
 
 function FloatingElementRenderer({
@@ -224,7 +220,7 @@ function FloatingImageEl({
                         e.stopPropagation();
                         onRemove();
                     }}
-                    title="Remove element"
+                    title="Remove decoration"
                 >
                     <Trash2 className="w-3.5 h-3.5" />
                 </button>

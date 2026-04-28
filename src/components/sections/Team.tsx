@@ -18,7 +18,7 @@ import {
     type HomeContent,
     type TeamMemberContent,
 } from "@/lib/site-content";
-import { EditableText, EditableImage, EditableList, useEditMode } from "@/lib/edit-mode";
+import { EditableText, EditableImage, EditableList, FloatingElementsLayer, useEditMode } from "@/lib/edit-mode";
 
 const NEW_MEMBER_DEFAULT: TeamMemberContent = {
     name: "New Member",
@@ -140,6 +140,10 @@ export default function Team({ content }: TeamProps = {}) {
 
     return (
         <CRevealSection zIndex={13} id="team" centerHeader={true} contentMaxWidth="1400px">
+            <FloatingElementsLayer
+                decorations={c.decorations ?? []}
+                path="team.decorations"
+            />
             <div className="text-center mb-6">
                 <EditableText
                     path="team.eyebrow"

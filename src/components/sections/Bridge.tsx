@@ -15,7 +15,7 @@ import { GripVertical, Trash2, Plus } from "lucide-react";
 import { useState } from "react";
 import { CRevealSection } from "@/components/design-system";
 import { DEFAULT_HOME_CONTENT, type HomeContent } from "@/lib/site-content";
-import { EditableText, EditableImage, useEditMode } from "@/lib/edit-mode";
+import { EditableText, EditableImage, FloatingElementsLayer, useEditMode } from "@/lib/edit-mode";
 
 type BridgeProps = {
     content?: HomeContent["bridge"];
@@ -35,6 +35,10 @@ export default function Bridge({ content }: BridgeProps = {}) {
             centerHeader={false}
             contentMaxWidth="1400px"
         >
+            <FloatingElementsLayer
+                decorations={c.decorations ?? []}
+                path="bridge.decorations"
+            />
             <div className="grid lg:grid-cols-[1fr_1.55fr] gap-10 lg:gap-16 items-center">
                 <div className="order-1 relative flex items-center justify-center">
                     <EditableImage

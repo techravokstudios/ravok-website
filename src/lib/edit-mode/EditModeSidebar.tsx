@@ -29,59 +29,63 @@ import {
 import { useEditMode } from "./EditModeProvider";
 import { ALL_SECTION_KEYS, type HomeContent, type SectionKey } from "@/lib/site-content";
 import { uploadAsset } from "@/lib/site-content/api";
-import type { FloatingAnchor } from "@/lib/site-content/types";
 
 /**
- * Find the .floating-anchor element whose bounding rect best contains the
- * viewport center. That section becomes the anchor for new floating elements.
- * Falls back to "document" if nothing matches (which can't actually happen
- * since hero is always rendered, but defensive).
+ * Find the .section-anchor element whose bounding rect best contains the
+ * viewport center. Decorations supports sections that participate in their
+ * own animations (sticky, marquee). Returns the section key + the bounding
+ * rect so callers can position new decorations relative to it.
  */
-function detectAnchorInViewport(): FloatingAnchor {
-    if (typeof document === "undefined") return "document";
+type DetectedAnchor = {
+    sectionKey: string;
+    rect: DOMRect;
+};
+function detectAnchorInViewport(): DetectedAnchor | null {
+    if (typeof document === "undefined") return null;
     const cy = window.innerHeight / 2;
     const candidates = Array.from(
-        document.querySelectorAll<HTMLElement>(".floating-anchor[data-anchor]")
+        document.querySelectorAll<HTMLElement>(".section-anchor[data-section]")
     );
-    let best: { anchor: FloatingAnchor; distance: number } | null = null;
+    let best: { key: string; rect: DOMRect; distance: number } | null = null;
     for (const el of candidates) {
         const rect = el.getBoundingClientRect();
-        // Skip elements completely off-screen
         if (rect.bottom < 0 || rect.top > window.innerHeight) continue;
-        // Distance from viewport center to the anchor's vertical center
         const center = (rect.top + rect.bottom) / 2;
         const distance = Math.abs(center - cy);
-        const a = (el.dataset.anchor ?? "document") as FloatingAnchor;
+        const key = el.dataset.section ?? "";
+        if (!key) continue;
         if (!best || distance < best.distance) {
-            best = { anchor: a, distance };
+            best = { key, rect, distance };
         }
     }
-    return best?.anchor ?? "document";
+    if (!best) return null;
+    return { sectionKey: best.key, rect: best.rect };
 }
 
 /**
- * Given an anchor key, compute the position (top px, left %) such that a
- * new floating element appears centered in the current viewport relative
- * to the anchor's bounding box.
+ * Position relative to a section's bounding rect. Returns
+ * coordinates suitable for a FloatingImage stored inside that section's
+ * decorations[] array.
  */
-function computeCenterRelativeToAnchor(anchor: FloatingAnchor): { top: number; left: number } {
-    if (typeof document === "undefined") return { top: 100, left: 40 };
-    const el = document.querySelector<HTMLElement>(
-        `.floating-anchor[data-anchor="${anchor}"]`
-    );
-    if (!el) return { top: 100, left: 40 };
-    const rect = el.getBoundingClientRect();
-    // Viewport center in screen coords:
+function computeCenterInRect(rect: DOMRect): { top: number; left: number } {
     const cyScreen = window.innerHeight / 2;
     const cxScreen = window.innerWidth / 2;
-    // Convert to anchor-relative px:
-    const topPx = cyScreen - rect.top - 100; // -100 so element appears slightly above center
+    const topPx = cyScreen - rect.top - 100;
     const leftPct = ((cxScreen - rect.left) / Math.max(1, rect.width)) * 100;
     return {
         top: Math.max(20, topPx),
-        left: Math.min(85, Math.max(5, leftPct - 10)), // -10% so element width starts left of center
+        left: Math.min(85, Math.max(5, leftPct - 10)),
     };
 }
+
+/** Section keys that have a decorations[] field in HomeContent */
+const DECORATABLE_SECTIONS = new Set([
+    "hero",
+    "intro",
+    "bridge",
+    "portfolio",
+    "team",
+]);
 
 type Tab = "layers" | "add";
 
@@ -265,6 +269,7 @@ function AddPanel() {
     const { content, setAt, pushAt } = useEditMode();
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState<string | null>(null);
+    const [lastAddedTo, setLastAddedTo] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     function addHiddenSection(key: SectionKey) {
@@ -279,23 +284,31 @@ function AddPanel() {
     }
 
     /**
-     * Drop a new floating image, anchored to whichever section is currently
-     * most visible in the viewport. Position the element at the visual center
-     * of the viewport, expressed in coordinates relative to that section.
+     * Drop a new decoration into whichever section is currently most visible
+     * in the viewport. Decoration is INSIDE that section's content tree, so
+     * it rides along with whatever the section is doing (sticky cover,
+     * marquee scroll, etc.). Position relative to the section's bounding box.
      */
     function addFloatingImage(src: string) {
+        const detected = detectAnchorInViewport();
+        if (!detected || !DECORATABLE_SECTIONS.has(detected.sectionKey)) {
+            alert(
+                "Scroll to a section (Hero / Intro / Bridge / Portfolio / Team) first, then click Add image. Decorations are scoped to a section so they ride along with its animations."
+            );
+            return;
+        }
         const id = `f-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
-        const anchor = detectAnchorInViewport();
-        const { top, left } = computeCenterRelativeToAnchor(anchor);
-        pushAt("floatingElements", {
+        const { top, left } = computeCenterInRect(detected.rect);
+        const sectionPath = `${detected.sectionKey}.decorations`;
+        pushAt(sectionPath, {
             id,
             type: "image",
             src,
-            anchor,
             top,
             left,
             width: 200,
         });
+        setLastAddedTo(detected.sectionKey);
     }
 
     async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -318,15 +331,28 @@ function AddPanel() {
         ALL_SECTION_KEYS.includes(k)
     );
     const hiddenSections = ALL_SECTION_KEYS.filter((k) => !stored.includes(k));
-    const floatingCount = (content.floatingElements ?? []).length;
+    const totalDecorations =
+        (content.hero.decorations?.length ?? 0) +
+        (content.intro.decorations?.length ?? 0) +
+        (content.bridge.decorations?.length ?? 0) +
+        (content.portfolio.decorations?.length ?? 0) +
+        (content.team.decorations?.length ?? 0);
 
     return (
         <div className="edit-mode-add">
             <div className="edit-mode-add-group">
-                <div className="edit-mode-add-group-label">Free-form image (Canva-style)</div>
+                <div className="edit-mode-add-group-label">Decorations (free-form image)</div>
                 <p className="edit-mode-add-empty">
-                    Drop an image anywhere on the page. After it lands, drag to move, corner to
-                    resize, bottom-left to rotate. Currently on this page: <strong>{floatingCount}</strong>.
+                    Drop an image inside the section currently in your viewport. It rides along
+                    with that section&apos;s animation (sticky cover, marquee scroll). Drag to move,
+                    corner to resize, bottom-left to rotate. Total on this page:{" "}
+                    <strong>{totalDecorations}</strong>.
+                    {lastAddedTo && (
+                        <>
+                            {" "}
+                            Last added to <strong>{lastAddedTo}</strong>.
+                        </>
+                    )}
                 </p>
                 <input
                     ref={fileInputRef}

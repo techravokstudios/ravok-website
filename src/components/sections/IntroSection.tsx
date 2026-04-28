@@ -9,7 +9,7 @@
 import { Eye } from "lucide-react";
 import { CRevealSection, Button } from "@/components/design-system";
 import { DEFAULT_HOME_CONTENT, type HomeContent } from "@/lib/site-content";
-import { EditableText, EditableImage, EditableList } from "@/lib/edit-mode";
+import { EditableText, EditableImage, EditableList, FloatingElementsLayer } from "@/lib/edit-mode";
 
 type IntroSectionProps = {
     content?: HomeContent["intro"];
@@ -25,6 +25,10 @@ export default function IntroSection({ content }: IntroSectionProps = {}) {
             centerHeader={false}
             contentMaxWidth="1300px"
         >
+            <FloatingElementsLayer
+                decorations={c.decorations ?? []}
+                path="intro.decorations"
+            />
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                 <div className="order-2 lg:order-1">
                     <EditableText

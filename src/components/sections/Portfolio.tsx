@@ -21,7 +21,7 @@ import {
     type HomeContent,
     type PortfolioStepContent,
 } from "@/lib/site-content";
-import { EditableText, EditableImage, EditableList, useEditMode } from "@/lib/edit-mode";
+import { EditableText, EditableImage, EditableList, FloatingElementsLayer, useEditMode } from "@/lib/edit-mode";
 
 const NEW_STEP_DEFAULT: PortfolioStepContent = {
     tag: "Tag · 0X",
@@ -335,6 +335,10 @@ function PortfolioStacked({ content }: { content: HomeContent["portfolio"] }) {
                 backgroundImage: "linear-gradient(to bottom, rgba(196,149,58,0.06) 0, transparent 200px)",
             }}
         >
+            <FloatingElementsLayer
+                decorations={content.decorations ?? []}
+                path="portfolio.decorations"
+            />
             <div className="max-w-[1500px] mx-auto">
                 <EditableText
                     path="portfolio.label"

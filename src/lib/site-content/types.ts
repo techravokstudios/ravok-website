@@ -84,26 +84,26 @@ export type SectionKey = "intro" | "bridge" | "portfolio" | "team";
 export const ALL_SECTION_KEYS: SectionKey[] = ["intro", "bridge", "portfolio", "team"];
 
 /**
- * A free-floating image dropped on the page (Canva-style). Anchored to a
- * specific section so it moves/scrolls with that section (sticky reveals,
- * reorders, content height changes don't break alignment).
+ * A decoration image that lives INSIDE a section's content. Position is
+ * relative to the section's content area; the decoration participates in
+ * whatever the section is doing (sticky reveal, marquee scroll, etc.) so
+ * placements stay locked to the section's content visually.
  *
  * Coordinate system:
- *   - `anchor`: which container the element is positioned within
- *   - `top`: px from the top of the anchor's bounding box
- *   - `left`: % of the anchor's WIDTH (0–100)
+ *   - `top`: px from the top of the section content
+ *   - `left`: % of the section's width (0–100)
  *   - `width`: px (height auto, preserves source aspect)
  *
- * Anchor "document" = legacy mode, positioned relative to the whole <main>.
- * Older saved data without an anchor field is treated as document-anchored.
+ * Each section's content has an optional `decorations[]` array.
+ *
+ * Legacy: HomeContent.floatingElements (page-level) is preserved for
+ * backwards-compat with older saved data and is treated as anchored to
+ * the document overall.
  */
-export type FloatingAnchor = "hero" | SectionKey | "footer" | "document";
-
 export type FloatingImage = {
     id: string;
     type: "image";
     src: string;
-    anchor?: FloatingAnchor;
     top: number;
     left: number;
     width: number;
@@ -122,6 +122,7 @@ export type HomeContent = {
         scrollCue: string;
         logoImageTransform?: ImageTransform;
         templeImageTransform?: ImageTransform;
+        decorations?: FloatingImage[];
     };
     intro: {
         eyebrow: string;
@@ -132,6 +133,7 @@ export type HomeContent = {
         ctas: Cta[];
         statueImage: string;
         statueImageTransform?: ImageTransform;
+        decorations?: FloatingImage[];
     };
     bridge: {
         eyebrow: string;
@@ -142,11 +144,13 @@ export type HomeContent = {
         rows: ComparisonRow[];
         statueImage: string;
         statueImageTransform?: ImageTransform;
+        decorations?: FloatingImage[];
     };
     portfolio: {
         label: string;
         counterSuffix: string;
         steps: PortfolioStepContent[];
+        decorations?: FloatingImage[];
     };
     team: {
         eyebrow: string;
@@ -155,6 +159,7 @@ export type HomeContent = {
         members: TeamMemberContent[];
         coinFrame: string;
         coinFrameTransform?: ImageTransform;
+        decorations?: FloatingImage[];
     };
     footer: {
         email: string;

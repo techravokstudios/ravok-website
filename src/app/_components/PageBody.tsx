@@ -23,7 +23,6 @@ import Footer from "@/components/layout/Footer";
 import {
     EditModeProvider,
     EditModeOverlay,
-    FloatingElementsLayer,
     useEditMode,
 } from "@/lib/edit-mode";
 import { ALL_SECTION_KEYS, type HomeContent, type SectionKey } from "@/lib/site-content";
@@ -52,25 +51,17 @@ function Sections() {
     return (
         <main
             className="min-h-screen text-white selection:bg-ravok-gold selection:text-black"
-            style={{ overflowX: "clip", position: "relative" }}
+            style={{ overflowX: "clip" }}
         >
-            <div className="floating-anchor" data-anchor="hero" style={{ position: "relative" }}>
+            <div className="section-anchor" data-section="hero" style={{ position: "relative" }}>
                 <Hero content={content.hero} />
-                <FloatingElementsLayer anchor="hero" />
             </div>
             {order.map((key, position) => (
                 <SectionSlot key={key} sectionKey={key} position={position} />
             ))}
-            <div
-                className="relative z-[60] floating-anchor"
-                data-anchor="footer"
-                style={{ position: "relative" }}
-            >
+            <div className="relative z-[60]">
                 <Footer />
-                <FloatingElementsLayer anchor="footer" />
             </div>
-            {/* Legacy / document-anchored elements still float over the whole page */}
-            <FloatingElementsLayer anchor="document" />
         </main>
     );
 }
@@ -115,27 +106,21 @@ function SectionSlot({
     })();
 
     if (!enabled) {
-        // Out of edit mode: still wrap in floating-anchor container so floating
-        // elements anchored to this section render relative to it.
+        // Out of edit mode: just mark the section anchor. Decorations are
+        // rendered INSIDE each section component (so they participate in
+        // section-internal animations like the team marquee).
         return (
-            <div
-                className="floating-anchor"
-                data-anchor={sectionKey}
-                style={{ position: "relative" }}
-            >
+            <div className="section-anchor" data-section={sectionKey}>
                 {sectionEl}
-                <FloatingElementsLayer anchor={sectionKey} />
             </div>
         );
     }
 
     return (
         <div
-            className="edit-mode-section-slot floating-anchor"
+            className="edit-mode-section-slot section-anchor"
             data-section={sectionKey}
-            data-anchor={sectionKey}
             data-position={position}
-            style={{ position: "relative" }}
             onDragOver={(e) => {
                 if (dragFrom !== null && dragFrom !== position) e.preventDefault();
             }}
@@ -167,7 +152,6 @@ function SectionSlot({
                 </button>
             </div>
             {sectionEl}
-            <FloatingElementsLayer anchor={sectionKey} />
         </div>
     );
 }
