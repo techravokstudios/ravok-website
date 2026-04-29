@@ -1098,6 +1098,21 @@ body.edit-mode-active .coin-portrait > .edit-mode-image-toolbar {
   background: #d4a54a;
 }
 
+/* CRITICAL: section-anchor wrappers must NOT establish layout boxes in
+   non-edit mode, or each sticky section's containing block becomes its own
+   wrapper (which auto-grows to exactly the section's height). With section
+   height == container height, sticky has zero range to pin → sections
+   scroll normally and the C-reveal cover-from-below cascade dies.
+   `display: contents` makes the wrapper layout-transparent so sticky's
+   containing block becomes <main> (full document height) and all sections
+   sticky-pin simultaneously, with z-index handling the cover-from-below.
+   In edit mode the wrapper gets `.edit-mode-section-slot` (which sets
+   `position: relative` for drag handles) — display:contents would break
+   that, so we exclude it. */
+.section-anchor:not(.edit-mode-section-slot) {
+  display: contents;
+}
+
 /* Push body content down so the toolbar doesn't cover the hero */
 body.edit-mode-active main {
   padding-top: 56px;
