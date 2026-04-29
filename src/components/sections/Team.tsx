@@ -204,6 +204,27 @@ export default function Team({ content }: TeamProps = {}) {
                             />
                             <span className="team-frame-controls-value">{portraitScale}%</span>
                         </label>
+                        <button
+                            type="button"
+                            className="team-frame-install-btn"
+                            onClick={() => {
+                                const laurelUrl =
+                                    "https://pub-0c5b0ff2bc9242ffa0b31812b16adf4e.r2.dev/2026/04/i1swh4tzrnnd.svg";
+                                setAt("team.coinFrame", laurelUrl);
+                                setAt("team.coinFrameScale", 130);
+                                setAt("team.coinPortraitScale", 58);
+                                // Strip any orphan floating laurel decoration —
+                                // the laurel is now the actual frame, not a
+                                // free-floating ornament.
+                                const cleaned = (c.decorations ?? []).filter(
+                                    (d) => (d as { src?: string }).src !== laurelUrl
+                                );
+                                setAt("team.decorations", cleaned);
+                            }}
+                            title="Swap the coin frame to the laurel ring + tune the scales + remove the orphan decoration"
+                        >
+                            ⚘ Use laurel as frame
+                        </button>
                     </div>
                 </div>
             )}

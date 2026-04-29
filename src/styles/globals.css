@@ -501,6 +501,28 @@ body.edit-mode-active .coin-portrait > .edit-mode-image-toolbar {
   letter-spacing: 0;
   text-transform: none;
 }
+.team-frame-install-btn {
+  align-self: center;
+  padding: 0.5rem 0.9rem;
+  background: var(--ravok-gold, #c4953a);
+  color: #1c1c1a;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+.team-frame-install-btn:hover {
+  background: #d6a449;
+  transform: translateY(-1px);
+}
+.team-frame-install-btn:active {
+  transform: translateY(0);
+}
 
 /* ============ FLOATING ELEMENTS LAYER ============ */
 .floating-elements-layer {
