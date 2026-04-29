@@ -200,6 +200,22 @@ function FloatingImageEl({
                 <GripVertical className="w-4 h-4" />
             </div>
 
+            {/* Persistent delete badge — always visible in edit mode so admins
+                can remove a decoration without hunting for a hover-only toolbar.
+                Top-right corner of the decoration itself (not floating above). */}
+            <button
+                type="button"
+                className="floating-element-delete-badge"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onRemove();
+                }}
+                title="Delete this decoration"
+                aria-label="Delete decoration"
+            >
+                <Trash2 className="w-3.5 h-3.5" />
+            </button>
+
             <div className="floating-element-toolbar">
                 <button
                     type="button"
@@ -212,17 +228,6 @@ function FloatingImageEl({
                     title="Change image (paste URL)"
                 >
                     <ImagePlus className="w-3.5 h-3.5" />
-                </button>
-                <button
-                    type="button"
-                    className="edit-mode-image-edit-btn edit-mode-image-edit-btn--danger"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onRemove();
-                    }}
-                    title="Remove decoration"
-                >
-                    <Trash2 className="w-3.5 h-3.5" />
                 </button>
             </div>
 

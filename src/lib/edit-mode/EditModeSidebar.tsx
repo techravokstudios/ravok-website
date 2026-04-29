@@ -153,6 +153,42 @@ function LayersPanel() {
     const order: SectionKey[] = [...stored, ...missing];
     const customBlocks = content.customBlocks ?? [];
 
+    // Collect every decoration across every section so admins have a single
+    // place to find + delete them (vs. having to hunt for hover-only toolbars
+    // on each decoration scattered across the page).
+    type DecorEntry = {
+        sectionKey: string;
+        sectionLabel: string;
+        anchor: string;
+        path: string; // dot-path of the decorations array
+        index: number;
+        src: string;
+    };
+    const allDecorations: DecorEntry[] = [];
+    function collect(
+        sectionKey: string,
+        label: string,
+        anchor: string,
+        path: string,
+        decorations: { id: string; type: string; src?: string }[] | undefined,
+    ) {
+        (decorations ?? []).forEach((d, i) => {
+            allDecorations.push({
+                sectionKey,
+                sectionLabel: label,
+                anchor,
+                path,
+                index: i,
+                src: (d as { src?: string }).src ?? "",
+            });
+        });
+    }
+    collect("hero", "Hero", "top", "hero.decorations", content.hero.decorations);
+    collect("intro", "Intro", "about", "intro.decorations", content.intro.decorations);
+    collect("bridge", "Bridge", "bridge", "bridge.decorations", content.bridge.decorations);
+    collect("portfolio", "Portfolio", "portfolio", "portfolio.decorations", content.portfolio.decorations);
+    collect("team", "Team", "team", "team.decorations", content.team.decorations);
+
     return (
         <div className="edit-mode-layers">
             <SectionNode
@@ -187,6 +223,51 @@ function LayersPanel() {
                 />
             ))}
             <SectionNode label="Footer" anchor="contact" locked summary="Email · links · copyright" />
+
+            {allDecorations.length > 0 && (
+                <div className="edit-mode-decor-list">
+                    <div className="edit-mode-decor-list-header">
+                        Decorations on this page ({allDecorations.length})
+                    </div>
+                    {allDecorations.map((d) => (
+                        <div key={`${d.path}-${d.index}`} className="edit-mode-decor-item">
+                            <button
+                                type="button"
+                                className="edit-mode-decor-thumb"
+                                onClick={() => {
+                                    const el = document.getElementById(d.anchor);
+                                    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+                                }}
+                                title={`Scroll to ${d.sectionLabel}`}
+                            >
+                                {d.src ? (
+                                    <img src={d.src} alt="" />
+                                ) : (
+                                    <ImageIcon className="w-3 h-3" />
+                                )}
+                            </button>
+                            <div className="edit-mode-decor-meta">
+                                <div className="edit-mode-decor-section">{d.sectionLabel}</div>
+                                <div className="edit-mode-decor-filename">
+                                    {d.src ? d.src.split("/").pop() : "(no image)"}
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                className="edit-mode-decor-delete"
+                                onClick={() => {
+                                    if (!confirm(`Delete this decoration from ${d.sectionLabel}?`)) return;
+                                    removeAt(d.path, d.index);
+                                }}
+                                aria-label="Delete decoration"
+                                title="Delete decoration"
+                            >
+                                <Trash2 className="w-3 h-3" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
