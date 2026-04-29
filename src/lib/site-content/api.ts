@@ -171,6 +171,42 @@ export async function listAllPages(): Promise<PageListEntry[]> {
     return json.data ?? [];
 }
 
+/** #80 — Hard-delete a page row from site_content. Backend refuses 'home'. */
+export async function deletePage(slug: string): Promise<void> {
+    const url = `${getApiBase()}/api/admin/site/content/${encodeURIComponent(slug)}`;
+    const token = getToken();
+    const res = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            Accept: "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+    });
+    if (!res.ok) {
+        const body = await res.text();
+        throw new Error(`Delete failed (${res.status}): ${body}`);
+    }
+}
+
+/** #78 — Rename a page's slug. Backend validates format + uniqueness. */
+export async function renamePage(slug: string, newSlug: string): Promise<void> {
+    const url = `${getApiBase()}/api/admin/site/content/${encodeURIComponent(slug)}/rename`;
+    const token = getToken();
+    const res = await fetch(url, {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ newSlug }),
+    });
+    if (!res.ok) {
+        const body = await res.text();
+        throw new Error(`Rename failed (${res.status}): ${body}`);
+    }
+}
+
 /* ───────────────── ASSET UPLOAD (R2 via backend) ───────────────── */
 
 export type AssetRecord = {

@@ -129,6 +129,10 @@ Route::middleware('auth:sanctum')->group(function () {
         // Site content editor (CMS MVP) — admin can edit homepage copy + image references
         Route::get('/admin/site/content', [SiteContentController::class, 'index']);
         Route::put('/admin/site/content/{slug}', [SiteContentController::class, 'update']);
+        // #80 hard-delete (replaces the soft-delete via PUT empty content)
+        Route::delete('/admin/site/content/{slug}', [SiteContentController::class, 'destroy']);
+        // #78 slug rename
+        Route::post('/admin/site/content/{slug}/rename', [SiteContentController::class, 'rename']);
 
         // Site asset upload (CMS MVP) — multipart upload to public R2 bucket
         Route::get('/admin/site/assets', [SiteAssetController::class, 'index']);

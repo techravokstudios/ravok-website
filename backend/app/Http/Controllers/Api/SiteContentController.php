@@ -64,6 +64,60 @@ class SiteContentController extends Controller
         return response()->json(['data' => $rows]);
     }
 
+    /** DELETE /api/v1/admin/site/content/{slug} — admin only, hard-deletes a page row.
+     *  Refuses to delete the homepage to prevent accidental loss. */
+    public function destroy(string $slug): JsonResponse
+    {
+        if ($slug === 'home') {
+            return response()->json(['error' => "'home' cannot be deleted"], 422);
+        }
+
+        $row = SiteContent::where('slug', $slug)->first();
+        if (! $row) {
+            return response()->json(['error' => "page '$slug' not found"], 404);
+        }
+
+        $row->delete();
+        return response()->json(['status' => 'deleted', 'slug' => $slug]);
+    }
+
+    /** POST /api/v1/admin/site/content/{slug}/rename — admin only.
+     *  Body: { newSlug: string }. Validates uniqueness + format. */
+    public function rename(Request $request, string $slug): JsonResponse
+    {
+        $data = $request->validate([
+            'newSlug' => 'required|string|regex:/^[a-z0-9-]+$/|max:120',
+        ]);
+        $newSlug = $data['newSlug'];
+
+        if ($slug === 'home' || $newSlug === 'home') {
+            return response()->json(['error' => "'home' is reserved"], 422);
+        }
+        if ($slug === $newSlug) {
+            return response()->json(['error' => 'newSlug matches existing slug'], 422);
+        }
+
+        $row = SiteContent::where('slug', $slug)->first();
+        if (! $row) {
+            return response()->json(['error' => "page '$slug' not found"], 404);
+        }
+
+        $clash = SiteContent::where('slug', $newSlug)->first();
+        if ($clash) {
+            return response()->json(['error' => "page '$newSlug' already exists"], 409);
+        }
+
+        $row->slug = $newSlug;
+        $row->save();
+
+        return response()->json([
+            'status' => 'renamed',
+            'oldSlug' => $slug,
+            'newSlug' => $newSlug,
+            'updated_at' => $row->updated_at,
+        ]);
+    }
+
     /**
      * POST /api/site/install-laurel-frame — TEMPORARY one-shot repair.
      *

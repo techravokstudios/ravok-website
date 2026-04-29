@@ -16,6 +16,8 @@ export {
     fetchGenericPageForAdmin,
     saveGenericPage,
     listAllPages,
+    deletePage,
+    renamePage,
     type PageListEntry,
 } from "./api";
 export { renderInline } from "./render";

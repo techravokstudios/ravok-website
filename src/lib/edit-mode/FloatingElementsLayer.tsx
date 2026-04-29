@@ -24,7 +24,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { GripVertical, Maximize2, RotateCcw, Trash2, ImagePlus } from "lucide-react";
+import { GripVertical, Maximize2, RotateCcw, Trash2, ImagePlus, ChevronUp, ChevronDown } from "lucide-react";
 import { useEditMode } from "./EditModeProvider";
 import type { FloatingElement, FloatingImage, FloatingTarget } from "@/lib/site-content/types";
 
@@ -285,6 +285,37 @@ function FloatingImageEl({
                         : (element.target ?? "section") === "marquee"
                         ? "↔ marquee"
                         : "📜 scrollytell"}
+                </button>
+                {/* Layer controls — bring forward / send back. Default z=1; clamp 0..100. */}
+                <button
+                    type="button"
+                    className="edit-mode-image-edit-btn floating-element-layer-btn"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        const z = (element.zIndex ?? 1) + 1;
+                        onPatch({ zIndex: Math.min(100, z) });
+                    }}
+                    title="Bring forward (z + 1)"
+                >
+                    <ChevronUp className="w-3.5 h-3.5" />
+                </button>
+                <span
+                    className="floating-element-layer-badge"
+                    title="Current z-index"
+                >
+                    z{element.zIndex ?? 1}
+                </span>
+                <button
+                    type="button"
+                    className="edit-mode-image-edit-btn floating-element-layer-btn"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        const z = (element.zIndex ?? 1) - 1;
+                        onPatch({ zIndex: Math.max(0, z) });
+                    }}
+                    title="Send back (z - 1)"
+                >
+                    <ChevronDown className="w-3.5 h-3.5" />
                 </button>
             </div>
 

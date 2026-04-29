@@ -16,15 +16,16 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2, Plus, Trash2, ExternalLink, RefreshCw, Home } from "lucide-react";
+import { Loader2, Plus, Trash2, ExternalLink, RefreshCw, Home, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
     listAllPages,
     saveGenericPage,
+    deletePage as deletePageApi,
+    renamePage as renamePageApi,
     type PageListEntry,
 } from "@/lib/site-content";
-import { getApiBase, getToken } from "@/lib/api/base";
 
 export default function AdminPagesIndex() {
     const [pages, setPages] = useState<PageListEntry[] | null>(null);
@@ -84,36 +85,42 @@ export default function AdminPagesIndex() {
 
     async function deletePage(slug: string) {
         if (slug === "home") {
-            toast.error("Can't delete the homepage from here.");
+            toast.error("Can't delete the homepage.");
             return;
         }
-        if (!confirm(`Delete page '${slug}'? This cannot be undone.`)) return;
-        const token = getToken();
-        if (!token) {
-            toast.error("Not authenticated");
-            return;
-        }
-        // No DELETE endpoint exists yet — using PUT with empty content as a soft-delete
-        // workaround. Will revisit if hard-delete is needed.
-        const url = `${getApiBase()}/api/admin/site/content/${encodeURIComponent(slug)}`;
+        if (!confirm(`HARD-delete page '${slug}'? The row is removed from the database — this cannot be undone.`)) return;
         try {
-            // Best-effort: PUT empty content. Backend keeps row but content is empty.
-            const res = await fetch(url, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    content: { title: `[deleted] ${slug}`, customBlocks: [] },
-                }),
-            });
-            if (!res.ok) throw new Error(`Failed (${res.status})`);
-            toast.success(`Soft-deleted '${slug}' — content cleared`);
+            await deletePageApi(slug);
+            toast.success(`Deleted '${slug}'`);
             await reload();
         } catch (err) {
             toast.error(err instanceof Error ? err.message : "Delete failed");
+        }
+    }
+
+    async function renamePage(slug: string) {
+        if (slug === "home") {
+            toast.error("Can't rename the homepage.");
+            return;
+        }
+        const raw = prompt(`New slug for '${slug}'? (lowercase, hyphens, no spaces)`, slug);
+        if (!raw) return;
+        const newSlug = raw.trim().toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-");
+        if (!newSlug || newSlug === slug) return;
+        if (newSlug === "home") {
+            toast.error("'home' is reserved.");
+            return;
+        }
+        if (pages?.some((p) => p.slug === newSlug)) {
+            toast.error(`Page '${newSlug}' already exists.`);
+            return;
+        }
+        try {
+            await renamePageApi(slug, newSlug);
+            toast.success(`Renamed '${slug}' → '${newSlug}'`);
+            await reload();
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : "Rename failed");
         }
     }
 
@@ -196,13 +203,22 @@ export default function AdminPagesIndex() {
                                         Open
                                     </Link>
                                     {!isHome && (
-                                        <button
-                                            onClick={() => deletePage(p.slug)}
-                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[0.7rem] text-white/40 hover:text-red-400 border border-white/10 hover:border-red-500/40 rounded-md"
-                                            title="Soft delete"
-                                        >
-                                            <Trash2 className="w-3 h-3" />
-                                        </button>
+                                        <>
+                                            <button
+                                                onClick={() => renamePage(p.slug)}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[0.7rem] text-white/40 hover:text-ravok-gold border border-white/10 hover:border-ravok-gold/40 rounded-md"
+                                                title="Rename slug"
+                                            >
+                                                <Pencil className="w-3 h-3" />
+                                            </button>
+                                            <button
+                                                onClick={() => deletePage(p.slug)}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[0.7rem] text-white/40 hover:text-red-400 border border-white/10 hover:border-red-500/40 rounded-md"
+                                                title="Hard delete"
+                                            >
+                                                <Trash2 className="w-3 h-3" />
+                                            </button>
+                                        </>
                                     )}
                                 </div>
                             </div>
