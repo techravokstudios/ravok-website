@@ -5,6 +5,9 @@ export {
     DEFAULT_ABOUT_US_PAGE,
     DEFAULT_OUR_MODEL_PAGE,
     DEFAULT_NAVBAR,
+    DEFAULT_SUBMISSION_AGREEMENT,
+    DEFAULT_PRIVACY_POLICY,
+    DEFAULT_TERMS_AND_CONDITIONS,
 } from "./defaults";
 export {
     fetchHomeContent,

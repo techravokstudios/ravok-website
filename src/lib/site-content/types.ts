@@ -352,6 +352,21 @@ export type NavbarContent = {
     links: NavbarLink[];
 };
 
+/** Shared shape for /submission-agreement, /privacy-policy, /terms-and-conditions.
+ *  Each section's `body` is a multi-paragraph string — paragraphs separated by
+ *  blank lines (\n\n), bullet lines start with "- ". Renderer splits + groups. */
+export type LegalSection = {
+    title: string;
+    body: string;
+};
+
+export type LegalPageContent = {
+    title: string;
+    lastUpdated: string;
+    intro: string;
+    sections: LegalSection[];
+};
+
 /** /our-model page content shape. */
 export type OurModelStage = {
     title: string;
