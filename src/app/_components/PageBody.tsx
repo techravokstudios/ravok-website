@@ -23,6 +23,8 @@ import {
     IntroSection,
     Bridge,
     Portfolio,
+    TheWindow,
+    TheSignal,
     // Team intentionally NOT imported here on design-cms-v2 — moved to /about-us.
     // The Team component still exists in @/components/sections for V3 revival.
     ImageBlockSection,
@@ -98,7 +100,9 @@ function Sections() {
     const stored = (content.sectionOrder ?? []).filter((k): k is SectionKey =>
         ALL_SECTION_KEYS.includes(k) && k !== "team"
     );
-    const missing = ALL_SECTION_KEYS.filter((k) => !stored.includes(k) && k !== "team");
+    const missing = ALL_SECTION_KEYS.filter(
+        (k) => !stored.includes(k) && k !== "team"
+    );
     const order: SectionKey[] = [...stored, ...missing];
 
     const customBlocks = content.customBlocks ?? [];
@@ -291,10 +295,13 @@ function SectionSlot({
                 return <Bridge content={content.bridge} />;
             case "portfolio":
                 return <Portfolio content={content.portfolio} />;
+            case "window":
+                return <TheWindow content={content.window} />;
+            case "signal":
+                return <TheSignal content={content.signal} />;
             case "team":
                 // design-cms-v2: team is filtered out of the rendered order
-                // above. Returning null is unreachable, but the case keeps
-                // the SectionKey switch exhaustive without re-importing Team.
+                // above. Returning null is unreachable but keeps the switch exhaustive.
                 return null;
         }
     })();

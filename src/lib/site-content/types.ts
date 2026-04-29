@@ -92,8 +92,8 @@ export type TeamMemberContent = {
  * Optional in schema for backwards compat — when missing, the default
  * order from DEFAULT_HOME_CONTENT is used.
  */
-export type SectionKey = "intro" | "bridge" | "portfolio" | "team";
-export const ALL_SECTION_KEYS: SectionKey[] = ["intro", "bridge", "portfolio", "team"];
+export type SectionKey = "intro" | "bridge" | "portfolio" | "team" | "window" | "signal";
+export const ALL_SECTION_KEYS: SectionKey[] = ["intro", "bridge", "portfolio", "team", "window", "signal"];
 
 /**
  * A decoration image that lives INSIDE a section's content. Position is
@@ -206,6 +206,23 @@ export type HomeContent = {
          *  ~58 to make the photo well smaller so it nests inside an ornate
          *  frame instead of sitting on top of it. */
         coinPortraitScale?: number;
+        decorations?: FloatingImage[];
+    };
+    /** Section 5 — submissions / email capture. */
+    window?: {
+        eyebrow: string;
+        headline: string;
+        lead: string;
+        emailPlaceholder: string;
+        emailCta: string;
+        decorations?: FloatingImage[];
+    };
+    /** Section 6 — final CTA / closing signal. */
+    signal?: {
+        eyebrow: string;
+        headline: string;
+        body: string;
+        ctas: Cta[];
         decorations?: FloatingImage[];
     };
     footer: {

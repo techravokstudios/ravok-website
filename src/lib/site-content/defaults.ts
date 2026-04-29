@@ -10,7 +10,7 @@ import type { HomeContent } from "./types";
  * from this even if the API is down.
  */
 export const DEFAULT_HOME_CONTENT: HomeContent = {
-    sectionOrder: ["intro", "bridge", "portfolio", "team"],
+    sectionOrder: ["intro", "bridge", "portfolio", "window", "signal"],
     hero: {
         tagline: "A New Architecture for Entertainment",
         logoImage: "/images/logo.png",
@@ -193,6 +193,24 @@ export const DEFAULT_HOME_CONTENT: HomeContent = {
             "https://pub-0c5b0ff2bc9242ffa0b31812b16adf4e.r2.dev/2026/04/i1swh4tzrnnd.svg",
         coinFrameScale: 130,
         coinPortraitScale: 58,
+    },
+
+    window: {
+        eyebrow: "— The Window",
+        headline: "Applications are open.",
+        lead: "We take on a limited number of projects per cycle. If you're building something worth backing, this is how you get in.",
+        emailPlaceholder: "your@email.com",
+        emailCta: "Get the application guide",
+    },
+
+    signal: {
+        eyebrow: "— The Signal",
+        headline: "The industry is being rebuilt.\nBe on the right side of it.",
+        body: "RAVOK is a limited-access venture studio. Every project we back gets the full infrastructure — legal, financial, distribution, and tech. If you're a creator, investor, or operator who sees what we see, let's talk.",
+        ctas: [
+            { label: "Apply as a creator", href: "/form/creator", variant: "primary" },
+            { label: "Contact us", href: "/contact-us", variant: "secondary" },
+        ],
     },
 
     footer: {

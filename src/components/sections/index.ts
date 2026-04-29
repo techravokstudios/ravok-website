@@ -2,6 +2,8 @@ export { default as Hero } from './Hero';
 export { default as IntroSection } from './IntroSection';
 export { default as Bridge } from './Bridge';
 export { default as Portfolio } from './Portfolio';
+export { default as TheWindow } from './TheWindow';
+export { default as TheSignal } from './TheSignal';
 export { default as Team } from './Team';
 export { default as ImageBlockSection } from './ImageBlockSection';
 export { default as RichTextSection } from './RichTextSection';

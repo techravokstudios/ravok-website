@@ -377,6 +377,10 @@ function sectionLabel(k: SectionKey): string {
             return "Portfolio";
         case "team":
             return "Team";
+        case "window":
+            return "The Window";
+        case "signal":
+            return "The Signal";
     }
 }
 
@@ -390,6 +394,10 @@ function sectionSummary(k: SectionKey, c: HomeContent): string {
             return `${c.portfolio.steps.length} pillars`;
         case "team":
             return `${c.team.members.length} members`;
+        case "window":
+            return c.window?.headline ?? "Applications";
+        case "signal":
+            return c.signal?.headline.slice(0, 40) ?? "Final CTA";
     }
 }
 
