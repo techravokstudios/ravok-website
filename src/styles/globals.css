@@ -446,10 +446,15 @@ body::after {
    normal overflow:hidden + circle clip would hide the edit toolbar in
    the corner. Switch to overflow:visible and clip the IMG instead, so
    the toolbar can render outside the circle while the photo still
-   appears circular. Bump z-index above coin-frame-wrap so hovering the
-   photo triggers the photo toolbar (not the frame toolbar). */
+   appears circular. */
 body.edit-mode-active .coin-portrait {
   overflow: visible;
+  /* Default z-index 1 (same as production) so the frame at z-index 2 stays
+     visible above the photo. Only bump above the frame WHILE HOVERED so the
+     photo toolbar wins over the frame toolbar when admins hover the photo. */
+  z-index: 1;
+}
+body.edit-mode-active .coin-portrait:hover {
   z-index: 3;
 }
 body.edit-mode-active .coin-portrait > img {
