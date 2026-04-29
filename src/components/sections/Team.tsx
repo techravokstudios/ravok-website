@@ -222,7 +222,7 @@ export default function Team({ content }: TeamProps = {}) {
                  * left% is consistent with edit mode. The seamless-loop
                  * wraparound is automatic because both sets render the same
                  * decoration data. */
-                <div className="team-marquee relative w-full overflow-x-clip py-2" style={{ overflowY: "visible" }}>
+                <div className="team-marquee relative w-full py-2" style={{ overflow: "visible" }}>
                     <div className="team-marquee-inner flex gap-12 w-max relative">
                         <div className="team-coin-set relative flex gap-12">
                             <FloatingElementsLayer

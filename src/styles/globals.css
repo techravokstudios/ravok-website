@@ -366,8 +366,9 @@ body::after {
    Coins glide right→left at slow tempo. Pauses on hover. Soft fade
    masks at left + right edges so cards fade in/out. */
 .team-marquee {
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%);
-          mask-image: linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%);
+  /* Mask removed — was fading the edges of decorations like the laurel
+     ring, making them appear cut. Coins extending past section edges
+     are an expected part of the marquee animation. */
 }
 .team-marquee-inner {
   animation: team-marquee 60s linear infinite;
