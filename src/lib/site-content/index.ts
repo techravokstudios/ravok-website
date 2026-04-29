@@ -20,6 +20,7 @@ export {
     fetchGenericPageForAdmin,
     fetchNavbarContent,
     saveGenericPage,
+    saveSplitPageAndNavbar,
     listAllPages,
     deletePage,
     renamePage,

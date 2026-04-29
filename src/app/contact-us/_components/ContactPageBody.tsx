@@ -23,15 +23,13 @@ import {
     type ContactPageContent,
     type HomeContent,
     type NavbarContent,
-    saveGenericPage,
+    saveSplitPageAndNavbar,
 } from "@/lib/site-content";
 import { useEffect } from "react";
 
 const SLUG = "contact-us";
 
-/** Backend stores arbitrary JSON. We cast the per-page shape to HomeContent
- *  so EditModeProvider's typing is satisfied; path-based access doesn't care. */
-function cast(c: ContactPageContent): HomeContent {
+function cast(c: ContactPageContent & { navbar?: NavbarContent }): HomeContent {
     return c as unknown as HomeContent;
 }
 function uncast(c: HomeContent): ContactPageContent {
@@ -39,11 +37,11 @@ function uncast(c: HomeContent): ContactPageContent {
 }
 
 async function saveContact(content: HomeContent): Promise<HomeContent> {
-    const persisted = await saveGenericPage(
+    const persisted = await saveSplitPageAndNavbar(
         SLUG,
-        uncast(content) as unknown as Parameters<typeof saveGenericPage>[1]
+        content as unknown as Record<string, unknown>
     );
-    return cast(persisted as unknown as ContactPageContent);
+    return persisted as unknown as HomeContent;
 }
 
 export default function ContactPageBody({
@@ -53,8 +51,9 @@ export default function ContactPageBody({
     initialContent: ContactPageContent;
     navbar?: NavbarContent;
 }) {
+    const combined = { ...initialContent, navbar };
     return (
-        <EditModeProvider initialContent={cast(initialContent)} saveFn={saveContact}>
+        <EditModeProvider initialContent={cast(combined)} saveFn={saveContact}>
             <BodyClassToggle />
             <Navbar content={navbar} />
             <ContactPage />

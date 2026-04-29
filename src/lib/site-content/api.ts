@@ -193,6 +193,38 @@ export async function listAllPages(): Promise<PageListEntry[]> {
     return json.data ?? [];
 }
 
+/** Combined save: writes the page-half to its own slug AND the navbar-half
+ *  to the "navbar" slug in parallel. Used by per-page bodies that wrap
+ *  page content + navbar together in their EditModeProvider so navbar can
+ *  be edited inline. Returns the merged persisted result so the provider
+ *  state stays in sync after save. */
+export async function saveSplitPageAndNavbar(
+    pageSlug: string,
+    combined: Record<string, unknown>
+): Promise<Record<string, unknown>> {
+    const navbar = combined.navbar as Record<string, unknown> | undefined;
+    const pageContent: Record<string, unknown> = { ...combined };
+    delete pageContent.navbar;
+
+    const [savedPage, savedNavbar] = await Promise.all([
+        saveGenericPage(
+            pageSlug,
+            pageContent as unknown as Parameters<typeof saveGenericPage>[1]
+        ),
+        navbar
+            ? saveGenericPage(
+                  "navbar",
+                  navbar as unknown as Parameters<typeof saveGenericPage>[1]
+              )
+            : Promise.resolve(undefined),
+    ]);
+
+    return {
+        ...(savedPage as Record<string, unknown>),
+        navbar: savedNavbar ?? navbar,
+    };
+}
+
 /** #80 — Hard-delete a page row from site_content. Backend refuses 'home'. */
 export async function deletePage(slug: string): Promise<void> {
     const url = `${getApiBase()}/api/admin/site/content/${encodeURIComponent(slug)}`;

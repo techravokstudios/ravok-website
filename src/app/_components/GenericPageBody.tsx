@@ -52,14 +52,21 @@ import {
  * decorations are meaningful for generic pages. The site_content row keeps
  * the full JSON; render layers ignore the fixed-section fields.
  */
-function adaptToHomeShape(generic: GenericPageContent): HomeContent {
+function adaptToHomeShape(
+    generic: GenericPageContent,
+    navbar?: NavbarContent
+): HomeContent {
     return {
         ...DEFAULT_HOME_CONTENT,
         customBlocks: generic.customBlocks ?? [],
-        // Title + meta are stored alongside (not part of HomeContent type but
-        // PHP backend accepts arbitrary JSON, so they survive round-trips).
-        // We keep them via a non-standard cast.
-        ...({ title: generic.title, metaDescription: generic.metaDescription } as object),
+        // Title + meta + navbar are stored alongside (not part of HomeContent
+        // type but PHP backend accepts arbitrary JSON, so they survive
+        // round-trips). We keep them via a non-standard cast.
+        ...({
+            title: generic.title,
+            metaDescription: generic.metaDescription,
+            navbar,
+        } as object),
     } as HomeContent;
 }
 
@@ -72,10 +79,18 @@ export default function GenericPageBody({
     initialContent: GenericPageContent;
     navbar?: NavbarContent;
 }) {
-    const adapted = adaptToHomeShape(initialContent);
+    const adapted = adaptToHomeShape(initialContent, navbar);
+    const saveFn = async (content: HomeContent): Promise<HomeContent> => {
+        const { saveSplitPageAndNavbar } = await import("@/lib/site-content");
+        const persisted = await saveSplitPageAndNavbar(
+            slug,
+            content as unknown as Record<string, unknown>
+        );
+        return persisted as unknown as HomeContent;
+    };
 
     return (
-        <EditModeProvider initialContent={adapted}>
+        <EditModeProvider initialContent={adapted} saveFn={saveFn}>
             <BodyClassToggle />
             <Navbar content={navbar} />
             <main

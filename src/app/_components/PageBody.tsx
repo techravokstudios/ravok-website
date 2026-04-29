@@ -38,8 +38,22 @@ import {
     SectionFocusOverlay,
     useEditMode,
 } from "@/lib/edit-mode";
-import { ALL_SECTION_KEYS, type HomeContent, type SectionKey, type NavbarContent } from "@/lib/site-content";
+import {
+    ALL_SECTION_KEYS,
+    type HomeContent,
+    type SectionKey,
+    type NavbarContent,
+    saveSplitPageAndNavbar,
+} from "@/lib/site-content";
 import { moveInArrayAtPath } from "@/lib/edit-mode/path-utils";
+
+async function saveHomeAndNavbar(content: HomeContent): Promise<HomeContent> {
+    const persisted = await saveSplitPageAndNavbar(
+        "home",
+        content as unknown as Record<string, unknown>
+    );
+    return persisted as unknown as HomeContent;
+}
 
 export function PageBody({
     initialContent,
@@ -48,8 +62,11 @@ export function PageBody({
     initialContent: HomeContent;
     navbar?: NavbarContent;
 }) {
+    // Merge navbar into the content tree so it edits inline through the same
+    // provider. saveFn splits it back out before persisting.
+    const combined = { ...initialContent, navbar } as HomeContent;
     return (
-        <EditModeProvider initialContent={initialContent}>
+        <EditModeProvider initialContent={combined} saveFn={saveHomeAndNavbar}>
             <BodyClassToggle />
             <Navbar content={navbar} />
             <Sections />

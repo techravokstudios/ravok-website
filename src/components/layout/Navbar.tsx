@@ -7,14 +7,23 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getStoredUser } from "@/lib/api";
 import { DEFAULT_NAVBAR, type NavbarContent } from "@/lib/site-content";
+import { EditableText, EditableImage, useEditMode } from "@/lib/edit-mode";
 
 type NavbarProps = {
-    /** CMS-driven navbar content. When omitted, uses DEFAULT_NAVBAR. */
+    /** CMS-driven navbar content. When omitted, uses DEFAULT_NAVBAR.
+     *  When the parent EditModeProvider's content carries a `navbar` field,
+     *  Navbar reads from that instead (live editing). */
     content?: NavbarContent;
 };
 
 export default function Navbar({ content }: NavbarProps = {}) {
-    const cmsContent = content ?? DEFAULT_NAVBAR;
+    // If the surrounding EditModeProvider has navbar content, use it (lets
+    // admin edits show immediately and persist via the provider's save flow).
+    // Otherwise fall back to the prop or bundled defaults.
+    const ctx = useEditMode();
+    const liveContent = (ctx.content as unknown as { navbar?: NavbarContent }).navbar;
+    const cmsContent: NavbarContent = liveContent ?? content ?? DEFAULT_NAVBAR;
+    const editingEnabled = ctx.enabled && !!liveContent;
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
     const [showLogo, setShowLogo] = useState(false);
@@ -96,22 +105,31 @@ export default function Navbar({ content }: NavbarProps = {}) {
                     animate={{ opacity: (!isHomePage || showLogo) ? 1 : 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    <Link href="/" className="block">
-                        <motion.img
-                            src={logoSrc}
+                    {editingEnabled ? (
+                        <EditableImage
+                            path="navbar.logoImage"
+                            value={logoSrc}
                             alt="RAVOK"
                             className="h-10 w-auto object-contain"
-                            whileHover={{ scale: 1.05 }}
-                            transition={{ duration: 0.2 }}
                         />
-                    </Link>
+                    ) : (
+                        <Link href="/" className="block">
+                            <motion.img
+                                src={logoSrc}
+                                alt="RAVOK"
+                                className="h-10 w-auto object-contain"
+                                whileHover={{ scale: 1.05 }}
+                                transition={{ duration: 0.2 }}
+                            />
+                        </Link>
+                    )}
                 </motion.div>
 
                 {/* Desktop Navigation */}
                 <div className="hidden lg:flex items-center gap-12 font-sans text-sm tracking-widest text-[var(--ds-ink)]">
                     {navItems.map((item, i) => (
                         <motion.div
-                            key={item.href}
+                            key={`${i}-${item.href}`}
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
@@ -120,17 +138,33 @@ export default function Navbar({ content }: NavbarProps = {}) {
                                 ease: [0.22, 1, 0.36, 1]
                             }}
                         >
-                            <Link
-                                href={item.href}
-                                className="relative group"
-                            >
-                                <span className="relative z-10 text-[var(--ds-ink)] group-hover:text-ravok-gold transition-colors duration-300">
-                                    {item.label}
-                                </span>
-                                <motion.span
-                                    className="absolute -bottom-1 left-0 w-0 h-px bg-ravok-gold group-hover:w-full transition-all duration-300"
-                                />
-                            </Link>
+                            {editingEnabled ? (
+                                <div className="relative group">
+                                    <EditableText
+                                        path={`navbar.links.${i}.label`}
+                                        value={item.label}
+                                        as="span"
+                                        inline
+                                        className="relative z-10 text-[var(--ds-ink)] group-hover:text-ravok-gold transition-colors duration-300"
+                                    />
+                                    <EditableText
+                                        path={`navbar.links.${i}.href`}
+                                        value={item.href}
+                                        as="div"
+                                        inline={false}
+                                        className="font-mono text-[0.55rem] text-[var(--ds-ink-muted)] mt-1"
+                                    />
+                                </div>
+                            ) : (
+                                <Link href={item.href} className="relative group">
+                                    <span className="relative z-10 text-[var(--ds-ink)] group-hover:text-ravok-gold transition-colors duration-300">
+                                        {item.label}
+                                    </span>
+                                    <motion.span
+                                        className="absolute -bottom-1 left-0 w-0 h-px bg-ravok-gold group-hover:w-full transition-all duration-300"
+                                    />
+                                </Link>
+                            )}
                         </motion.div>
                     ))}
                 </div>
