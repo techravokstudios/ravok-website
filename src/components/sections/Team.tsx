@@ -58,8 +58,14 @@ function CoinMember({
     const card = (
         <>
             <div className="coin">
-                {/* Photo: EditableImage wrapper IS the coin-portrait so the
-                    edit toolbar (Change/Remove/Transform) appears on hover. */}
+                {/* Clean circular photo, no frame overlay. The "laurel" SVG
+                    that was being used as a frame turned out to be the same
+                    1920x810 wireframe asset Amanda found earlier — its
+                    decorative content extends across the SVG canvas, so
+                    rendering it on top of the photo (z-index 2 above z-index
+                    1 portrait) made it visibly intrude into the photo area.
+                    Removing the frame element entirely until a real ring
+                    asset exists. */}
                 <EditableImage
                     path={`team.members.${index}.photo`}
                     value={member.photo}
@@ -67,23 +73,6 @@ function CoinMember({
                 >
                     {(src) => <img src={src} alt="" />}
                 </EditableImage>
-
-                {/* Coin frame: separate EditableImage so admins can remove or
-                    swap the gold wireframe ring. Path is at the team level
-                    (shared across all members) so removing it removes for all. */}
-                {!isDuplicate ? (
-                    <EditableImage
-                        path="team.coinFrame"
-                        value={coinFrame}
-                        wrapperClassName="coin-frame-wrap"
-                    >
-                        {(src) => (
-                            <img className="coin-frame" src={src} alt="" aria-hidden="true" />
-                        )}
-                    </EditableImage>
-                ) : coinFrame ? (
-                    <img className="coin-frame" src={coinFrame} alt="" aria-hidden="true" />
-                ) : null}
             </div>
             <EditableText
                 path={`team.members.${index}.role`}
@@ -146,13 +135,14 @@ export default function Team({ content }: TeamProps = {}) {
     const c = content ?? DEFAULT_HOME_CONTENT.team;
     const { enabled } = useEditMode();
 
-    // Render-time fallback only: if data still has the legacy wireframe SVG
-    // path, swap to the laurel with sensible scales. Stored data is left
-    // alone unless admin explicitly saves something else.
-    const isLegacyData = c.coinFrame === LEGACY_WIREFRAME_PATH;
-    const effectiveCoinFrame = isLegacyData ? LAUREL_URL : (c.coinFrame || LAUREL_URL);
-    const frameScale = isLegacyData ? 130 : (c.coinFrameScale ?? 130);
-    const portraitScale = isLegacyData ? 58 : (c.coinPortraitScale ?? 58);
+    // Frame element removed in v28 — Amanda asked for the coin/ring to be
+    // out of the photo area because the only available SVG (the "laurel"
+    // that turned out to be the wireframe) had decorative content overlapping
+    // the photo. Until a clean ring asset exists, photos render as plain
+    // circles filling the coin.
+    const effectiveCoinFrame = "";
+    const frameScale = 100;
+    const portraitScale = 100;
 
     const teamCSSVars = {
         ["--coin-frame-scale" as string]: `${frameScale}%`,
