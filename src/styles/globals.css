@@ -390,10 +390,31 @@ body::after {
           mask-image: none !important;
   overflow-x: auto;
   overflow-y: visible;
+  padding-bottom: 4rem; /* room for the absolute-positioned Add button */
 }
 .team-marquee--editing .team-marquee-inner {
   animation: none !important;
   transform: none !important;
+}
+
+/* Coin set wrapper: holds one set's worth of members + a marquee decoration
+   layer scoped to that set. Production renders TWO of these (set + duplicate
+   for seamless loop); edit mode renders ONE. Either way, the layer's width
+   = 1 set width, so decoration left:X% is consistent across modes. */
+.team-coin-set {
+  position: relative;
+}
+
+/* The Add button is pulled out of flex flow so it doesn't inflate the set's
+   width (which would shift decoration positions in edit mode vs production).
+   Floats below the marquee instead. */
+.team-marquee--editing .edit-mode-list-add {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 0 !important;
+  z-index: 10;
 }
 
 /* ============ GREEK COIN — transparent SVG wireframe + portrait inside ============

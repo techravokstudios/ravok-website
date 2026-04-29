@@ -195,77 +195,70 @@ export default function Team({ content }: TeamProps = {}) {
             </div>
 
             {enabled ? (
-                /* Edit mode: render the SAME marquee structure as production
-                   but paused (animation off) and with one set instead of two.
-                   This way the coordinate system for marquee-target decorations
-                   matches production exactly — drop a decoration on Amanda's
-                   coin in edit mode and it stays on Amanda's coin live.
-
-                   The mask and overflow:hidden are also off so admin sees the
-                   full row even if it overflows the section width. */
+                /* Edit mode: wrap members in a team-coin-set sub-container so
+                 * the layer covers EXACTLY 1 set's width — same coord space
+                 * as each production set container. The Add button is pulled
+                 * out of flex flow via CSS so it doesn't inflate the set's
+                 * width. */
                 <div className="team-marquee team-marquee--editing relative w-full py-2">
-                    <div
-                        className="team-marquee-inner flex gap-12 w-max relative"
-                        data-decoration-zone="marquee"
-                    >
-                        <FloatingElementsLayer
-                            decorations={c.decorations ?? []}
-                            path="team.decorations"
-                            targetFilter="marquee"
-                        />
-                        <EditableList
-                            arrayPath="team.members"
-                            items={c.members}
-                            defaultNewItem={NEW_MEMBER_DEFAULT}
-                            addLabel="Add team member"
-                            as="div"
-                            className="flex gap-12"
-                            renderItem={(m, i) => (
-                                <CoinMember member={m} index={i} coinFrame={effectiveCoinFrame} />
-                            )}
-                        />
+                    <div className="team-marquee-inner flex gap-12 w-max relative">
+                        <div
+                            className="team-coin-set relative flex gap-12"
+                            data-decoration-zone="marquee"
+                        >
+                            <FloatingElementsLayer
+                                decorations={c.decorations ?? []}
+                                path="team.decorations"
+                                targetFilter="marquee"
+                            />
+                            <EditableList
+                                arrayPath="team.members"
+                                items={c.members}
+                                defaultNewItem={NEW_MEMBER_DEFAULT}
+                                addLabel="Add team member"
+                                as="div"
+                                className="contents"
+                                renderItem={(m, i) => (
+                                    <CoinMember member={m} index={i} coinFrame={effectiveCoinFrame} />
+                                )}
+                            />
+                        </div>
                     </div>
                 </div>
             ) : (
-                /* Production: scrolling coin marquee.
-                 * Marquee-target decorations live inside team-marquee-inner so
-                 * they translate with the coins. We render them TWICE (once
-                 * native, once shifted +50%) so the seamless-loop wraparound
-                 * also applies to decorations — same trick as the duplicate
-                 * coin set. */
+                /* Production: TWO team-coin-set containers (set + duplicate),
+                 * each with its own layer covering 1 set's width. Decoration
+                 * left% is consistent with edit mode. The seamless-loop
+                 * wraparound is automatic because both sets render the same
+                 * decoration data. */
                 <div className="team-marquee relative w-full overflow-hidden py-2">
                     <div className="team-marquee-inner flex gap-12 w-max relative">
-                        {/* Layer 1 covers exactly 1 set's width (50% of the 2-
-                            set track). Decoration left% is interpreted as a %
-                            of 1 set — same coord space as edit mode where
-                            marquee-inner IS just 1 set. */}
-                        <FloatingElementsLayer
-                            decorations={c.decorations ?? []}
-                            path="team.decorations"
-                            targetFilter="marquee"
-                            style={{ width: "50%", left: 0 }}
-                        />
-                        {c.members.map((m, i) => (
-                            <CoinMember key={`s1-${i}`} member={m} index={i} coinFrame={effectiveCoinFrame} />
-                        ))}
-                        {/* Layer 2 covers the second set's region. Same
-                            decoration data, rendered again so the seamless
-                            wraparound shows the decoration in both halves. */}
-                        <FloatingElementsLayer
-                            decorations={c.decorations ?? []}
-                            path="team.decorations"
-                            targetFilter="marquee"
-                            style={{ width: "50%", left: "50%" }}
-                        />
-                        {c.members.map((m, i) => (
-                            <CoinMember
-                                key={`s2-${i}`}
-                                member={m}
-                                index={i}
-                                coinFrame={effectiveCoinFrame}
-                                isDuplicate
+                        <div className="team-coin-set relative flex gap-12">
+                            <FloatingElementsLayer
+                                decorations={c.decorations ?? []}
+                                path="team.decorations"
+                                targetFilter="marquee"
                             />
-                        ))}
+                            {c.members.map((m, i) => (
+                                <CoinMember key={`s1-${i}`} member={m} index={i} coinFrame={effectiveCoinFrame} />
+                            ))}
+                        </div>
+                        <div className="team-coin-set relative flex gap-12">
+                            <FloatingElementsLayer
+                                decorations={c.decorations ?? []}
+                                path="team.decorations"
+                                targetFilter="marquee"
+                            />
+                            {c.members.map((m, i) => (
+                                <CoinMember
+                                    key={`s2-${i}`}
+                                    member={m}
+                                    index={i}
+                                    coinFrame={effectiveCoinFrame}
+                                    isDuplicate
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}
