@@ -409,6 +409,12 @@ body::after {
 }
 .coin:hover { transform: translateY(-4px) rotate(-1deg); }
 
+/* `.coin .coin-portrait` (compound) bumps specificity above
+   `.edit-mode-image-wrap` so the coin layout wins when EditableImage adds
+   its wrapper class to the portrait. Without this, edit-mode would silently
+   override position/display and the photo would render at a different
+   geometry than production. */
+.coin .coin-portrait,
 .coin-portrait {
   position: absolute;
   top: 50%; left: 50%;
@@ -444,12 +450,15 @@ body::after {
 }
 /* When the coin-frame is wrapped in EditableImage (admin edit mode), the
    wrapper span needs to absolutely fill the .coin parent so its hover toolbar
-   sits over the frame. Without this, the wrapper is inline and zero-sized. */
+   sits over the frame. Without this, the wrapper is inline and zero-sized.
+   Compound selector bumps specificity above .edit-mode-image-wrap. */
+.coin .coin-frame-wrap,
 .coin-frame-wrap {
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: auto;
+  display: block;
 }
 /* Inside the wrap, let the inner img keep its existing .coin-frame styling */
 .coin-frame-wrap .coin-frame {
