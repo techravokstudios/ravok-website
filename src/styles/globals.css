@@ -262,8 +262,6 @@ body::after {
    Smaller radius (36px) keeps the corner cleaner — at 48px the
    atmosphere bleed-through at the curve corners was very visible. */
 .section-card {
-  border-top-left-radius: 36px;
-  border-top-right-radius: 36px;
   border-top: 1px solid rgba(196,149,58,0.6);
   box-shadow:
     /* gold inner highlight at the top edge (subtle "page top" sheen) */
@@ -272,12 +270,6 @@ body::after {
     0 -8px 32px -10px rgba(196,149,58,0.18),
     /* dark drop shadow above (depth cue) */
     0 -10px 40px -20px rgba(0,0,0,0.55);
-}
-@media (max-width: 640px) {
-  .section-card {
-    border-top-left-radius: 24px;
-    border-top-right-radius: 24px;
-  }
 }
 
 /* ============ HORIZONTAL MARQUEE (Partners section) ============
