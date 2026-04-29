@@ -143,6 +143,7 @@ export default function Team({ content }: TeamProps = {}) {
     const effectiveCoinFrame = "";
     const frameScale = 100;
     const portraitScale = 100;
+    const allDecorations = c.decorations ?? [];
 
     const teamCSSVars = {
         ["--coin-frame-scale" as string]: `${frameScale}%`,
@@ -157,7 +158,7 @@ export default function Team({ content }: TeamProps = {}) {
              *  rendered inside team-marquee-inner (in BOTH modes — edit mode
              *  now renders the marquee structure paused) so coords match. */}
             <FloatingElementsLayer
-                decorations={c.decorations ?? []}
+                decorations={allDecorations}
                 path="team.decorations"
                 targetFilter="section"
             />
@@ -197,7 +198,7 @@ export default function Team({ content }: TeamProps = {}) {
                             data-decoration-zone="marquee"
                         >
                             <FloatingElementsLayer
-                                decorations={c.decorations ?? []}
+                                decorations={allDecorations}
                                 path="team.decorations"
                                 targetFilter="marquee"
                             />
@@ -221,11 +222,11 @@ export default function Team({ content }: TeamProps = {}) {
                  * left% is consistent with edit mode. The seamless-loop
                  * wraparound is automatic because both sets render the same
                  * decoration data. */
-                <div className="team-marquee relative w-full overflow-hidden py-2">
+                <div className="team-marquee relative w-full overflow-x-clip py-2" style={{ overflowY: "visible" }}>
                     <div className="team-marquee-inner flex gap-12 w-max relative">
                         <div className="team-coin-set relative flex gap-12">
                             <FloatingElementsLayer
-                                decorations={c.decorations ?? []}
+                                decorations={allDecorations}
                                 path="team.decorations"
                                 targetFilter="marquee"
                             />
@@ -235,7 +236,7 @@ export default function Team({ content }: TeamProps = {}) {
                         </div>
                         <div className="team-coin-set relative flex gap-12">
                             <FloatingElementsLayer
-                                decorations={c.decorations ?? []}
+                                decorations={allDecorations}
                                 path="team.decorations"
                                 targetFilter="marquee"
                             />

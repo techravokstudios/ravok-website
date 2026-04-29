@@ -201,6 +201,13 @@ function FloatingImageEl({
         transformOrigin: "center",
         zIndex: element.zIndex ?? 1,
         pointerEvents: enabled ? "auto" : "none",
+        // CRITICAL: Tailwind's preflight sets `img { max-width: 100% }` which
+        // would clamp our explicit pixel width to the parent layer's width.
+        // That made decorations appear at full size in edit mode (where they
+        // are wrapped in a div) but smaller in production (where the img is
+        // direct). Force max-width: none so the inline width wins everywhere.
+        maxWidth: "none",
+        height: "auto",
     };
 
     if (!enabled) {
