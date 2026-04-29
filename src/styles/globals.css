@@ -432,23 +432,43 @@ body::after {
 
 /* `.coin .coin-portrait` (compound) bumps specificity above
    `.edit-mode-image-wrap` so the coin layout wins when EditableImage adds
-   its wrapper class to the portrait. Without this, edit-mode would silently
-   override position/display and the photo would render at a different
-   geometry than production. */
+   its wrapper class to the portrait. !important on the layout properties
+   provides belt-and-braces against other rules sneaking in (we hit issues
+   where edit-mode and production photos rendered at different geometries
+   because of class-list combinations we didn't control). */
 .coin .coin-portrait,
 .coin-portrait {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  /* Width is CMS-driven via --coin-portrait-scale (set on the team root in
-     Team.tsx). Default 75% matches the original wireframe-coin layout.
-     Drop to ~58% to nest the photo inside an ornate ring frame (laurel etc). */
-  width: var(--coin-portrait-scale, 75%);
-  aspect-ratio: 1 / 1;
-  border-radius: 50%; overflow: hidden;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: var(--coin-portrait-scale, 100%) !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 50%;
+  overflow: hidden;
   background: var(--ds-bg-deeper, #0d0d0b);
-  display: flex; align-items: center; justify-content: center;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
   z-index: 1;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Image inside .coin-portrait must fill the wrapper exactly the same way in
+   edit and production. !important so EditableImage's
+   .edit-mode-image-wrap > * (outline rules) can't accidentally inflate. */
+.coin .coin-portrait > img,
+.coin-portrait > img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+  outline: none !important;
+  outline-offset: 0 !important;
+  display: block !important;
 }
 .coin-portrait img {
   width: 100%; height: 100%; object-fit: cover;
