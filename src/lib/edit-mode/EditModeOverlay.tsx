@@ -10,12 +10,21 @@
  */
 
 import { useState } from "react";
-import { Pencil, Save, RotateCcw, X, Loader2, ExternalLink, PanelLeft } from "lucide-react";
+import { Pencil, Save, RotateCcw, X, Loader2, ExternalLink, PanelLeft, Zap } from "lucide-react";
 import { useEditMode } from "./EditModeProvider";
 import { EditModeSidebar } from "./EditModeSidebar";
 
+function formatTime(d: Date): string {
+    const hh = d.getHours().toString().padStart(2, "0");
+    const mm = d.getMinutes().toString().padStart(2, "0");
+    return `${hh}:${mm}`;
+}
+
 export function EditModeOverlay() {
-    const { isAdmin, enabled, setEnabled, dirty, saving, save, discard } = useEditMode();
+    const {
+        isAdmin, enabled, setEnabled, dirty, saving, save, discard,
+        autoSaveEnabled, setAutoSaveEnabled, lastSavedAt,
+    } = useEditMode();
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
     if (!isAdmin) return null;
@@ -63,13 +72,32 @@ export function EditModeOverlay() {
                         <PanelLeft className="w-3.5 h-3.5" />
                     </button>
                     <span className="edit-mode-badge">EDITING</span>
-                    {dirty ? (
-                        <span className="edit-mode-dirty">● Unsaved changes</span>
+                    {saving ? (
+                        <span className="edit-mode-clean">
+                            <Loader2 className="inline w-3 h-3 animate-spin mr-1" />
+                            Saving…
+                        </span>
+                    ) : dirty ? (
+                        <span className="edit-mode-dirty">
+                            ● Unsaved
+                            {autoSaveEnabled && " · auto-saving in 4s"}
+                        </span>
                     ) : (
-                        <span className="edit-mode-clean">All changes saved</span>
+                        <span className="edit-mode-clean">
+                            ✓ Saved{lastSavedAt && ` · ${formatTime(lastSavedAt)}`}
+                        </span>
                     )}
                 </div>
                 <div className="edit-mode-toolbar-right">
+                    <button
+                        type="button"
+                        onClick={() => setAutoSaveEnabled(!autoSaveEnabled)}
+                        className={`edit-mode-btn edit-mode-btn--ghost ${autoSaveEnabled ? "is-active" : ""}`}
+                        title={autoSaveEnabled ? "Auto-save ON (click to turn off)" : "Auto-save OFF (click to turn on)"}
+                    >
+                        <Zap className="w-3.5 h-3.5" />
+                        <span>Auto-save {autoSaveEnabled ? "on" : "off"}</span>
+                    </button>
                     <a
                         href="/admin/site"
                         className="edit-mode-btn edit-mode-btn--ghost"

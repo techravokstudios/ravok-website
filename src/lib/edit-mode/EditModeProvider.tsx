@@ -54,6 +54,9 @@ type EditModeContextValue = {
     isAdmin: boolean;
     dirty: boolean;
     saving: boolean;
+    autoSaveEnabled: boolean;
+    setAutoSaveEnabled: (v: boolean) => void;
+    lastSavedAt: Date | null;
 
     save: () => Promise<void>;
     discard: () => void;
@@ -78,6 +81,9 @@ export function useEditMode(): EditModeContextValue {
             isAdmin: false,
             dirty: false,
             saving: false,
+            autoSaveEnabled: false,
+            setAutoSaveEnabled: () => {},
+            lastSavedAt: null,
             save: async () => {},
             discard: () => {},
         };
@@ -97,6 +103,18 @@ export function EditModeProvider({
     const [savedContent, setSavedContent] = useState<HomeContent>(initialContent);
     const [saving, setSaving] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [autoSaveEnabled, setAutoSaveEnabledRaw] = useState<boolean>(true);
+    const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+
+    // Persist auto-save preference per-browser
+    useEffect(() => {
+        const v = localStorage.getItem("ravok_cms_autosave");
+        if (v !== null) setAutoSaveEnabledRaw(v === "1");
+    }, []);
+    const setAutoSaveEnabled = useCallback((v: boolean) => {
+        setAutoSaveEnabledRaw(v);
+        try { localStorage.setItem("ravok_cms_autosave", v ? "1" : "0"); } catch { /* no-op */ }
+    }, []);
 
     // Detect admin status client-side (localStorage). Run once on mount.
     useEffect(() => {
@@ -131,6 +149,7 @@ export function EditModeProvider({
             const persisted = await saveHomeContent(content);
             setContent(persisted);
             setSavedContent(persisted);
+            setLastSavedAt(new Date());
             toast.success("Saved.");
         } catch (err) {
             toast.error("Save failed: " + (err instanceof Error ? err.message : "unknown"));
@@ -139,6 +158,19 @@ export function EditModeProvider({
             setSaving(false);
         }
     }, [content]);
+
+    /**
+     * Auto-save: when content is dirty + autoSave is on + admin is editing,
+     * schedule a save after 4 seconds of inactivity. Each new edit resets
+     * the timer, so we don't hammer the API on every keystroke.
+     */
+    useEffect(() => {
+        if (!enabled || !isAdmin || !autoSaveEnabled || !dirty || saving) return;
+        const timer = setTimeout(() => {
+            void save().catch(() => { /* error toast handled inside save() */ });
+        }, 4000);
+        return () => clearTimeout(timer);
+    }, [enabled, isAdmin, autoSaveEnabled, dirty, saving, content, save]);
 
     const discard = useCallback(() => {
         if (dirty && !confirm("Discard unsaved changes?")) return;
@@ -168,10 +200,17 @@ export function EditModeProvider({
             isAdmin,
             dirty,
             saving,
+            autoSaveEnabled,
+            setAutoSaveEnabled,
+            lastSavedAt,
             save,
             discard,
         }),
-        [enabled, content, setAt, pushAt, removeAt, moveAt, isAdmin, dirty, saving, save, discard]
+        [
+            enabled, content, setAt, pushAt, removeAt, moveAt, isAdmin,
+            dirty, saving, autoSaveEnabled, setAutoSaveEnabled, lastSavedAt,
+            save, discard,
+        ]
     );
 
     return <EditModeContext.Provider value={value}>{children}</EditModeContext.Provider>;
