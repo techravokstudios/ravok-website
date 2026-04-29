@@ -113,9 +113,14 @@ export function useEditMode(): EditModeContextValue {
 export function EditModeProvider({
     initialContent,
     children,
+    saveFn,
 }: {
     initialContent: HomeContent;
     children: ReactNode;
+    /** Override the default save (which targets /api/admin/site/content/home).
+     *  Per-page providers (contact-us, about-us, our-model) pass a slug-
+     *  specific save fn here. */
+    saveFn?: (content: HomeContent) => Promise<HomeContent>;
 }) {
     const [enabled, setEnabled] = useState(false);
     const [content, setContent] = useState<HomeContent>(initialContent);
@@ -192,7 +197,8 @@ export function EditModeProvider({
     const save = useCallback(async () => {
         setSaving(true);
         try {
-            const persisted = await saveHomeContent(content);
+            const fn = saveFn ?? saveHomeContent;
+            const persisted = await fn(content);
             setContent(persisted);
             setSavedContent(persisted);
             setLastSavedAt(new Date());
@@ -203,7 +209,7 @@ export function EditModeProvider({
         } finally {
             setSaving(false);
         }
-    }, [content]);
+    }, [content, saveFn]);
 
     /**
      * Auto-save: when content is dirty + autoSave is on + admin is editing,

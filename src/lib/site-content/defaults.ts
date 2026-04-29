@@ -236,3 +236,143 @@ export const DEFAULT_HOME_CONTENT: HomeContent = {
     floatingElements: [],
     customBlocks: [],
 };
+
+/* ============================================================
+ * Per-page defaults for the migrated static pages. Used as
+ * fallback when the CMS row hasn't been created yet — first
+ * admin save persists these values to the DB.
+ * ============================================================ */
+
+import type {
+    ContactPageContent,
+    AboutUsPageContent,
+    OurModelPageContent,
+} from "./types";
+
+export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
+    title: "Contact Us",
+    headline:
+        "Whether you're a partner, investor, or creator—we want to hear from you.",
+    formCtas: [
+        { label: "Writer Form", href: "/form/writer" },
+        { label: "Director Form", href: "/form/director" },
+        { label: "Producer Form", href: "/form/producer" },
+    ],
+    contactSectionHeading: "Contact Information",
+    inquiryTypes: [
+        { label: "General Inquiries", email: "contact@ravokstudios.com" },
+        { label: "Partnership Inquiries", email: "contact@ravokstudios.com" },
+        { label: "Investor Relations", email: "contact@ravokstudios.com" },
+    ],
+    decorations: [],
+};
+
+export const DEFAULT_ABOUT_US_PAGE: AboutUsPageContent = {
+    title: "About Us",
+    heroEyebrow: "— About Ravok Studios",
+    heroHeadline: "We're rebuilding entertainment from the operating agreement up.",
+    heroSubheadline:
+        "Ravok is a venture studio for entertainment — applying startup methodology to film and the businesses around it. Founders own equity. Investors get transparent waterfalls. Creators get partnership, not patronage.",
+    sections: [
+        {
+            eyebrow: "— Origin",
+            heading: "Built by people who've lived the problem.",
+            body:
+                "Founder Amanda Aoki Rak moved from Brazil to Los Angeles on an acting scholarship and learned the entertainment industry from the inside — including its exploitative practices. After packaging three feature films across seven years, she taught herself to code and started building the institutional infrastructure she wished had existed when she was a creator.",
+        },
+        {
+            eyebrow: "— Mission",
+            heading: "Make film historically investable.",
+            body:
+                "Film has historically been uninvestable as an asset class. We're changing that with SPV-per-project structures, transparent profit waterfalls, creator equity, and a tech stack that brings real-time accounting to revenues that have always been hidden.",
+        },
+        {
+            eyebrow: "— Approach",
+            heading: "Treat each film like a startup.",
+            body:
+                "Each project is its own venture with founder equity, board governance, and clear decision rights. We provide capital, infrastructure, and strategic support without taking creative control. The creator stays the founder.",
+        },
+    ],
+    closingHeadline: "Want to build something with us?",
+    closingBody:
+        "We're actively looking at writer-director projects, packaging deals, and platform partnerships.",
+    closingCta: { label: "Get in touch", href: "/contact-us" },
+    decorations: [],
+};
+
+export const DEFAULT_OUR_MODEL_PAGE: OurModelPageContent = {
+    title: "Our Model",
+    heroEyebrow: "— OUR MODEL, EXPLAINED SIMPLY",
+    heroHeadline: "Three stages. Real equity at every one.",
+    heroLead:
+        "We treat each film like a startup. Seed it. Build it. Distribute it. Creators own equity from day one — not points that disappear in the waterfall.",
+    stages: [
+        {
+            title: "STAGE 1: SEED & STRUCTURE",
+            traditional:
+                "Creator pitches. If they're lucky, gets option money or development deal. Studio owns everything. Creator hopes for backend points that never pay out.",
+            ravok:
+                "We provide seed capital for development. Structure the project as an independent venture with an operating agreement. Creator gets founder equity (typically 30-50%). Clear governance from day one.",
+            bullets: [
+                "You own a piece of what you build",
+                "Transparent cap table",
+                'Real decision rights, not "creative control" that disappears in production',
+            ],
+            bulletIcon: "plus",
+        },
+        {
+            title: "STAGE 2: BUILD & PACKAGE",
+            traditional:
+                'Creator assembles package alone, begging for attachments. Studio steps in only when it\'s "ready." Endless notes from executives who\'ve never made anything.',
+            ravok:
+                "Strategic support throughout packaging. Access to our network of actors, DPs, producers. Professional infrastructure (legal, finance, marketing strategy). Clear decision rights—you're the founder, not an employee.",
+            bullets: [
+                "You're not alone in development",
+                "Professional support without giving up control",
+                "Partnership, not patronage",
+            ],
+            bulletIcon: "check",
+        },
+        {
+            title: "STAGE 3: PRODUCTION & DISTRIBUTION",
+            traditional:
+                "Film gets made (if you're lucky). Studio controls distribution. Creator gets paid once, maybe twice. No ongoing revenue. Next project starts from zero.",
+            ravok:
+                "Production with strategic partners. Distribution through festivals, boutique streamers, or our platform (Phema). Revenue flows back to the venture. Creator sees the numbers. Build for franchise potential and IP longevity.",
+            bullets: [
+                "Transparent revenue",
+                "Ongoing economics, not one-off deals",
+                "Sustainable creative career",
+            ],
+            bulletIcon: "check",
+        },
+    ],
+    structuralEyebrow: "— THE STRUCTURAL DIFFERENCE",
+    structuralHeading: "Side by side.",
+    traditionalLabel: "Traditional Studio",
+    traditionalItems: [
+        "Studio owns 100%",
+        "Creator: Work-for-hire",
+        "Backend points (fake)",
+        "No board seat",
+        '"Creative control" (disappears)',
+        "Opaque accounting",
+        "One-off project",
+        "Hope for backend",
+    ],
+    ravokLabel: "Ravok",
+    ravokItems: [
+        "Board seat with voting rights",
+        "Operating agreement with defined decision rights",
+        "Transparent books",
+        "Sustainable venture",
+        "Real equity value",
+    ],
+    ctaEyebrow: "— READY TO BUILD?",
+    ctaHeading: "Bring us your project.",
+    ctaBody:
+        "We're actively looking at writer-director-led features and packaging-stage projects.",
+    ctaPrimary: { label: "Submit your project", href: "/pitch-us" },
+    ctaSecondary: { label: "Learn more", href: "/about-us" },
+    decorations: [],
+};

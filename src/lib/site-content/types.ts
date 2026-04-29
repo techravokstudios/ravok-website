@@ -304,3 +304,68 @@ export type GenericPageContent = {
 export function isGenericPage(c: HomeContent | GenericPageContent): c is GenericPageContent {
     return typeof (c as GenericPageContent).title === "string" && !("hero" in c);
 }
+
+/* ============================================================
+ * Per-page content types for the static pages migrated to CMS.
+ * Each preserves the page's existing layout/design — only the
+ * text and image content is admin-editable. Stored in
+ * site_content table keyed by their respective slugs.
+ * ============================================================ */
+
+/** /contact-us page content shape. */
+export type ContactPageContent = {
+    title: string;
+    headline: string;
+    formCtas: Array<{ label: string; href: string }>;
+    contactSectionHeading: string;
+    inquiryTypes: Array<{ label: string; email: string }>;
+    decorations?: FloatingImage[];
+};
+
+/** /about-us page content shape. */
+export type AboutUsSection = {
+    eyebrow: string;
+    heading: string;
+    body: string;
+};
+
+export type AboutUsPageContent = {
+    title: string;
+    heroEyebrow: string;
+    heroHeadline: string;
+    heroSubheadline: string;
+    sections: AboutUsSection[];
+    closingHeadline: string;
+    closingBody: string;
+    closingCta: { label: string; href: string };
+    decorations?: FloatingImage[];
+};
+
+/** /our-model page content shape. */
+export type OurModelStage = {
+    title: string;
+    traditional: string;
+    ravok: string;
+    bullets: string[];
+    bulletIcon: "plus" | "check";
+};
+
+export type OurModelPageContent = {
+    title: string;
+    heroEyebrow: string;
+    heroHeadline: string;
+    heroLead: string;
+    stages: OurModelStage[];
+    structuralEyebrow: string;
+    structuralHeading: string;
+    traditionalLabel: string;
+    traditionalItems: string[];
+    ravokLabel: string;
+    ravokItems: string[];
+    ctaEyebrow: string;
+    ctaHeading: string;
+    ctaBody: string;
+    ctaPrimary: { label: string; href: string };
+    ctaSecondary: { label: string; href: string };
+    decorations?: FloatingImage[];
+};

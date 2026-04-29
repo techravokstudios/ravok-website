@@ -1,5 +1,10 @@
 export * from "./types";
-export { DEFAULT_HOME_CONTENT } from "./defaults";
+export {
+    DEFAULT_HOME_CONTENT,
+    DEFAULT_CONTACT_PAGE,
+    DEFAULT_ABOUT_US_PAGE,
+    DEFAULT_OUR_MODEL_PAGE,
+} from "./defaults";
 export {
     fetchHomeContent,
     fetchHomeContentForAdmin,
