@@ -377,31 +377,27 @@ export default function Portfolio({ content }: PortfolioProps = {}) {
 
     const steps = c.steps.map((s, i) => toScrollytellStep(s, i));
 
-    // Production renders the scrollytell. Section-target decorations sit on
-    // the section root (don't get the scrollytell motion). Scrollytell-target
-    // decorations live INSIDE the sticky scrollytell visual via extraOverlay,
-    // so they pin/cross-fade with the active step.
+    // Production renders the scrollytell. Both target=section and
+    // target=scrollytell decorations now render inside the sticky scrollytell
+    // visual via extraOverlay — wrapping ScrollytellSection in an outer div
+    // (v23) was breaking the C-reveal sticky chain because that outer div
+    // changed where the next section's sticky pinning released. Putting the
+    // section-target layer alongside the scrollytell-target one preserves
+    // the existing fragment structure ScrollytellSection expects (section +
+    // spacer as direct siblings of the parent flow container).
     return (
-        <div style={{ position: "relative" }}>
-            <FloatingElementsLayer
-                decorations={c.decorations ?? []}
-                path="portfolio.decorations"
-                targetFilter="section"
-            />
-            <ScrollytellSection
-                zIndex={12}
-                id="portfolio"
-                label={c.label}
-                counterSuffix={c.counterSuffix}
-                steps={steps}
-                extraOverlay={
-                    <FloatingElementsLayer
-                        decorations={c.decorations ?? []}
-                        path="portfolio.decorations"
-                        targetFilter="scrollytell"
-                    />
-                }
-            />
-        </div>
+        <ScrollytellSection
+            zIndex={12}
+            id="portfolio"
+            label={c.label}
+            counterSuffix={c.counterSuffix}
+            steps={steps}
+            extraOverlay={
+                <FloatingElementsLayer
+                    decorations={c.decorations ?? []}
+                    path="portfolio.decorations"
+                />
+            }
+        />
     );
 }
