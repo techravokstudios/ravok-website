@@ -29,9 +29,14 @@ import {
     EmphasisHelp,
 } from "./fields";
 
-type Props = { initialContent: HomeContent };
+type Props = {
+    initialContent: HomeContent;
+    /** Optional callback fired after a successful save — used by the
+     *  parent page to refresh the live-preview iframe. */
+    onSaved?: () => void;
+};
 
-export function SiteEditorClient({ initialContent }: Props) {
+export function SiteEditorClient({ initialContent, onSaved }: Props) {
     const [content, setContent] = useState<HomeContent>(initialContent);
     const [savedContent, setSavedContent] = useState<HomeContent>(initialContent);
     const [saving, setSaving] = useState(false);
@@ -61,6 +66,7 @@ export function SiteEditorClient({ initialContent }: Props) {
             setSavedContent(persisted);
             setContent(persisted);
             toast.success("Saved. Changes are live on the homepage.");
+            onSaved?.();
         } catch (err) {
             toast.error("Save failed: " + (err instanceof Error ? err.message : "unknown error"));
         } finally {
