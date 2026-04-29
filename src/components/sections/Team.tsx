@@ -12,7 +12,6 @@
  * mark them aria-hidden + tabIndex={-1} so focus skips them).
  */
 
-import { useEffect } from "react";
 import { CRevealSection } from "@/components/design-system";
 import {
     DEFAULT_HOME_CONTENT,
@@ -145,39 +144,16 @@ function CoinMember({
 
 export default function Team({ content }: TeamProps = {}) {
     const c = content ?? DEFAULT_HOME_CONTENT.team;
-    const { enabled, setAt } = useEditMode();
+    const { enabled } = useEditMode();
 
-    // Auto-fallback: production data still has the legacy 16:9 wireframe SVG
-    // path stored as coinFrame, plus stale 450/75 scales tuned for that
-    // (broken) asset. When detected, we substitute the laurel + sane scales
-    // at render time so admins immediately see the right frame regardless of
-    // what's in the DB. The data itself migrates on first save.
+    // Render-time fallback only: if data still has the legacy wireframe SVG
+    // path, swap to the laurel with sensible scales. Stored data is left
+    // alone unless admin explicitly saves something else.
     const isLegacyData = c.coinFrame === LEGACY_WIREFRAME_PATH;
     const effectiveCoinFrame = isLegacyData ? LAUREL_URL : (c.coinFrame || LAUREL_URL);
     const frameScale = isLegacyData ? 130 : (c.coinFrameScale ?? 130);
     const portraitScale = isLegacyData ? 58 : (c.coinPortraitScale ?? 58);
 
-    // Belt-and-braces: also write the migration to the DB on admin mount so
-    // future loads (and the public site) see the laurel without relying on
-    // this fallback. Idempotent — bails if already migrated.
-    useEffect(() => {
-        if (!enabled) return;
-        if (!isLegacyData) return;
-        const cleanedDecorations = (c.decorations ?? []).filter(
-            (d) => (d as { src?: string }).src !== LAUREL_URL
-        );
-        const nextTeam = {
-            ...c,
-            coinFrame: LAUREL_URL,
-            coinFrameScale: 130,
-            coinPortraitScale: 58,
-            decorations: cleanedDecorations,
-        };
-        // eslint-disable-next-line no-console
-        console.log("[team-auto-migrate] writing laurel patch", nextTeam);
-        setAt("team", nextTeam);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [enabled, isLegacyData]);
     const teamCSSVars = {
         ["--coin-frame-scale" as string]: `${frameScale}%`,
         ["--coin-portrait-scale" as string]: `${portraitScale}%`,
@@ -217,65 +193,6 @@ export default function Team({ content }: TeamProps = {}) {
                     className="font-heading italic text-[0.85rem] leading-[1.45] text-[var(--ds-ink-dim)] max-w-[520px] mx-auto"
                 />
             </div>
-
-            {enabled && (
-                <div className="text-center">
-                    <div className="team-frame-controls" role="group" aria-label="Team frame sizing">
-                        <label>
-                            Frame size
-                            <input
-                                type="range"
-                                min={50}
-                                max={600}
-                                step={5}
-                                value={frameScale}
-                                onChange={(e) => setAt("team.coinFrameScale", Number(e.target.value))}
-                            />
-                            <span className="team-frame-controls-value">{frameScale}%</span>
-                        </label>
-                        <label>
-                            Photo size
-                            <input
-                                type="range"
-                                min={30}
-                                max={100}
-                                step={1}
-                                value={portraitScale}
-                                onChange={(e) => setAt("team.coinPortraitScale", Number(e.target.value))}
-                            />
-                            <span className="team-frame-controls-value">{portraitScale}%</span>
-                        </label>
-                        <button
-                            type="button"
-                            className="team-frame-install-btn"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                const laurelUrl =
-                                    "https://pub-0c5b0ff2bc9242ffa0b31812b16adf4e.r2.dev/2026/04/i1swh4tzrnnd.svg";
-                                // Single atomic patch — replaces the whole team
-                                // object so all four field changes apply together.
-                                // Avoids any chance of split-state / stale-closure
-                                // collisions between consecutive setAt calls.
-                                const cleaned = (c.decorations ?? []).filter(
-                                    (d) => (d as { src?: string }).src !== laurelUrl
-                                );
-                                const nextTeam = {
-                                    ...c,
-                                    coinFrame: laurelUrl,
-                                    coinFrameScale: 130,
-                                    coinPortraitScale: 58,
-                                    decorations: cleaned,
-                                };
-                                console.log("[install-laurel] patching team", nextTeam);
-                                setAt("team", nextTeam);
-                            }}
-                            title="Swap the coin frame to the laurel ring + tune the scales + remove the orphan decoration"
-                        >
-                            ⚘ Use laurel as frame
-                        </button>
-                    </div>
-                </div>
-            )}
 
             {enabled ? (
                 /* Edit mode: render the SAME marquee structure as production
