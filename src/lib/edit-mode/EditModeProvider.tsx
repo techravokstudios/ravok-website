@@ -65,6 +65,12 @@ type EditModeContextValue = {
     undo: () => void;
     redo: () => void;
 
+    /** Section focus — when set, editable affordances are narrowed to this
+     *  section only; other sections render dimmed + locked. null means
+     *  global edit (everything editable). */
+    focusedSection: string | null;
+    setFocusedSection: (s: string | null) => void;
+
     save: () => Promise<void>;
     discard: () => void;
 };
@@ -95,6 +101,8 @@ export function useEditMode(): EditModeContextValue {
             canRedo: false,
             undo: () => {},
             redo: () => {},
+            focusedSection: null,
+            setFocusedSection: () => {},
             save: async () => {},
             discard: () => {},
         };
@@ -116,6 +124,24 @@ export function EditModeProvider({
     const [isAdmin, setIsAdmin] = useState(false);
     const [autoSaveEnabled, setAutoSaveEnabledRaw] = useState<boolean>(true);
     const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+    const [focusedSection, setFocusedSectionRaw] = useState<string | null>(null);
+
+    /** Toggling focus also writes to a body data attribute so CSS can dim
+     *  non-focused sections + scope edit affordances by selector. */
+    const setFocusedSection = useCallback((s: string | null) => {
+        setFocusedSectionRaw(s);
+        if (typeof document !== "undefined") {
+            if (s) document.body.setAttribute("data-focused-section", s);
+            else document.body.removeAttribute("data-focused-section");
+        }
+    }, []);
+
+    /** Clear focus when exiting edit mode */
+    useEffect(() => {
+        if (!enabled && focusedSection) {
+            setFocusedSection(null);
+        }
+    }, [enabled, focusedSection, setFocusedSection]);
 
     /* History (undo/redo) — debounced snapshots, capped at 50.
        Each "burst" of edits within 600ms collapses into one history entry. */
@@ -312,6 +338,8 @@ export function EditModeProvider({
             canRedo,
             undo,
             redo,
+            focusedSection,
+            setFocusedSection,
             save,
             discard,
         }),
@@ -319,6 +347,7 @@ export function EditModeProvider({
             enabled, content, setAt, pushAt, removeAt, moveAt, isAdmin,
             dirty, saving, autoSaveEnabled, setAutoSaveEnabled, lastSavedAt,
             canUndo, canRedo, undo, redo,
+            focusedSection, setFocusedSection,
             save, discard,
         ]
     );

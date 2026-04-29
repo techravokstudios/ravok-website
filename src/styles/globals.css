@@ -1358,6 +1358,168 @@ body.edit-mode-sidebar-open main {
   cursor: not-allowed;
 }
 
+/* ============ SECTION FOCUS MODE ============
+   When admin clicks "Edit this section", body gets data-focused-section="<key>".
+   All section-anchor elements EXCEPT the matching one are dimmed and have
+   their editable affordances disabled. The focused section gets a subtle
+   gold outline so admin can see where they are. */
+
+/* Per-section "Edit this section" button (idle state in edit mode) */
+.section-focus-edit-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 49;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.85rem;
+    background: rgba(28,28,26,0.92);
+    color: var(--ds-gold);
+    border: 1px solid rgba(196,149,58,0.5);
+    border-radius: 999px;
+    font-family: var(--font-montserrat, "Montserrat"), sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.18s ease, transform 0.18s ease, background 0.15s ease;
+}
+.section-anchor:hover > .section-focus-edit-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+.section-focus-edit-btn:hover {
+    background: rgba(196,149,58,0.95);
+    color: #1c1c1a;
+}
+
+/* Active focus banner inside the focused section */
+.section-focus-active-banner {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 49;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.5rem 0.45rem 0.85rem;
+    background: rgba(196,149,58,0.95);
+    color: #1c1c1a;
+    border-radius: 999px;
+    font-family: var(--font-montserrat, "Montserrat"), sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+}
+.section-focus-active-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.section-focus-exit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.55rem;
+    background: rgba(28,28,26,0.95);
+    color: var(--ds-gold);
+    border: none;
+    border-radius: 999px;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+.section-focus-exit-btn:hover {
+    background: rgba(13,13,11,0.95);
+}
+
+/* When a section is focused: dim every other section + disable their
+   editable affordances so admin can't accidentally edit a sibling. */
+body[data-focused-section] .section-anchor {
+    transition: opacity 0.25s ease, filter 0.25s ease;
+}
+body[data-focused-section] .section-anchor:not([data-section]) {
+    /* unmarked anchors: leave alone */
+}
+body[data-focused-section] [data-section]:not([data-section=""]) {
+    pointer-events: auto;
+}
+body[data-focused-section="hero"] [data-section]:not([data-section="hero"]),
+body[data-focused-section="intro"] [data-section]:not([data-section="intro"]),
+body[data-focused-section="bridge"] [data-section]:not([data-section="bridge"]),
+body[data-focused-section="portfolio"] [data-section]:not([data-section="portfolio"]),
+body[data-focused-section="team"] [data-section]:not([data-section="team"]),
+body[data-focused-section="footer"] [data-section]:not([data-section="footer"]) {
+    opacity: 0.45;
+    filter: saturate(0.6);
+}
+/* Custom block focus — handled the same way via [data-section="custom-..."] */
+body[data-focused-section^="custom-"] [data-section]:not([data-section="hero"]) {
+    /* fallback: only the matching custom slot stays full opacity */
+}
+
+/* Disable editable affordances inside dimmed sections */
+body[data-focused-section] [data-section]:not(:focus-within) .edit-mode-editable,
+body[data-focused-section] [data-section]:not(:focus-within) .edit-mode-image-wrap,
+body[data-focused-section] [data-section]:not(:focus-within) .edit-mode-list-add,
+body[data-focused-section] [data-section]:not(:focus-within) .floating-element-wrap {
+    pointer-events: auto;
+}
+/* Truly dim the non-focused sections' affordances */
+body[data-focused-section="hero"] [data-section]:not([data-section="hero"]) .edit-mode-editable,
+body[data-focused-section="hero"] [data-section]:not([data-section="hero"]) .edit-mode-image-edit-btn,
+body[data-focused-section="hero"] [data-section]:not([data-section="hero"]) .edit-mode-list-add,
+body[data-focused-section="hero"] [data-section]:not([data-section="hero"]) .edit-mode-list-handle,
+body[data-focused-section="hero"] [data-section]:not([data-section="hero"]) .edit-mode-list-remove,
+body[data-focused-section="intro"] [data-section]:not([data-section="intro"]) .edit-mode-editable,
+body[data-focused-section="intro"] [data-section]:not([data-section="intro"]) .edit-mode-image-edit-btn,
+body[data-focused-section="intro"] [data-section]:not([data-section="intro"]) .edit-mode-list-add,
+body[data-focused-section="intro"] [data-section]:not([data-section="intro"]) .edit-mode-list-handle,
+body[data-focused-section="intro"] [data-section]:not([data-section="intro"]) .edit-mode-list-remove,
+body[data-focused-section="bridge"] [data-section]:not([data-section="bridge"]) .edit-mode-editable,
+body[data-focused-section="bridge"] [data-section]:not([data-section="bridge"]) .edit-mode-image-edit-btn,
+body[data-focused-section="bridge"] [data-section]:not([data-section="bridge"]) .edit-mode-list-add,
+body[data-focused-section="bridge"] [data-section]:not([data-section="bridge"]) .edit-mode-list-handle,
+body[data-focused-section="bridge"] [data-section]:not([data-section="bridge"]) .edit-mode-list-remove,
+body[data-focused-section="portfolio"] [data-section]:not([data-section="portfolio"]) .edit-mode-editable,
+body[data-focused-section="portfolio"] [data-section]:not([data-section="portfolio"]) .edit-mode-image-edit-btn,
+body[data-focused-section="portfolio"] [data-section]:not([data-section="portfolio"]) .edit-mode-list-add,
+body[data-focused-section="portfolio"] [data-section]:not([data-section="portfolio"]) .edit-mode-list-handle,
+body[data-focused-section="portfolio"] [data-section]:not([data-section="portfolio"]) .edit-mode-list-remove,
+body[data-focused-section="team"] [data-section]:not([data-section="team"]) .edit-mode-editable,
+body[data-focused-section="team"] [data-section]:not([data-section="team"]) .edit-mode-image-edit-btn,
+body[data-focused-section="team"] [data-section]:not([data-section="team"]) .edit-mode-list-add,
+body[data-focused-section="team"] [data-section]:not([data-section="team"]) .edit-mode-list-handle,
+body[data-focused-section="team"] [data-section]:not([data-section="team"]) .edit-mode-list-remove,
+body[data-focused-section="footer"] [data-section]:not([data-section="footer"]) .edit-mode-editable,
+body[data-focused-section="footer"] [data-section]:not([data-section="footer"]) .edit-mode-image-edit-btn,
+body[data-focused-section="footer"] [data-section]:not([data-section="footer"]) .edit-mode-list-add,
+body[data-focused-section="footer"] [data-section]:not([data-section="footer"]) .edit-mode-list-handle,
+body[data-focused-section="footer"] [data-section]:not([data-section="footer"]) .edit-mode-list-remove {
+    pointer-events: none !important;
+}
+
+/* Highlight the focused section with a gold ring */
+body[data-focused-section="hero"] [data-section="hero"],
+body[data-focused-section="intro"] [data-section="intro"],
+body[data-focused-section="bridge"] [data-section="bridge"],
+body[data-focused-section="portfolio"] [data-section="portfolio"],
+body[data-focused-section="team"] [data-section="team"],
+body[data-focused-section="footer"] [data-section="footer"] {
+    outline: 2px solid rgba(196,149,58,0.4);
+    outline-offset: -2px;
+}
+
 /* ============ REDUCE MOTION ============ */
 @media (prefers-reduced-motion: reduce) {
   .film-grain { animation: none; }

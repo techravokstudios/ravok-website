@@ -34,6 +34,7 @@ import Footer from "@/components/layout/Footer";
 import {
     EditModeProvider,
     EditModeOverlay,
+    SectionFocusOverlay,
     useEditMode,
 } from "@/lib/edit-mode";
 import { ALL_SECTION_KEYS, type HomeContent, type SectionKey } from "@/lib/site-content";
@@ -71,6 +72,7 @@ function Sections() {
             style={{ overflowX: "clip" }}
         >
             <div className="section-anchor" data-section="hero" style={{ position: "relative" }}>
+                <SectionFocusOverlay sectionKey="hero" />
                 <Hero content={content.hero} />
             </div>
             {order.map((key, position) => (
@@ -80,6 +82,7 @@ function Sections() {
                 <CustomBlockSlot key={block.id} block={block} index={i} z={CUSTOM_BLOCK_BASE_Z + i} />
             ))}
             <div className="relative z-[60] section-anchor" data-section="footer" style={{ position: "relative" }}>
+                <SectionFocusOverlay sectionKey="footer" />
                 <Footer content={content.footer} />
             </div>
         </main>
@@ -176,6 +179,7 @@ function CustomBlockSlot({
                 setDragFrom(null);
             }}
         >
+            <SectionFocusOverlay sectionKey={sectionId} />
             <div className="edit-mode-section-handle">
                 <button
                     type="button"
@@ -252,9 +256,6 @@ function SectionSlot({
     })();
 
     if (!enabled) {
-        // Out of edit mode: just mark the section anchor. Decorations are
-        // rendered INSIDE each section component (so they participate in
-        // section-internal animations like the team marquee).
         return (
             <div className="section-anchor" data-section={sectionKey}>
                 {sectionEl}
@@ -279,6 +280,7 @@ function SectionSlot({
                 setDragFrom(null);
             }}
         >
+            <SectionFocusOverlay sectionKey={sectionKey} />
             <div className="edit-mode-section-handle">
                 <button
                     type="button"

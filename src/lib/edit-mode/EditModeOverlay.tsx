@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Pencil, Save, RotateCcw, X, Loader2, ExternalLink, PanelLeft, Zap, Undo2, Redo2 } from "lucide-react";
 import { useEditMode } from "./EditModeProvider";
 import { EditModeSidebar } from "./EditModeSidebar";
+import { FocusedSectionExitButton } from "./SectionFocusOverlay";
 
 function formatTime(d: Date): string {
     const hh = d.getHours().toString().padStart(2, "0");
@@ -90,6 +91,7 @@ export function EditModeOverlay() {
                     )}
                 </div>
                 <div className="edit-mode-toolbar-right">
+                    <FocusedSectionExitButton />
                     <button
                         type="button"
                         onClick={undo}
