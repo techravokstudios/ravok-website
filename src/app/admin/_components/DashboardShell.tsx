@@ -293,13 +293,27 @@ export function DashboardShell({
                     href="/admin/site"
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2.5 font-sans text-sm transition-colors",
-                      pathname.startsWith("/admin/site")
+                      pathname === "/admin/site" || (pathname.startsWith("/admin/site") && !pathname.startsWith("/admin/site/assets"))
                         ? "bg-ravok-gold/10 text-ravok-gold border border-ravok-gold/20"
                         : "text-white/80 hover:bg-white/10 hover:text-white"
                     )}
                   >
                     <Settings className="h-4 w-4 shrink-0" />
                     Site Editor
+                  </Link>
+                </div>
+                <div className="mt-1">
+                  <Link
+                    href="/admin/site/assets"
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 font-sans text-sm transition-colors",
+                      pathname.startsWith("/admin/site/assets")
+                        ? "bg-ravok-gold/10 text-ravok-gold border border-ravok-gold/20"
+                        : "text-white/80 hover:bg-white/10 hover:text-white"
+                    )}
+                  >
+                    <FolderOpen className="h-4 w-4 shrink-0" />
+                    Asset Library
                   </Link>
                 </div>
 
