@@ -153,6 +153,12 @@ function LayersPanel() {
     const order: SectionKey[] = [...stored, ...missing];
     const customBlocks = content.customBlocks ?? [];
 
+    /* Detect whether we're on the homepage. Non-home pages (about-us,
+     * our-model, contact-us) cast their own content shape to HomeContent,
+     * so `content.hero`, `content.intro`, etc. are all undefined. Without
+     * this guard the panel crashes on those pages and edit mode never opens. */
+    const isHomePage = !!(content.hero && content.intro);
+
     // Collect every decoration across every section so admins have a single
     // place to find + delete them (vs. having to hunt for hover-only toolbars
     // on each decoration scattered across the page).
@@ -183,21 +189,29 @@ function LayersPanel() {
             });
         });
     }
-    collect("hero", "Hero", "top", "hero.decorations", content.hero.decorations);
-    collect("intro", "Intro", "about", "intro.decorations", content.intro.decorations);
-    collect("bridge", "Bridge", "bridge", "bridge.decorations", content.bridge.decorations);
-    collect("portfolio", "Portfolio", "portfolio", "portfolio.decorations", content.portfolio.decorations);
-    collect("team", "Team", "team", "team.decorations", content.team.decorations);
+    if (isHomePage) {
+        collect("hero", "Hero", "top", "hero.decorations", content.hero?.decorations);
+        collect("intro", "Intro", "about", "intro.decorations", content.intro?.decorations);
+        collect("bridge", "Bridge", "bridge", "bridge.decorations", content.bridge?.decorations);
+        collect("portfolio", "Portfolio", "portfolio", "portfolio.decorations", content.portfolio?.decorations);
+        collect("team", "Team", "team", "team.decorations", content.team?.decorations);
+    } else {
+        // Generic page: collect any top-level decorations array if present
+        const generic = (content as unknown as { decorations?: { id: string; type: string; src?: string }[] }).decorations;
+        collect("page", "Page", "top", "decorations", generic);
+    }
 
     return (
         <div className="edit-mode-layers">
-            <SectionNode
-                label="Hero"
-                anchor="top"
-                locked
-                summary={`Logo · "${content.hero.tagline}"`}
-            />
-            {order.map((key) => (
+            {isHomePage && (
+                <SectionNode
+                    label="Hero"
+                    anchor="top"
+                    locked
+                    summary={`Logo · "${content.hero?.tagline ?? ""}"`}
+                />
+            )}
+            {isHomePage && order.map((key) => (
                 <SectionNode
                     key={key}
                     label={sectionLabel(key)}
@@ -210,6 +224,14 @@ function LayersPanel() {
                     }}
                 />
             ))}
+            {!isHomePage && (
+                <SectionNode
+                    label="Page content"
+                    anchor="top"
+                    locked
+                    summary="Edit text directly on the page — click any block to edit."
+                />
+            )}
             {customBlocks.map((block, i) => (
                 <SectionNode
                     key={block.id}
@@ -387,17 +409,17 @@ function sectionLabel(k: SectionKey): string {
 function sectionSummary(k: SectionKey, c: HomeContent): string {
     switch (k) {
         case "intro":
-            return `${c.intro.headline.slice(0, 40)}…`;
+            return `${(c.intro?.headline ?? "").slice(0, 40)}…`;
         case "bridge":
-            return `${c.bridge.rows.length} comparison rows`;
+            return `${c.bridge?.rows?.length ?? 0} comparison rows`;
         case "portfolio":
-            return `${c.portfolio.steps.length} pillars`;
+            return `${c.portfolio?.steps?.length ?? 0} pillars`;
         case "team":
-            return `${c.team.members.length} members`;
+            return `${c.team?.members?.length ?? 0} members`;
         case "window":
             return c.window?.headline ?? "Applications";
         case "signal":
-            return c.signal?.headline.slice(0, 40) ?? "Final CTA";
+            return (c.signal?.headline ?? "").slice(0, 40) || "Final CTA";
     }
 }
 
@@ -563,11 +585,11 @@ function AddPanel() {
     );
     const hiddenSections = ALL_SECTION_KEYS.filter((k) => !stored.includes(k));
     const totalDecorations =
-        (content.hero.decorations?.length ?? 0) +
-        (content.intro.decorations?.length ?? 0) +
-        (content.bridge.decorations?.length ?? 0) +
-        (content.portfolio.decorations?.length ?? 0) +
-        (content.team.decorations?.length ?? 0);
+        (content.hero?.decorations?.length ?? 0) +
+        (content.intro?.decorations?.length ?? 0) +
+        (content.bridge?.decorations?.length ?? 0) +
+        (content.portfolio?.decorations?.length ?? 0) +
+        (content.team?.decorations?.length ?? 0);
 
     const customCount = (content.customBlocks ?? []).length;
 
