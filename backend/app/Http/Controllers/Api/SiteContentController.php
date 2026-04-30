@@ -21,8 +21,8 @@ class SiteContentController extends Controller
 {
     /** GET /api/v1/site/content/{slug} — public, used by the frontend at request time.
      *  Returns published content only (`content`, never `draft_content`).
-     *  Admins can pass `?include_draft=1` to see the draft when editing. */
-    public function show(Request $request, string $slug): JsonResponse
+     */
+    public function show(string $slug): JsonResponse
     {
         $row = SiteContent::where('slug', $slug)->first();
 
@@ -30,22 +30,35 @@ class SiteContentController extends Controller
             return response()->json(['slug' => $slug, 'content' => null], 404);
         }
 
-        // Admin draft preview: return draft if it exists, else published
-        $includeDraft = $request->query('include_draft') === '1';
-        $payload = $includeDraft && $row->draft_content !== null
-            ? $row->draft_content
-            : $row->content;
+        return response()->json([
+            'slug' => $row->slug,
+            'content' => $row->content,
+            'published_at' => $row->published_at,
+            'updated_at' => $row->updated_at,
+        ]);
+    }
+
+    /** GET /api/v1/admin/site/content/{slug} - admin only.
+     *  Returns draft content when present so the editor can resume unpublished
+     *  work without exposing drafts through the public endpoint. */
+    public function showAdmin(string $slug): JsonResponse
+    {
+        $row = SiteContent::where('slug', $slug)->first();
+
+        if (! $row) {
+            return response()->json(['slug' => $slug, 'content' => null], 404);
+        }
 
         return response()->json([
             'slug' => $row->slug,
-            'content' => $payload,
+            'content' => $row->draft_content ?? $row->content,
             'has_draft' => $row->draft_content !== null,
             'published_at' => $row->published_at,
             'updated_at' => $row->updated_at,
         ]);
     }
 
-    /** PUT /api/v1/admin/site/content/{slug} — admin only.
+    /** PUT /api/v1/admin/site/content/{slug} - admin only.
      *  Writes to `draft_content` (not the live `content`). Use POST .../publish
      *  to promote the draft to live. Creates the row with the draft as the
      *  initial published content if it doesn't exist yet. */

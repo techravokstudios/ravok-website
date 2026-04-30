@@ -33,6 +33,7 @@ import {
     saveHomeContent,
     publishPageAndNavbar,
     discardDraftPageAndNavbar,
+    fetchPageAndNavbarEnvelopeForAdmin,
     type HomeContent,
 } from "@/lib/site-content";
 import { getStoredUser } from "@/lib/api/base";
@@ -163,6 +164,7 @@ export function EditModeProvider({
     const [publishing, setPublishing] = useState(false);
 
     const effectiveSlug = slug ?? "home";
+    const draftHydratedRef = useRef(false);
 
     /** Toggling focus also writes to a body data attribute so CSS can dim
      *  non-focused sections + scope edit affordances by selector. */
@@ -210,6 +212,31 @@ export function EditModeProvider({
         () => JSON.stringify(content) !== JSON.stringify(savedContent),
         [content, savedContent]
     );
+
+    // Public server components render published content only. When an admin
+    // actually enters edit mode, resume any saved draft through the admin-only
+    // endpoint so unpublished content never leaks through public reads.
+    useEffect(() => {
+        if (!enabled || !isAdmin || draftHydratedRef.current || dirty) return;
+        draftHydratedRef.current = true;
+        void fetchPageAndNavbarEnvelopeForAdmin(
+            effectiveSlug,
+            content as unknown as Record<string, unknown>
+        )
+            .then((env) => {
+                const resumed = env.content as unknown as HomeContent;
+                setContent(resumed);
+                setSavedContent(resumed);
+                setHasDraft(env.hasDraft);
+            })
+            .catch((err) => {
+                draftHydratedRef.current = false;
+                toast.error(
+                    "Draft load failed: " +
+                        (err instanceof Error ? err.message : "unknown")
+                );
+            });
+    }, [enabled, isAdmin, dirty, effectiveSlug, content]);
 
     const setAt = useCallback((path: Path, value: unknown) => {
         setContent((prev) => setAtPath(prev, path, value));

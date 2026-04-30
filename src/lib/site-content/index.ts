@@ -11,6 +11,7 @@ export {
 } from "./defaults";
 export {
     fetchHomeContent,
+    fetchSiteContentEnvelopeForAdmin,
     fetchHomeContentForAdmin,
     fetchHomeContentEnvelopeForAdmin,
     saveHomeContent,
@@ -26,6 +27,7 @@ export {
     saveGenericPageEnvelope,
     saveSplitPageAndNavbar,
     saveSplitPageAndNavbarEnvelope,
+    fetchPageAndNavbarEnvelopeForAdmin,
     publishPage,
     discardDraft,
     publishPageAndNavbar,

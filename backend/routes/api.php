@@ -128,6 +128,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Site content editor (CMS MVP) — admin can edit homepage copy + image references
         Route::get('/admin/site/content', [SiteContentController::class, 'index']);
+        Route::get('/admin/site/content/{slug}', [SiteContentController::class, 'showAdmin']);
         Route::put('/admin/site/content/{slug}', [SiteContentController::class, 'update']);
         // #80 hard-delete (replaces the soft-delete via PUT empty content)
         Route::delete('/admin/site/content/{slug}', [SiteContentController::class, 'destroy']);
