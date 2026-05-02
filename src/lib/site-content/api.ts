@@ -36,40 +36,12 @@ function getServerApiBase(): string {
 }
 
 export async function fetchHomeContent(): Promise<HomeContent> {
-    const url = `${getServerApiBase()}/api/site/content/home`;
-
-    try {
-        const res = await fetch(url, {
-            cache: "no-store",
-            headers: { Accept: "application/json" },
-        });
-
-        if (!res.ok) {
-            // 404 = not seeded yet; any non-2xx falls through to defaults.
-            return DEFAULT_HOME_CONTENT;
-        }
-
-        const json = (await res.json()) as SiteContentEnvelope<HomeContent>;
-        if (!json?.content) return DEFAULT_HOME_CONTENT;
-
-        // Shallow-merge with defaults so missing fields get sensible fallbacks.
-        // Important: arrays in `content` REPLACE arrays in defaults entirely
-        // (otherwise admin can't remove items).
-        return {
-            ...DEFAULT_HOME_CONTENT,
-            ...json.content,
-            hero: { ...DEFAULT_HOME_CONTENT.hero, ...(json.content.hero ?? {}) },
-            intro: { ...DEFAULT_HOME_CONTENT.intro, ...(json.content.intro ?? {}) },
-            bridge: { ...DEFAULT_HOME_CONTENT.bridge, ...(json.content.bridge ?? {}) },
-            portfolio: { ...DEFAULT_HOME_CONTENT.portfolio, ...(json.content.portfolio ?? {}) },
-            team: { ...DEFAULT_HOME_CONTENT.team, ...(json.content.team ?? {}) },
-            footer: { ...DEFAULT_HOME_CONTENT.footer, ...(json.content.footer ?? {}) },
-        };
-    } catch (err) {
-        // eslint-disable-next-line no-console
-        console.warn("[site-content] backend unreachable, falling back to defaults", err);
-        return DEFAULT_HOME_CONTENT;
-    }
+    // design-cms-v2: use defaults.ts directly while iterating on copy.
+    // The production DB has a stale "home" row from the original seeder that
+    // overrides every field. Bypass the API until the DB row is updated to
+    // match the new copy, then restore the fetch+merge below.
+    // TODO: restore API fetch once DB content is synced with defaults.
+    return DEFAULT_HOME_CONTENT;
 }
 
 /** Client-side fetch — used by /admin/site to load + edit. Bearer-token auth.
