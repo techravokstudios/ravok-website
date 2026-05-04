@@ -14,14 +14,15 @@
 import { GripVertical, Trash2, Plus } from "lucide-react";
 import { useState } from "react";
 import { CRevealSection } from "@/components/design-system";
-import { DEFAULT_HOME_CONTENT, type HomeContent } from "@/lib/site-content";
-import { EditableText, EditableImage, FloatingElementsLayer, useEditMode } from "@/lib/edit-mode";
+import { DEFAULT_HOME_CONTENT, renderInline, type HomeContent, type Cta } from "@/lib/site-content";
+import { EditableText, EditableImage, EditableList, FloatingElementsLayer, useEditMode } from "@/lib/edit-mode";
 
 type BridgeProps = {
     content?: HomeContent["bridge"];
 };
 
 const NEW_ROW_DEFAULT = { dim: "New dimension", old: "Old way…", next: "RAVOK way…" };
+const NEW_CTA_DEFAULT: Cta = { label: "New CTA", href: "/", variant: "primary" };
 
 export default function Bridge({ content }: BridgeProps = {}) {
     const c = content ?? DEFAULT_HOME_CONTENT.bridge;
@@ -191,6 +192,41 @@ export default function Bridge({ content }: BridgeProps = {}) {
                             <Plus className="w-3.5 h-3.5" />
                             <span>Add comparison row</span>
                         </button>
+                    )}
+
+                    {/* CTA buttons */}
+                    {(c.ctas?.length ?? 0) > 0 && (
+                        <div className="mt-6 lg:mt-8">
+                            <EditableList
+                                arrayPath="bridge.ctas"
+                                items={c.ctas ?? []}
+                                defaultNewItem={NEW_CTA_DEFAULT}
+                                addLabel="Add CTA"
+                                as="div"
+                                className="flex flex-wrap gap-3"
+                                renderItem={(cta, i) => {
+                                    const isPrimary = cta.variant === "primary";
+                                    const cls = isPrimary
+                                        ? "inline-flex items-center gap-2 px-7 py-3 rounded-full border border-ravok-gold/40 text-ravok-gold font-sans text-[0.6rem] tracking-[0.25em] uppercase hover:border-ravok-gold hover:bg-[rgba(196,149,58,0.06)] transition-colors duration-200"
+                                        : "inline-flex items-center gap-2 px-7 py-3 rounded-full border border-[var(--ds-border-strong)] text-[var(--ds-ink-dim)] font-sans text-[0.6rem] tracking-[0.25em] uppercase hover:border-ravok-gold/40 hover:text-ravok-gold transition-colors duration-200";
+                                    if (enabled) {
+                                        return (
+                                            <div className="flex flex-col items-start gap-1">
+                                                <div className={cls}>
+                                                    <EditableText path={`bridge.ctas.${i}.label`} value={cta.label} as="span" inline className="" />
+                                                </div>
+                                                <EditableText path={`bridge.ctas.${i}.href`} value={cta.href} as="div" inline={false} className="font-mono text-[0.6rem] text-[var(--ds-ink-muted)]" />
+                                            </div>
+                                        );
+                                    }
+                                    return (
+                                        <a href={cta.href} className={cls}>
+                                            {renderInline(cta.label)}
+                                        </a>
+                                    );
+                                }}
+                            />
+                        </div>
                     )}
                 </div>
             </div>

@@ -37,7 +37,6 @@ export const DEFAULT_HOME_CONTENT: HomeContent = {
         ],
         ctas: [
             { label: "Read more about us →", href: "/about-us", variant: "primary" },
-            { label: "How it works →", href: "/our-model", variant: "secondary" },
         ],
         statueImage: "/images/statues/intro-statue.svg",
     },
@@ -82,6 +81,9 @@ export const DEFAULT_HOME_CONTENT: HomeContent = {
             },
         ],
         statueImage: "/images/statues/bridge-statue.svg",
+        ctas: [
+            { label: "How it works →", href: "/our-model", variant: "primary" },
+        ],
     },
 
     portfolio: {

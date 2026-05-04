@@ -174,6 +174,7 @@ export type HomeContent = {
         statueImage: string;
         statueImageTransform?: ImageTransform;
         decorations?: FloatingImage[];
+        ctas?: Cta[];
     };
     portfolio: {
         label: string;
